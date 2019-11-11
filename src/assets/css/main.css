@@ -1,0 +1,10 @@
+body {
+  margin: 0;
+  padding: 0;
+  background-color: rgb(235,235,235);
+}
+
+.max-width {
+  margin: auto;
+  width: 1196px;
+}
