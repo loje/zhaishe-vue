@@ -23,7 +23,7 @@
 <script>
 export default {
   activated() {
-    console.log(this.$route.matched);
+    // console.log(this.$route.matched);
   },
 }
 </script>

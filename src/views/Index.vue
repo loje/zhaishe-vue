@@ -1,19 +1,25 @@
 <template>
   <div class="max-width">
-    <swiper :options="swiperOption" ref="mySwiper" style="margin-top: 20px;">
-      <!-- slides -->
-      <swiper-slide v-for="(item, $index) in bannerList" :key="$index">
-        <div class="swiper-box">
-          <div class="box-left" :style="{backgroundImage:`url(${item.banner.imgList[0]})`}"></div>
-          <div class="box-right">
-            <div class="box-top" :style="{backgroundImage:`url(${item.banner.imgList[1]})`}"></div>
-            <div class="box-btm" :style="{backgroundImage:`url(${item.banner.imgList[2]})`}"></div>
-          </div>
-        </div>
-      </swiper-slide>
-      <!-- Optional controls -->
-      <div class="swiper-pagination" slot="pagination"></div>
-    </swiper>
+    <div class="swiper-box" style="margin-top: 20px;">
+      <div class="box-left">
+        <swiper :options="leftSwiperOption" ref="leftSwiper">
+          <template v-for="(item, $index) in bannerOneList">
+          <swiper-slide :key="$index">
+            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
+          </swiper-slide>
+          </template>
+        </swiper>
+      </div>
+      <div class="box-right">
+        <swiper :options="rightSwiperOption" ref="rightSwiper">
+          <template v-for="(item, $index) in bannerTwoList">
+          <swiper-slide :key="$index">
+            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
+          </swiper-slide>
+          </template>
+        </swiper>
+      </div>
+    </div>
 
     <div class="layer">
       <div class="title">
@@ -27,7 +33,7 @@
         <div class="box-2">
           <div class="box box-col-2">
             <div class="box-title">
-              <span>以往活动</span>
+              <span>宅设活动</span>
               <a>MORE</a>
             </div>
             <div class="media-list">
@@ -86,15 +92,33 @@ export default {
   },
   data() {
     return {
-      swiperOption: {
+      leftSwiperOption: {
         // some swiper options/callbacks
         // 所有的参数同 swiper 官方 api 参数
         // ...
+        autoplay: true,
+        loop : true,
+        delay: 1000,
         pagination: {
           el: '.swiper-pagination',
         }
       },
-      bannerList: [],
+      rightSwiperOption: {
+        // some swiper options/callbacks
+        // 所有的参数同 swiper 官方 api 参数
+        // ...
+        autoplay: true,
+        loop : true,
+        delay: 1000,
+        direction : 'vertical',
+        slidesPerView : 2,
+        pagination: {
+          el: '.swiper-pagination',
+        }
+      },
+      bannerOneList: [],
+      bannerTwoList: [],
+
       recommendList: [],
       activityList: [],
       downloadList: [],
@@ -103,7 +127,7 @@ export default {
   },
   computed: {
     swiper() {
-      return this.$refs.mySwiper.swiper
+      return this.$refs.leftSwiper.swiper;
     }
   },
   mounted() {
@@ -128,12 +152,18 @@ export default {
     getBanner() {
       let that = this;
       var query = new this.$AV.Query('banner');
-      let arr = [];
+      let aa = [];
+      let bb = [];
+
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({banner: res[i].attributes});
+          console.log(res[i].attributes);
+          aa = res[0].attributes.imgList;
+          bb = res[1].attributes.imgList;
         }
-        that.bannerList = arr;
+        that.bannerOneList = aa;
+        that.bannerTwoList = bb;
+
       });
     },
     getRecommend() {
@@ -196,35 +226,37 @@ export default {
 </script>
 
 <style lang="scss" scope>
-  .swiper-container{
+  .swiper-box {
+    display: flex;
     width: 100%;
     height: 380px;
-    .swiper-box {
-      display: flex;
-      width: 100%;
+    border-radius: 10px;
+    overflow: hidden;
+    .box-left {
+      width: 761px;
       height: 100%;
-      border-radius: 10px;
-      overflow: hidden;
-      .box-left {
-        width: 761px;
+      background-color: #707A81;
+      background-position: 50%;
+      background-size: cover;
+      .swiper-container{
+        width: 100%;
         height: 100%;
-        background-color: #707A81;
-        background-position: 50%;
-        background-size: cover;
-      }
-      .box-right {
-        width: 443px;
-        .box-top {
+        .img {
           width: 100%;
-          height: 190px;
-          background-color: #E3BE4C;
+          height: 100%;
           background-position: 50%;
           background-size: cover;
         }
-        .box-btm {
+      }
+    }
+    .box-right {
+      width: 443px;
+      .swiper-container{
+        width: 100%;
+        height: 100%;
+        .img {
           width: 100%;
-          height: 190px;
-          background-color: #648094;
+          height: 100%;
           background-position: 50%;
           background-size: cover;
         }
@@ -242,7 +274,6 @@ export default {
       padding-right: 16px;
       span {
         font-size: 24px;
-        font-weight: 100;
         letter-spacing: 2px;
       }
       a {
@@ -283,7 +314,6 @@ export default {
             letter-spacing: 2px;
             span {
               font-size: 24px;
-              font-weight: 100;
             }
             a {
               float: right;
