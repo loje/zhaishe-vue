@@ -2,9 +2,10 @@ body {
   margin: 0;
   padding: 0;
   background-color: rgb(235,235,235);
+  font-family: PingFang SC Regular;
 }
 
 .max-width {
   margin: auto;
-  width: 1196px;
+  width: 1204px;
 }
