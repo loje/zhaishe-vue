@@ -2,22 +2,73 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 
 const Index = (r) => require.ensure([], () => r(require('@/views/Index')), 'init');
-const About = (r) => require.ensure([], () => r(require('@/views/About')), 'init');
+const Tools = (r) => require.ensure([], () => r(require('@/views/Tools/index')), 'init');
+const Activity = (r) => require.ensure([], () => r(require('@/views/Activity/index')), 'init');
+const Download = (r) => require.ensure([], () => r(require('@/views/Download/index')), 'init');
+const About = (r) => require.ensure([], () => r(require('@/views/About/index')), 'init');
 
 Vue.use(VueRouter);
 
-const routes = [
+export const routes = [
   {
     path: '/',
     name: 'index',
+    meta: { menuName: '首页' },
     component: Index
+  },
+  {
+    path: '/tools',
+    name: 'tools',
+    meta: { menuName: '工具' },
+    component: Tools
+  },
+  {
+    path: '/activity',
+    name: 'activity',
+    meta: { menuName: '活动' },
+    component: Activity,
+    children: [
+      {
+        path: '/activity',
+        name: 'activity',
+        meta: { menuName: '全部活动' },
+        component: Activity,
+      },
+      {
+        path: '/activity/zhaishe',
+        name: 'zhaishe',
+        meta: { menuName: '宅设主办' },
+        component: Activity,
+      },
+      {
+        path: '/activity/recommend',
+        name: 'recommend',
+        meta: { menuName: '推荐活动' },
+        component: Activity,
+      },
+      {
+        path: '/activity/cooperation',
+        name: 'cooperation',
+        meta: { menuName: '合作活动' },
+        component: Activity,
+      },
+      {
+        path: '/activity/symposium',
+        name: 'symposium',
+        meta: { menuName: '探讨会' },
+        component: Activity,
+      },
+    ],
+  },{
+    path: '/download',
+    name: 'download',
+    meta: { menuName: '下载' },
+    component: Download
   },
   {
     path: '/about',
     name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
+    meta: { menuName: '关于我们' },
     component: About
   }
 ]

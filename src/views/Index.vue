@@ -163,7 +163,6 @@ export default {
         }
         that.bannerOneList = aa;
         that.bannerTwoList = bb;
-
       });
     },
     getRecommend() {
