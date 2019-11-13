@@ -363,7 +363,7 @@ export default {
         .form-group {
           margin-bottom: 22px;
           span {
-            font-size: 18px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(51,51,51,1);
           }
@@ -379,7 +379,7 @@ export default {
         }
         .tips {
           margin-bottom: 44px;
-          font-size: 18px;
+          font-size: 16px;
           font-family: PingFang SC Regular;
           color: rgba(153,153,153,1);
         }

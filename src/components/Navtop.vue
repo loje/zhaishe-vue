@@ -7,7 +7,7 @@
           <span>设计师活动聚集地</span>
         </div>
         <div id="nav" class="nav">
-          <router-link v-for="(items, $index) in routes" :key="$index" >{{items.meta.menuName}}</router-link>
+          <router-link v-for="(items, $index) in routes" :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'">{{items.meta.menuName}}</router-link>
         </div>
       </div>
       <div class="user-in">
@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="nav-secord" v-if="childRoutes.length > 0">
-      <router-link v-for="(items, $index) in childRoutes" :key="$index" :to="items.path" :style="{$route}">{{items.meta.menuName}}</router-link>
+      <router-link v-for="(items, $index) in childRoutes" :key="$index" :to="items.path">{{items.meta.menuName}}</router-link>
     </div>
   </div>
 </template>
@@ -33,11 +33,12 @@ export default {
   },
   watch: {
     $route(from) {
-      // if (from.path === '/') {
-      //   this.noIndex = true;
-      // } else {
-      //   this.noIndex = false;
-      // }
+      console.log(from);
+      if (from.name === 'index') {
+        this.isIndex = true;
+      } else {
+        this.isIndex = false;
+      }
       this.childRoutes = [];
       let allRoutes = this.$router.options.routes;
       for (let i = 0; i < allRoutes.length; i += 1) {
@@ -95,6 +96,9 @@ export default {
           text-align: center;
           &.router-link-active {
             border-bottom: 4px solid #E3BE4C;
+          }
+          &.hideBorder:nth-child(1) {
+            border-bottom: none;
           }
         }
       }
