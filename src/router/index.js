@@ -58,6 +58,12 @@ export const routes = [
         meta: { menuName: '探讨会' },
         component: Activity,
       },
+      {
+        path: '/activity/item',
+        name: 'activityItem',
+        meta: { menuName: '活动详情' },
+        component: (r) => require.ensure([], () => r(require('@/views/Activity/Item')), 'init'),
+      },
     ],
   },{
     path: '/download',

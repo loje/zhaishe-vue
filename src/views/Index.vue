@@ -47,7 +47,7 @@
                     <div class="media-desc">{{item.desc}}</div>
                   </div>
                   <div class="media-right">
-                    <a class="btn">查看</a>
+                    <a class="btn">报名</a>
                   </div>
                 </div>
               </template>
@@ -55,12 +55,14 @@
           </div>
           <div class="box">
             <div class="box-title">
-              <span>免费下载</span>
+              <span>更多资源</span>
               <a>MORE</a>
             </div>
             <div class="title-list">
               <template v-for="(item, $index) in downloadList">
-                <div class="t" :key="$index">{{item.title}}</div>
+                <div class="t" :key="$index">
+                {{item.title}} <span>{{item.}}</span>
+                </div>
               </template>
             </div>
           </div>
@@ -74,7 +76,10 @@
       </div>
       <div class="people-box">
         <template v-for="(item, $index) in designerList">
-        <div class="box" :key="$index" :style="{backgroundImage: `url(${item.src})`}"></div>
+        <div class="box" :key="$index">
+          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
+          <div class="name">{{item.name}}</div>
+        </div>
         </template>
       </div>
     </div>
@@ -215,6 +220,7 @@ export default {
           arr.push({
             id: res[i].attributes.id,
             src: res[i].attributes.img.attributes.url,
+            name: res[i].attributes.name,
           });
         }
         that.designerList = arr;
@@ -386,11 +392,21 @@ export default {
       justify-content: space-between;
       .box {
         width: 278px;
-        height: 349px;
-        background-color: #fff;
-        border-radius: 10px;
-        background-position: 50%;
-        background-size: cover;
+        .img {
+          width: 100%;
+          height: 349px;
+          background-color: #fff;
+          border-radius: 10px;
+          background-position: 50%;
+          background-size: cover;
+        }
+        .name {
+          margin-top: 16px;
+          text-align: center;
+          font-size: 18px;
+          font-family: PingFang SC Regular;
+          color: rgba(51,51,51,1);
+        }
       }
     }
   }
