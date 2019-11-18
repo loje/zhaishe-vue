@@ -81,7 +81,7 @@ export default {
       dialogForm: '',
     }
   },
-  mounted() {
+  activated() {
     this.getProducts();
   },
   methods: {

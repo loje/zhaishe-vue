@@ -1,81 +1,74 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 
-const Index = (r) => require.ensure([], () => r(require('@/views/Index')), 'init');
-const Tools = (r) => require.ensure([], () => r(require('@/views/Tools/index')), 'init');
-const Activity = (r) => require.ensure([], () => r(require('@/views/Activity/index')), 'init');
-const Download = (r) => require.ensure([], () => r(require('@/views/Download/index')), 'init');
-const About = (r) => require.ensure([], () => r(require('@/views/About/index')), 'init');
-
 Vue.use(VueRouter);
 
 export const routes = [
   {
     path: '/',
-    name: 'index',
-    meta: { menuName: '首页' },
-    component: Index
+    name: '首页',
+    meta: { menu: true },
+    component: () => import('@/views/Index'),
   },
   {
     path: '/tools',
-    name: 'tools',
-    meta: { menuName: '工具' },
-    component: Tools
+    name: '工具',
+    meta: { menu: true, keepAlive: true },
+    component: () => import('@/views/Tools/index'),
   },
   {
     path: '/activity',
-    name: 'activity',
-    meta: { menuName: '活动' },
-    component: Activity,
+    name: '活动',
+    component: () => import('@/views/Activity/index'),
+    meta: { menu: true, keepAlive: true },
     children: [
       {
         path: '/activity',
-        name: 'activity',
-        meta: { menuName: '全部活动' },
-        component: Activity,
+        name: '全部活动',
+        component: () => import('@/views/Activity/index'),
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/zhaishe',
-        name: 'zhaishe',
-        meta: { menuName: '宅设主办' },
-        component: Activity,
+        name: '宅设主办',
+        component: () => import('@/views/Activity/index'),
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/recommend',
-        name: 'recommend',
-        meta: { menuName: '推荐活动' },
-        component: Activity,
+        name: '推荐活动',
+        component: () => import('@/views/Activity/index'),
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/cooperation',
-        name: 'cooperation',
-        meta: { menuName: '合作活动' },
-        component: Activity,
+        name: '合作活动',
+        component: () => import('@/views/Activity/index'),
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/symposium',
-        name: 'symposium',
-        meta: { menuName: '探讨会' },
-        component: Activity,
+        name: '探讨会',
+        component: () => import('@/views/Activity/index'),
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/item',
-        name: 'activityItem',
-        meta: { menuName: '活动详情' },
-        component: (r) => require.ensure([], () => r(require('@/views/Activity/Item')), 'init'),
+        name: '活动详情',
+        component: () => import('@/views/Activity/Item'),
       },
     ],
   },{
     path: '/download',
-    name: 'download',
-    meta: { menuName: '下载' },
-    component: Download
+    name: '下载',
+    component: () => import('@/views/Download/index'),
+    meta: { menu: true, keepAlive: true },
   },
   {
     path: '/about',
-    name: 'about',
-    meta: { menuName: '关于我们' },
-    component: About
+    name: '关于我们',
+    component: () => import('@/views/About/index'),
+    meta: { menu: true, keepAlive: true },
   }
 ]
 

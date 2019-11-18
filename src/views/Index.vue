@@ -61,7 +61,7 @@
             <div class="title-list">
               <template v-for="(item, $index) in downloadList">
                 <div class="t" :key="$index">
-                {{item.title}} <span>{{item.}}</span>
+                <!-- {{item.title}} <span>{{item.}}</span> -->
                 </div>
               </template>
             </div>
@@ -136,22 +136,11 @@ export default {
     }
   },
   mounted() {
-    // var TestObject = this.$AV.Object.extend('TestObject');
-    // var testObject = new TestObject();
-    // testObject.set('words', 'Hello world!');
-    // testObject.save().then(function (testObject) {
-    //   console.log(testObject + '保存成功。')
-    // })
-
     this.getBanner();
     this.getRecommend();
     this.getActivity();
     this.getDownload();
     this.getDesigner();
-    // current swiper instance
-    // 然后你就可以使用当前上下文内的swiper对象去做你想做的事了
-    // console.log('this is current swiper instance object', this.swiper)
-    // this.swiper.slideTo(3, 1000, false)
   },
   methods: {
     getBanner() {

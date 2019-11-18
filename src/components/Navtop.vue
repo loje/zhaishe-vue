@@ -7,7 +7,9 @@
           <span>设计师活动聚集地</span>
         </div>
         <div id="nav" class="nav">
-          <router-link v-for="(items, $index) in routes" :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'">{{items.meta.menuName}}</router-link>
+          <template v-for="(items, $index) in routes">
+          <router-link :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
+          </template>
         </div>
       </div>
       <div class="user-in">
@@ -16,7 +18,9 @@
       </div>
     </div>
     <div class="nav-secord" v-if="childRoutes.length > 0">
-      <router-link v-for="(items, $index) in childRoutes" :key="$index" :to="items.path">{{items.meta.menuName}}</router-link>
+      <template v-for="(items, $index) in childRoutes">
+      <router-link :key="$index" :to="items.path" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
+      </template>
     </div>
   </div>
 </template>
@@ -34,7 +38,7 @@ export default {
   watch: {
     $route(from) {
       console.log(from);
-      if (from.name === 'index') {
+      if (from.name === '首页') {
         this.isIndex = true;
       } else {
         this.isIndex = false;

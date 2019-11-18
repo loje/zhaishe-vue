@@ -1,5 +1,6 @@
 <template>
-  <div class="activity-list max-width">
+  <div>
+    <div class="activity-list max-width" v-if="$route.path !== '/activity/item'">
     <template v-for="(item, $index) in activityList">
       <div class="the-activity" :key="$index">
         <div class="activity-left">
@@ -17,6 +18,8 @@
         </div>
       </div>
     </template>
+    </div>
+    <router-view v-else></router-view>
   </div>
 </template>
 <script>
@@ -26,8 +29,9 @@ export default {
       activityList: [],
     }
   },
-  mounted() {
+  activated() {
     this.getActivity();
+    console.log(this.$route.path);
   },
   methods: {
     tolink() {
