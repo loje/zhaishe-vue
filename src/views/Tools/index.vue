@@ -24,34 +24,17 @@
       </div>
     </div>
 
-    <div class="dialog" v-if="dialog">
-      <div class="dialog-box max-width">
-        <div class="img" :style="{backgroundImage: `url(${dialog.src})`}"></div>
-        <div class="box-right">
-          <div class="recommended">
-            <div class="recommended-t">推荐码</div>
-            <input type="text" />
-            <div class="recommended-tips">恭喜您以获得团购码</div>
-          </div>
-          <div class="the-price">
-            <div class="price-t">现购价</div>
-            <div class="price-num" style="color:#cc0033;">199元</div>
-          </div>
-          <div class="the-price">
-            <div class="price-t">团购价</div>
-            <div class="price-num">139元</div>
-          </div>
-          <div class="box-btn" @click="next">下一步</div>
-        </div>
-      </div>
-      <div class="dialog-bg" @click="hideBuy"></div>
-    </div>
-
     <div class="dialogForm" v-if="dialogForm">
       <div class="dialog-box">
-        <div class="img" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png);"></div>
+        <div class="dialog-left">
+          <div class="img" :style="{backgroundImage: `url(${dialogForm.src})`}"></div>
+          <input type="text" placeholder="请输入邀请码" />
+        </div>
         <div class="dialog-right">
-          <div class="form-t">团购信息</div>
+          <div class="form-t">
+            <span class="original-price">原价：{{dialogForm.price}}元</span>
+            <span class="group-price">团购价：{{dialogForm.groupPrice}}元</span>
+          </div>
           <div class="form-group">
             <span>姓名</span>
             <input type="text" />
@@ -64,11 +47,19 @@
             <span>微信</span>
             <input type="text" />
           </div>
-          <div class="tips">小编会添加好微信后固定时间邮箱发码</div>
-          <a class="btn">购买</a>
+          <div class="tips">{{tips}}</div>
+          <a class="btn" @click="buy">购买</a>
         </div>
       </div>
       <div class="dialog-bg" @click="hideFrom"></div>
+    </div>
+
+    <div class="dialog-qrcode" v-if="dialogQrcode">
+      <div class="dialog-box">
+        <div class="img" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png);"></div>
+        <div class="text">小编会第一时间联系您支付<br/>加小编了解进度</div>
+      </div>
+      <div class="dialog-bg" @click="hideQrcode"></div>
     </div>
   </div>
 </template>
@@ -77,8 +68,10 @@ export default {
   data() {
     return {
       productList: [],
-      dialog: '',
       dialogForm: '',
+      tips: '',
+
+      dialogQrcode: false,
     }
   },
   activated() {
@@ -108,6 +101,8 @@ export default {
             src: res[i].attributes.img.attributes.url,
             title: res[i].attributes.title,
             desc: res[i].attributes.desc,
+            groupPrice: res[i].attributes.groupPrice,
+            price: res[i].attributes.price,
             sys: arrb,
           });
         }
@@ -115,19 +110,19 @@ export default {
       });
     },
     showBuy(item) {
-      this.dialog = item;
+      this.dialogForm = item;
     },
-    hideBuy() {
-      this.dialog = '';
-    },
-    next() {
-      this.dialogForm = this.dialog;
-      this.dialog = '';
+    buy() {
+      this.dialogForm = '';
+      this.dialogQrcode = true;
     },
     hideFrom() {
-      this.dialog = '';
       this.dialogForm = '';
-    }
+      this.dialogQrcode = false;
+    },
+    hideQrcode() {
+      this.dialogQrcode = false;
+    },
   },
 };
 </script>
@@ -196,6 +191,7 @@ export default {
             .sys-list {
               margin-top: 11px;
               span {
+                display: inline-block;
                 margin-right: 25px;
                 >>>.icon {
                   display: block;
@@ -230,101 +226,7 @@ export default {
       }
     }
   }
-  .dialog {
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.34);
-    z-index: 1;
-    .dialog-box {
-      position: relative;
-      display: flex;
-      align-items: center;
-      height: 221px;
-      background-color: #fff;
-      border-radius: 10px;
-      box-sizing: border-box;
-      z-index: 1;
-      .img {
-        width: 221px;
-        height: 221px;
-        background-position: 50%;
-        background-repeat: no-repeat;
-        background-size: contain;
-      }
-      .box-right {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        padding: 50px;
-        height: 100%;
-        box-sizing: border-box;
-        .recommended {
-          .recommended-t {
-            font-size: 16px;
-            font-family: PingFang SC Regular;
-            color: rgba(51,51,51,1);
-          }
-          input {
-            margin-top: 11px;
-            padding: 0 23px;
-            width: 276px;
-            height: 47px;
-            outline: none;
-            border: none;
-            background-color: #eee;
-            border-radius: 10px;
-            box-sizing: border-box;
-          }
-          .recommended-tips {
-            margin-top: 13px;
-            font-size: 16px;
-            font-family: PingFang SC Regular;
-            color: rgba(212,92,92,1);
-          }
-        }
-        .the-price {
-          margin-left: 50px;
-          .price-t {
-            font-size: 16px;
-            font-family: PingFang SC Regular;
-            color: rgba(51,51,51,1);
-          }
-          .price-num {
-            margin-top: 11px;
-            font-size: 24px;
-            font-family: PingFang SC Regular;
-            color: rgba(153,153,153,1);
-          }
-        }
-        .box-btn {
-          width: 170px;
-          height: 47px;
-          line-height: 47px;
-          text-align: center;
-          background: rgba(241,196,74,1);
-          font-size: 24px;
-          font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
-          border-radius: 10px;
-          cursor: pointer;
-        }
-      }
-    }
-    .dialog-bg {
-      position: absolute;
-      left: 0;
-      top: 0;
-      width: 100%;
-      height: 100%;
-      z-index: 0;
-    }
-  }
+
 
   .dialogForm {
     position: fixed;
@@ -345,48 +247,74 @@ export default {
       border-radius: 10px;
       box-sizing: border-box;
       z-index: 1;
-      .img {
-        width: 378px;
-        height: 378px;
-        background-position: 50%;
-        background-size: cover;
-        background-repeat: no-repeat;
+      .dialog-left {
+        text-align: center;
+        .img {
+          width: 378px;
+          height: 350px;
+          background-position: 50%;
+          background-size: contain;
+          background-repeat: no-repeat;
+        }
+        input {
+          width: 273px;
+          height: 47px;
+          background: rgba(235,235,235,1);
+          border: none;
+          outline: none;
+          border-radius: 10px;
+          text-align: center;
+          font-size: 18px;
+        }
       }
+
       .dialog-right {
         margin-left: 114px;
         .form-t {
           margin-bottom: 33px;
-          font-size: 24px;
-          font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          .original-price {
+            margin-right: 41px;
+            font-size: 18px;
+            font-family: PingFang SC Regular;
+            color: rgba(153,153,153,1);
+          }
+          .group-price {
+            font-size: 18px;
+            font-family: PingFang SC Regular;
+            color: rgba(243,107,107,1);
+          }
         }
         .form-group {
-          margin-bottom: 22px;
+          margin-top: 22px;
           span {
             font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(51,51,51,1);
+            letter-spacing: 5px;
           }
           input {
             margin-left: 7px;
             width: 330px;
-            height: 36px;
-            line-height: 36px;
+            height: 47px;
+            line-height: 47px;
             border: none;
             outline: none;
             border-bottom: 1px solid #ddd;
           }
         }
         .tips {
+          margin-top: 27px;
           margin-bottom: 44px;
           font-size: 16px;
           font-family: PingFang SC Regular;
-          color: rgba(153,153,153,1);
+          width: 142px;
+          height: 23px;
+          color: rgba(243,107,107,1);
         }
         .btn {
           display: block;
           text-decoration: none;
-          width: 170px;
+          width: 100%;
           height: 47px;
           line-height: 47px;
           background: rgba(241,196,74,1);
@@ -397,6 +325,47 @@ export default {
           border-radius: 10px;
           cursor: pointer;
         }
+      }
+    }
+    .dialog-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+    }
+  }
+
+  .dialog-qrcode {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.34);
+    z-index: 1;
+    .dialog-box {
+      position: relative;
+      margin: auto;
+      padding: 50px;
+      background-color: #fff;
+      border-radius: 10px;
+      box-sizing: border-box;
+      z-index: 1;
+      .img {
+        width: 340px;
+        height: 340px;
+        background-size: contain;
+      }
+      .text {
+        text-align: center;
+        font-size: 18px;
+        font-family: PingFang SC Regular;
+        color: rgba(51,51,51,1);
+        line-height: 30px;
       }
     }
     .dialog-bg {

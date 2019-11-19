@@ -61,7 +61,7 @@
             <div class="title-list">
               <template v-for="(item, $index) in downloadList">
                 <div class="t" :key="$index">
-                <!-- {{item.title}} <span>{{item.}}</span> -->
+                {{item.title}} <span>{{item.downloads}}</span>
                 </div>
               </template>
             </div>
@@ -151,7 +151,6 @@ export default {
 
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
-          console.log(res[i].attributes);
           aa = res[0].attributes.imgList;
           bb = res[1].attributes.imgList;
         }
@@ -195,6 +194,7 @@ export default {
           arr.push({
             id: res[i].attributes.id,
             title: res[i].attributes.title,
+            downloads: res[i].attributes.downloads,
           });
         }
         that.downloadList = arr;
@@ -320,6 +320,9 @@ export default {
               font-size: 18px;
               font-family: PingFang SC Regular;
               color: rgba(51,51,51,1);
+              span {
+                float: right;
+              }
             }
           }
         }

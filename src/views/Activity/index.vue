@@ -14,7 +14,7 @@
             <div class="info">活动方式：{{item.mode}}</div>
             <div class="info">活动费用：{{item.fee}}</div>
           </div>
-          <div class="activity-link" @click="tolink">查看</div>          
+          <div class="activity-link" @click="tolink(item.id)">查看</div>          
         </div>
       </div>
     </template>
@@ -34,8 +34,8 @@ export default {
     console.log(this.$route.path);
   },
   methods: {
-    tolink() {
-      this.$router.push('/activity/item');
+    tolink(id) {
+      this.$router.push({path: '/activity/item', query: {id}});
     },
     getActivity() {
       let that = this;
