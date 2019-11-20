@@ -1,34 +1,74 @@
 <template>
   <div>
-  <div class="max-width">
-    <div class="banner">
-      <swiper :options="swiperOption" ref="bannerSwiper">
-        <template v-for="(item, $index) in banner">
-        <swiper-slide :key="$index">
-          <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
-        </swiper-slide>
-        </template>
-      </swiper>
-    </div>
-    <div class="activity-title">活动信息</div>
-    <div class="activity-detail">
-      <div class="info">
-        <p>主题：{{title}}</p>
-        <p>时间：{{time}}</p>
-        <p>地点：{{address}}</p>
-        <p>费用：{{fee}}</p>
-        <a class="btn">会后笔记</a>
-      </div>
-      <article v-html="content"></article>
-    </div>
-  </div>
-  <div class="price-layer">
+    <template v-if="$route.path !== '/activity/record'">
     <div class="max-width">
-      <div class="pv">浏览量：2018</div>
-      <div class="fee">费用：<span>50</span>元</div>
-      <a>报名</a>
+      <div class="banner">
+        <swiper :options="swiperOption" ref="bannerSwiper">
+          <template v-for="(item, $index) in banner">
+          <swiper-slide :key="$index">
+            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
+          </swiper-slide>
+          </template>
+        </swiper>
+      </div>
+      <div class="activity-title">活动信息</div>
+      <div class="activity-detail">
+        <div class="info">
+          <p>主题：{{title}}</p>
+          <p>时间：{{time}}</p>
+          <p>地点：{{address}}</p>
+          <p>费用：{{fee}}</p>
+          <a class="btn" @click="toRecord">会后笔记</a>
+        </div>
+        <article v-html="content"></article>
+      </div>
     </div>
-  </div>
+    <div class="price-layer">
+      <div class="max-width">
+        <div class="pv">浏览量：2018</div>
+        <div class="fee">费用：<span>50</span>元</div>
+        <a @click="apply">报名</a>
+      </div>
+    </div>
+
+    <div class="dialog" v-if="applyShow">
+      <div class="dialog-box">
+        <div class="dialog-flex">
+          <div class="img" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
+          <div class="right">
+            <div class="fee">报名费：50元</div>
+            <div class="form-group">
+              <span>姓名</span>
+              <input type="text" />
+            </div>
+            <div class="form-group">
+              <span>电话</span>
+              <input type="text" />
+            </div>
+            <div class="form-group">
+              <span>微信</span>
+              <input type="text" />
+            </div>
+            <div class="tips">电话格式错误</div>
+          </div>
+        </div>
+        <a class="btn" @click="putApply">报名</a>
+      </div>
+      <div class="dialog-bg"></div>
+    </div>
+
+    <div class="dialog" v-if="qrcodeShow">
+      <div class="dialog-box">
+        <div class="qrcode" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
+        <div class="text">
+          报名成功<br/>24小时内小编会联系您进行支付
+        </div>
+        <span class="close" @click="qrcodeHide">关闭</span>
+      </div>
+    </div>
+    </template>
+
+    <router-view v-else></router-view>
   </div>
 </template>
 <script>
@@ -59,6 +99,11 @@ export default {
           el: '.swiper-pagination',
         }
       },
+      applyShow: false,
+      dialog: {
+        img: '',
+      },
+      qrcodeShow: false
     }
   },
   computed: {
@@ -69,7 +114,7 @@ export default {
   mounted() {
     const that = this;
     var query = new this.$AV.Query('activity');
-    query.equalTo('id', this.$route.query.id);
+    query.equalTo('id', Number(this.$route.query.id));
     query.find().then(function (res) {
       that.banner = res[0].attributes.banner || [];
       that.title = res[0].attributes.title || '';
@@ -78,6 +123,21 @@ export default {
       that.fee = res[0].attributes.fee || '';
       that.content = res[0].attributes.content || '';
     });
+  },
+  methods: {
+    apply() {
+      this.applyShow = true;
+    },
+    putApply() {
+      this.applyShow = false;
+      this.qrcodeShow = true;
+    },
+    qrcodeHide() {
+      this.qrcodeShow = false;
+    },
+    toRecord() {
+      this.$router.push('/activity/record');
+    },
   },
 };
 </script>
@@ -128,6 +188,7 @@ export default {
         font-size: 16px;
         font-family: PingFang SC Regular;
         color: rgba(255,255,255,1);
+        cursor: pointer;
       }
     }
     article {
@@ -180,7 +241,113 @@ export default {
         color: rgba(51,51,51,1);
         text-align: center;
         border-radius: 10px;
+        cursor: pointer;
       }
+    }
+  }
+  .dialog {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.34);
+    z-index: 3;
+    .dialog-box {
+      position: relative;
+      margin: auto;
+      padding: 59px 54px 30px 48px;
+      background-color: #fff;
+      border-radius: 10px;
+      z-index: 1;
+      .dialog-flex {
+        display: inline-flex;
+        .img {
+          width: 300px;
+          height: 300px;
+          border-radius: 10px;
+          background-color: #E7C352;
+        }
+        .right {
+          padding-left: 57px;
+          .fee {
+            font-size: 18px;
+            font-family: PingFang SC Regular;
+            color: rgba(243,107,107,1);
+          }
+          .form-group {
+            margin-top: 23px;
+            width: 382px;
+            span {
+              font-size: 18px;
+              letter-spacing: 3px;
+              font-family: PingFang SC Regular;
+              color: rgba(51,51,51,1);
+            }
+            input {
+              margin-left: 9px;
+              padding: 0;
+              width: 330px;
+              height: 47px;
+              border: none;
+              outline: none;
+              border-bottom: 1px solid #DDD;
+            }
+          }
+          .tips {
+            margin-top: 27px;
+            font-size: 18px;
+            font-family: PingFang SC Regular;
+            color: rgba(243,107,107,1);
+          }
+        }
+      }
+
+      .btn {
+        display: block;
+        margin: auto;
+        margin-top: 46px;
+        width: 400px;
+        height: 50px;
+        line-height: 50px;
+        background-color: rgba(241,196,74,1);
+        font-family: PingFang SC Regular;
+        color: rgba(51,51,51,1);
+        text-align: center;
+        border-radius: 10px;
+      }
+
+      .qrcode {
+        width: 340px;
+        height: 340px;
+      }
+      .text {
+        text-align: center;
+        font-size: 18px;
+        font-family: PingFang SC Regular;
+        color: rgba(51,51,51,1);
+        line-height: 24px;
+      }
+      .close {
+        position: absolute;
+        right: 47px;
+        top: 39px;
+        font-size: 18px;
+        font-family: PingFang SC Regular;
+        color: rgba(51,51,51,1);
+        cursor: pointer;
+        z-index: 2;
+      }
+    }
+    .dialog-bg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
     }
   }
 </style>

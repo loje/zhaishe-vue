@@ -41,4 +41,7 @@ export default {
   font-family: PingFang SC Regular;
   color: rgba(51,51,51,1);
 }
+.the-layer {
+  background-color: #fff;
+}
 </style>

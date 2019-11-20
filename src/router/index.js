@@ -19,7 +19,7 @@ export const routes = [
   {
     path: '/activity',
     name: '活动',
-    component: () => import('@/views/Activity/index'),
+    component: () => import('@/views/Black'),
     meta: { menu: true, keepAlive: true },
     children: [
       {
@@ -56,6 +56,11 @@ export const routes = [
         path: '/activity/item',
         name: '活动详情',
         component: () => import('@/views/Activity/Item'),
+      },
+      {
+        path: '/activity/record',
+        name: '活动笔记',
+        component: () => import('@/views/Activity/Record'),
       },
     ],
   },{
