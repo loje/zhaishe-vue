@@ -147,7 +147,7 @@ export default {
     width: 100%;
     height: 426px;
     border-radius: 10px;
-    background-color: #E3BE4C;
+    background-color: #FFCB2B;
     overflow: hidden;
     .swiper-container{
       width: 100%;
@@ -182,7 +182,7 @@ export default {
         width: 147px;
         height: 40px;
         line-height: 40px;
-        background: rgba(227,190,76,1);
+        background: #FFCB2B;
         border-radius: 10px;
         text-align: center;
         font-size: 16px;
@@ -235,7 +235,7 @@ export default {
         width: 147px;
         height: 40px;
         line-height: 40px;
-        background-color: rgba(227,190,76,1);
+        background-color: #FFCB2B;
         font-size: 16px;
         font-family: PingFang SC Regular;
         color: rgba(51,51,51,1);

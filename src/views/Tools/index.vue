@@ -185,7 +185,7 @@ export default {
             .support-t {
               font-size: 16px;
               font-family: PingFang SC Light;
-              color: rgba(227,190,76,1);
+              color: #FFCB2B;
               line-height: 30px;
             }
             .sys-list {

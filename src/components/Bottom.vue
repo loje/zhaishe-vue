@@ -3,13 +3,18 @@
     <div class="max-width">
       <div class="bottom-left">
         <div class="contect">
-          小编微信：<br/>zhaishehui01
+          <div class="text-block">
+            <div class="text">小编微信：</div>
+            <div class="text">zhaishehui01</div>
+          </div>
+          <div class="text-block">
+            <div class="text">商务邮箱：</div>
+            <div class="text">zoupengyu@zdesigner.cn</div>
+          </div>
         </div>
         <div class="link">
           <span class="title">友情链接：</span>
           <div class="list">
-            <div class="img"></div>
-            <div class="img"></div>
             <div class="img"></div>
             <div class="img"></div>
             <div class="img"></div>
@@ -19,8 +24,8 @@
         <div class="cop">Copyright © 2019 zdesginer.cn All rights reserved.</div>
       </div>
       <div class="bottom-right">
-        <div class="qrcode" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png);"></div>
         <div class="text">宅设官方微信</div>
+        <div class="qrcode" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png);"></div>
       </div>
     </div>
   </div>
@@ -44,6 +49,14 @@
           display:inline-block;
           margin-right: 121px;
           vertical-align: top;
+          font-size: 14px;
+          line-height: 14px;
+          .text-block {
+            margin-bottom: 20px;
+            .text {
+              margin-bottom: 11px;
+            }
+          }
         }
         .link {
           display: inline-flex;
@@ -59,7 +72,7 @@
               margin: 0 20px;
               width: 46px;
               height: 46px;
-              background: rgba(227,190,76,1);
+              background: #FFCB2B;
               border-radius: 10px;
             }
           }
@@ -67,27 +80,32 @@
         .cop {
           position:absolute;
           left: 0;
-          bottom: 22px;
-          font-size: 13px;
+          bottom: 14px;
+          font-size: 14px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #999;
           text-transform : uppercase;
         }
       }
       .bottom-right {
+        .text {
+          display: inline-block;
+          vertical-align: top;
+          margin-right: 34px;
+          padding-top: 8px;
+          font-size: 14px;
+          font-family: PingFang SC Regular;
+          color: #333;
+        }
         .qrcode{
+          display: inline-block;
+          vertical-align: top;
           width: 123px;
           height: 123px;
           background-color: #fff;
           background-position: 50%;
         }
-        .text {
-          margin-top: 6px;
-          font-size: 16px;
-          font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
-          text-align: center;
-        }
+        
       }
     }
   }

@@ -38,7 +38,7 @@ export default {
       margin-bottom: 55px;
       font-size: 16px;
       font-family: PingFang SC Regular;
-      color: rgba(227,190,76,1);
+      color: #FFCB2B;
     }
   }
 
@@ -78,7 +78,7 @@ export default {
         width: 147px;
         height: 40px;
         line-height: 40px;
-        background-color: rgba(227,190,76,1);
+        background-color: #FFCB2B;
         font-size: 16px;
         font-family: PingFang SC Regular;
         color: rgba(51,51,51,1);

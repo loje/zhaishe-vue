@@ -151,7 +151,7 @@ export default {
         color: rgba(51,51,51,1);
         cursor: pointer;
         &.active {
-          color: #E3BE4C;
+          color: #FFCB2B;
         }
       }
     }
@@ -169,7 +169,7 @@ export default {
         margin-left: 12px;
         font-size: 14px;
         font-family: PingFang SC Regular;
-        color: rgba(227,190,76,1);
+        color: #FFCB2B;
         cursor: pointer;
       }
     }
@@ -194,7 +194,7 @@ export default {
           height: 110px;
           background-position: 50%;
           background-size: cover;
-          background-color: #E3BE4C;
+          background-color: #FFCB2B;
         }
       }
       .media-right {

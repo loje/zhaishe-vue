@@ -1,16 +1,14 @@
 <template>
   <div>
     <div class="nav-top">
-      <div class="max-width">
-        <div class="logo">
-          <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/93e2bac101ef97002df9/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112155535.png);"></div>
-          <span>设计师活动聚集地</span>
-        </div>
-        <div id="nav" class="nav">
-          <template v-for="(items, $index) in routes">
-          <router-link :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
-          </template>
-        </div>
+      <div class="logo" @click="$router.push('/')">
+        <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/93e2bac101ef97002df9/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112155535.png);"></div>
+        <span>设计师活动聚集地</span>
+      </div>
+      <div id="nav" class="nav">
+        <template v-for="(items, $index) in routes">
+        <router-link :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
+        </template>
       </div>
       <div class="user-in">
         <a>登录</a>
@@ -37,7 +35,6 @@ export default {
   },
   watch: {
     $route(from) {
-      console.log(from);
       if (from.name === '首页') {
         this.isIndex = true;
       } else {
@@ -62,68 +59,82 @@ export default {
     font-family: PingFang SC Regular;
   }
   .nav-top {
-    position: relative;
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    justify-content: space-between;
+    padding: 0 50px;
     width: 100%;
     height: 110px;
     background-color: #fff;
     letter-spacing: 2px;
-    .max-width {
-      display: flex;
-      height: 100%;
-      .logo {
-        padding-top: 19px;
-        margin-right: 120px;
+    box-sizing: border-box;
+    box-shadow: 0px -34px 49px 9px rgba(236,236,236,1);
+    z-index: 1000;
+    .logo {
+      line-height: 110px;
+      cursor: pointer;
+      .img {
+        display: inline-block;
+        margin-right: 16px;
         width: 181px;
-        text-align: center;
-        .img {
-          margin-bottom: 11px;
-          width: 181px;
-          height: 52px;
-        }
-        span {
-          font-size: 16px;
-          font-family: PingFang SC Regular;
-          color: rgba(153,153,153,1);
-          line-height: 16px;
-          letter-spacing: 2px;
-        }
+        height: 52px;
+        vertical-align: middle;
       }
-      .nav {
-        width:700px;
-        display: flex;
-        justify-content: space-between;
-        padding-top: 62px;
-        a {
-          display: inline-block;
-          width: 104px;
-          font-size: 18px;
-          text-align: center;
-          &.router-link-active {
-            border-bottom: 4px solid #E3BE4C;
-          }
-          &.hideBorder:nth-child(1) {
-            border-bottom: none;
-          }
+      span {
+        display: inline-block;
+        padding-left: 16px;
+        border-left: 1px dotted #EBEBEB;
+        font-size: 16px;
+        font-family: PingFang SC Regular;
+        color: rgba(153,153,153,1);
+        line-height: 52px;
+        letter-spacing: 2px;
+        vertical-align: middle;
+      }
+    }
+    .nav {
+      width:900px;
+      display: flex;
+      justify-content: space-between;
+      padding-top: 62px;
+      a {
+        display: inline-block;
+        width: 180px;
+        font-size: 18px;
+        text-align: center;
+        transition: color 0.5s;
+        border-bottom: 4px solid #fff;
+        cursor: pointer;
+        &:hover {
+          color: #FFCB2B;
+        }
+        &.router-link-active {
+          border-bottom: 4px solid #FFCB2B;
         }
       }
     }
     .user-in {
-      position: absolute;
-      right: 0;
-      top: 0;
-      display: flex;
-      height: 100%;
-      align-items: center;
-      padding-right: 60px;
+      width: 223px;
+      text-align: right;
+      line-height: 110px;
+      text-align: right;
       z-index: 1;
       a {
+        display: inline-block;
         font-size: 18px;
+        cursor: pointer;
+        transition: color 0.5s;
+        &:hover {
+          color: #FFCB2B;
+        }
         &.btn {
-          margin-left: 18px;
-          width: 107px;
-          height: 40px;
-          line-height: 40px;
-          background: rgba(227,190,76,1);
+          margin-left: 49px;
+          width: 120px;
+          height: 50px;
+          line-height: 50px;
+          background: #FFCB2B;
           border-radius: 10px;
           text-align: center;
         }
@@ -143,7 +154,7 @@ export default {
       text-align: center;
       &.router-link-exact-active 
       {
-        color: #E3BE4C;
+        color: #FFCB2B;
       }
     }
   }

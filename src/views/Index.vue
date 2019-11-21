@@ -265,24 +265,30 @@ export default {
     margin-top: 42px;
     .title {
       margin-bottom: 22px;
-      padding-left: 42px;
-      padding-right: 16px;
+      padding-left: 34px;
       span {
+        display: inline-block;
+        vertical-align: middle;
         font-size: 24px;
-        letter-spacing: 2px;
+        line-height: 50px;
       }
       a {
         float: right;
-        display: block;
-        width: 83px;
-        height: 40px;
+        display: inline-block;
+        vertical-align: middle;
+        width: 120px;
+        height: 50px;
         text-align: center;
-        line-height: 40px;
+        line-height: 50px;
         background-color: #fff;
         color: #333;
         border-radius: 10px;
         cursor: pointer;
         font-family: PingFang SC Regular;
+        transition: background-color 0.5s;
+        &:hover {
+          background-color: #FFCB2B;
+        }
       }
     }
     .layer-box {
@@ -301,27 +307,32 @@ export default {
         display: flex;
         justify-content: space-between;
         .box {
-          padding: 52px 52px 52px 42px;
+          padding: 52px 32px 52px 42px;
           height: 659px;
           box-sizing: border-box;
           .box-title {
             margin-bottom: 60px;
-            letter-spacing: 2px;
             span {
               font-size: 24px;
+              line-height: 24px;
             }
             a {
               float: right;
               font-size: 14px;
+              transition: color 0.5s;
+              line-height: 24px;
               cursor: pointer;
+              &:hover {
+                color: #FFCB2B;
+              }
             }
           }
           .title-list {
             .t {
-              margin-bottom: 15px;
+              margin-bottom: 30px;
               font-size: 18px;
               font-family: PingFang SC Regular;
-              color: rgba(51,51,51,1);
+              color: #666;
               span {
                 float: right;
               }
@@ -347,13 +358,13 @@ export default {
                 }
               }
               .media-mid {
-                flex: 1;
-                padding: 0 14px;
+                margin-left: 28px;
+                width: 350px;
                 .media-title {
                   margin-bottom: 9px;
                   font-size: 14px;
                   font-family: PingFang SC Regular;
-                  color: rgba(51,51,51,1);
+                  color: #666;
                 }
                 .media-desc {
                   font-size: 18px;
@@ -362,17 +373,20 @@ export default {
                 }
               }
               .media-right {
+                flex: 1;
+                text-align:right;
                 .btn {
-                  display: block;
-                  width: 110px;
-                  height: 40px;
-                  line-height: 40px;
-                  background: rgba(227,190,76,1);
+                  display: inline-block;
+                  width: 120px;
+                  height: 50px;
+                  line-height: 50px;
+                  background: #FFCB2B;
                   font-size: 18px;
                   font-family: PingFang SC Regular;
                   color: rgba(51,51,51,1);
                   border-radius: 10px;
                   text-align: center;
+                  cursor: pointer;
                 }
               }
             }
