@@ -4,6 +4,7 @@ body {
   padding-top: 110px;
   background-color: rgb(235,235,235);
   font-family: PingFang SC Regular;
+  overflow: scroll;
 }
 
 .max-width {
