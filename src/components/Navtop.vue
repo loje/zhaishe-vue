@@ -72,7 +72,7 @@ export default {
       height: 100%;
       .logo {
         padding-top: 19px;
-        margin-right: 143px;
+        margin-right: 120px;
         width: 181px;
         text-align: center;
         .img {
@@ -89,7 +89,7 @@ export default {
         }
       }
       .nav {
-        width:607px;
+        width:700px;
         display: flex;
         justify-content: space-between;
         padding-top: 62px;

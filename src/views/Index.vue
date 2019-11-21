@@ -23,8 +23,8 @@
 
     <div class="layer">
       <div class="title">
-        <span>工具推荐</span>
-        <a>MORE</a>
+        <span>宅设好物推荐</span>
+        <a @click="$router.push('/tools')">MORE</a>
       </div>
       <div class="layer-box">
         <div class="box-1">
@@ -34,7 +34,7 @@
           <div class="box box-col-2">
             <div class="box-title">
               <span>宅设活动</span>
-              <a>MORE</a>
+              <a @click="$router.push('/activity')">MORE</a>
             </div>
             <div class="media-list">
               <template v-for="(item, $index) in activityList">
@@ -56,7 +56,7 @@
           <div class="box">
             <div class="box-title">
               <span>更多资源</span>
-              <a>MORE</a>
+              <a @click="$router.push('/download')">MORE</a>
             </div>
             <div class="title-list">
               <template v-for="(item, $index) in downloadList">
@@ -73,6 +73,7 @@
     <div class="layer">
       <div class="title">
         <span>宅设严选人</span>
+        <a @click="$router.push('/designer')">MORE</a>
       </div>
       <div class="people-box">
         <template v-for="(item, $index) in designerList">
@@ -312,6 +313,7 @@ export default {
             a {
               float: right;
               font-size: 14px;
+              cursor: pointer;
             }
           }
           .title-list {

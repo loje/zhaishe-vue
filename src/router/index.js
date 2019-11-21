@@ -6,19 +6,19 @@ Vue.use(VueRouter);
 export const routes = [
   {
     path: '/',
-    name: '首页',
+    name: '宅设首页',
     meta: { menu: true },
     component: () => import('@/views/Index'),
   },
   {
     path: '/tools',
-    name: '工具',
+    name: '宅设好物',
     meta: { menu: true, keepAlive: true },
     component: () => import('@/views/Tools/index'),
   },
   {
     path: '/activity',
-    name: '活动',
+    name: '宅设活动',
     component: () => import('@/views/Black'),
     meta: { menu: true, keepAlive: true },
     children: [
@@ -65,7 +65,7 @@ export const routes = [
     ],
   },{
     path: '/download',
-    name: '下载',
+    name: '资源下载',
     component: () => import('@/views/Download/index'),
     meta: { menu: true, keepAlive: true },
   },
@@ -74,7 +74,13 @@ export const routes = [
     name: '关于我们',
     component: () => import('@/views/About/index'),
     meta: { menu: true, keepAlive: true },
-  }
+  },
+  {
+    path: '/designer',
+    name: '宅设严选人',
+    meta: { menu: true, keepAlive: true },
+    component: () => import('@/views/Designer/index'),
+  },
 ]
 
 const router = new VueRouter({
