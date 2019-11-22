@@ -165,7 +165,7 @@ export default {
     margin-top: 33px;
     font-size: 18px;
     font-family: PingFang SC Regular;
-    color: rgba(51,51,51,1);
+    color: #333;
   }
   .activity-detail {
     margin-top: 20px;
@@ -210,7 +210,7 @@ export default {
       box-sizing: border-box;
       font-size: 14px;
       font-family: PingFang SC Regular;
-      color: rgba(51,51,51,1);
+      color: #333;
       text-align: right;
       .pv {
         display: inline-block;
@@ -238,7 +238,7 @@ export default {
         background-color: #FFCB2B;
         font-size: 16px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         text-align: center;
         border-radius: 10px;
         cursor: pointer;
@@ -284,7 +284,7 @@ export default {
               font-size: 18px;
               letter-spacing: 3px;
               font-family: PingFang SC Regular;
-              color: rgba(51,51,51,1);
+              color: #333;
             }
             input {
               margin-left: 9px;
@@ -314,7 +314,7 @@ export default {
         line-height: 50px;
         background-color: rgba(241,196,74,1);
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         text-align: center;
         border-radius: 10px;
       }
@@ -327,7 +327,7 @@ export default {
         text-align: center;
         font-size: 18px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         line-height: 24px;
       }
       .close {
@@ -336,7 +336,7 @@ export default {
         top: 39px;
         font-size: 18px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         cursor: pointer;
         z-index: 2;
       }

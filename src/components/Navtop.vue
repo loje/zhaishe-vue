@@ -55,7 +55,7 @@ export default {
 <style lang="scss" scope>
   a {
     text-decoration: none;
-    color: rgba(51,51,51,1);
+    color: #333;
     font-family: PingFang SC Regular;
   }
   .nav-top {
@@ -66,14 +66,14 @@ export default {
     justify-content: space-between;
     padding: 0 50px;
     width: 100%;
-    height: 110px;
+    height: 108px;
     background-color: #fff;
     letter-spacing: 2px;
     box-sizing: border-box;
     box-shadow: 0px -34px 49px 9px rgba(236,236,236,1);
     z-index: 1000;
     .logo {
-      line-height: 110px;
+      line-height: 108px;
       cursor: pointer;
       .img {
         display: inline-block;
@@ -118,7 +118,7 @@ export default {
     .user-in {
       width: 223px;
       text-align: right;
-      line-height: 110px;
+      line-height: 108px;
       text-align: right;
       z-index: 1;
       a {
@@ -137,6 +137,9 @@ export default {
           background: #FFCB2B;
           border-radius: 10px;
           text-align: center;
+          &:hover {
+            color: #333;
+          }
         }
       }
     }
@@ -149,9 +152,8 @@ export default {
     text-align: center;
     a {
       display: inline-block;
-      width: 104px;
+      margin: 0 45px;
       font-size: 18px;
-      text-align: center;
       &.router-link-exact-active 
       {
         color: #FFCB2B;

@@ -94,7 +94,7 @@ export default {
           margin-bottom: 31px;
           font-size: 24px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #333;
         }
         .activity-info {
           .info {
@@ -114,7 +114,7 @@ export default {
           background: rgba(241,196,74,1);
           font-size: 16px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #333;
           text-align: center;
           border-radius: 10px;
           cursor: pointer;

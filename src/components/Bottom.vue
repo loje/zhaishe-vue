@@ -64,7 +64,7 @@
           .title {
             font-size: 16px;
             font-family: PingFang SC Regular;
-            color: rgba(51,51,51,1);
+            color: #333;
           }
           .list {
             display: flex;

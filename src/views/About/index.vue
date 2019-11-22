@@ -39,7 +39,7 @@ export default {
       border-bottom: 1px solid #EBEBEB;
       font-size: 26px;
       font-family: PingFang SC Semibold;
-      color: rgba(51,51,51,1);
+      color: #333;
     }
     .content {
       margin-top: 31px;

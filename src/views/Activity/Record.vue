@@ -53,7 +53,7 @@ export default {
       box-sizing: border-box;
       font-size: 14px;
       font-family: PingFang SC Regular;
-      color: rgba(51,51,51,1);
+      color: #333;
       text-align: right;
       .pv {
         display: inline-block;
@@ -81,7 +81,7 @@ export default {
         background-color: #FFCB2B;
         font-size: 16px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         text-align: center;
         border-radius: 10px;
         cursor: pointer;

@@ -160,7 +160,7 @@ export default {
         .tool-title{
           font-size: 24px;
           font-family: PingFang SC Medium;
-          color: rgba(51,51,51,1);
+          color: #333;
         }
         .tool-desc {
           margin-top: 25px;
@@ -216,7 +216,7 @@ export default {
                 width: 120px;
                 height: 45px;
                 background: rgba(241,196,74,1);
-                color: rgba(51,51,51,1);
+                color: #333;
                 text-align: center;
                 border-radius: 10px;
               }
@@ -289,7 +289,7 @@ export default {
           span {
             font-size: 16px;
             font-family: PingFang SC Regular;
-            color: rgba(51,51,51,1);
+            color: #333;
             letter-spacing: 5px;
           }
           input {
@@ -321,7 +321,7 @@ export default {
           text-align: center;
           font-size: 18px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #333;
           border-radius: 10px;
           cursor: pointer;
         }
@@ -364,7 +364,7 @@ export default {
         text-align: center;
         font-size: 18px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         line-height: 30px;
       }
     }

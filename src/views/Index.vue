@@ -2,7 +2,7 @@
   <div class="max-width">
     <div class="swiper-box" style="margin-top: 20px;">
       <div class="box-left">
-        <swiper :options="leftSwiperOption" ref="leftSwiper">
+        <swiper v-if="bannerOneList.length > 0" :options="leftSwiperOption" ref="leftSwiper">
           <template v-for="(item, $index) in bannerOneList">
           <swiper-slide :key="$index">
             <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
@@ -11,7 +11,7 @@
         </swiper>
       </div>
       <div class="box-right">
-        <swiper :options="rightSwiperOption" ref="rightSwiper">
+        <swiper v-if="bannerTwoList.length > 0" :options="rightSwiperOption" ref="rightSwiper">
           <template v-for="(item, $index) in bannerTwoList">
           <swiper-slide :key="$index">
             <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
@@ -27,9 +27,13 @@
         <a @click="$router.push('/tools')">MORE</a>
       </div>
       <div class="layer-box">
-        <div class="box-1">
-          <div class="box" v-for="(item, $index) in recommendList" :key="$index" :style="{backgroundImage:`url(${item.src})`, boxShadow: $index === 0 ? '-12px 0px 0px #F2F1F1' : $index === 2 ? '12px 0px 0px #F2F1F1' : 'none'}"></div>
-        </div>
+        <swiper v-if="recommendList.length > 0" :options="toolOption" ref="toolsSwiper">
+          <template v-for="(item, $index) in recommendList">
+          <swiper-slide :key="$index" >
+            <div class="img" :style="{backgroundImage:`url(${item.src})`, boxShadow: $index === 0 ? '-12px 0px 0px #F2F1F1' : $index === 2 ? '12px 0px 0px #F2F1F1' : 'none'}"></div>
+          </swiper-slide>
+          </template>
+        </swiper>
         <div class="box-2">
           <div class="box box-col-2">
             <div class="box-title">
@@ -47,7 +51,9 @@
                     <div class="media-desc">{{item.desc}}</div>
                   </div>
                   <div class="media-right">
-                    <a class="btn">报名</a>
+                    <a class="btn" v-if="item.status === 0">报名</a>
+                    <a class="btn disabled" v-else-if="item.status === 1">已报名</a>
+                    <a class="btn disabled" v-else-if="item.status === 2">结束</a>
                   </div>
                 </div>
               </template>
@@ -122,6 +128,14 @@ export default {
           el: '.swiper-pagination',
         }
       },
+      toolOption: {
+        autoplay: true,
+        loop : true,
+        delay: 1000,
+        slidesPerView: 3,
+        slidesPerGroup: 3,
+        spaceBetween: 8,
+      },
       bannerOneList: [],
       bannerTwoList: [],
 
@@ -181,6 +195,7 @@ export default {
             src: res[i].attributes.img.attributes.url,
             title: res[i].attributes.title,
             desc: res[i].attributes.desc,
+            status: res[i].attributes.status,
           });
         }
         that.activityList = arr;
@@ -292,16 +307,28 @@ export default {
       }
     }
     .layer-box {
+      width: 100%;
       .box {
         width: 396px;
-        height: 211px;
         margin-bottom: 12px;
         background-color: #fff;
         border-radius: 10px;
       }
-      .box-1 {
-        display: flex;
-        justify-content: space-between;
+
+      .swiper-container{
+        margin-left: -11px;
+        margin-right: -11px;
+        margin-bottom: 12px;
+        padding:0 11px;
+        width: 100%;
+        height: 211px;
+        .img {
+          width: 100%;
+          height: 100%;
+          background-position: 50%;
+          background-size: cover;
+          border-radius: 10px;
+        }
       }
       .box-2 {
         display: flex;
@@ -369,7 +396,7 @@ export default {
                 .media-desc {
                   font-size: 18px;
                   font-family: PingFang SC Regular;
-                  color: rgba(51,51,51,1);
+                  color: #333;
                 }
               }
               .media-right {
@@ -383,10 +410,13 @@ export default {
                   background: #FFCB2B;
                   font-size: 18px;
                   font-family: PingFang SC Regular;
-                  color: rgba(51,51,51,1);
+                  color: #333;
                   border-radius: 10px;
                   text-align: center;
                   cursor: pointer;
+                  &.disabled {
+                    background: #EBEBEB;
+                  }
                 }
               }
             }
@@ -413,7 +443,7 @@ export default {
           text-align: center;
           font-size: 18px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #333;
         }
       }
     }

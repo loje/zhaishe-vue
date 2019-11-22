@@ -8,7 +8,7 @@
           <div :class="isActive === item.id ? 'tab active' : 'tab'" v-for="(item, $index) in sortList" :key="$index" @click="toggleTab(item.id)">{{item.name}}</div>
         </div>
         <div class="search-bar">
-          <input type="text" v-model="text" />
+          <input type="text" v-model="text" placeholder="请输入标题关键字" />
           <span @click="search">搜索</span>
         </div>
       </div>
@@ -129,7 +129,7 @@ export default {
   margin-bottom: 20px;
   font-size: 24px;
   font-family: PingFang SC Regular;
-  color: rgba(51,51,51,1);
+  color: #333;
 }
 .the-layer {
   padding: 41px 34px;
@@ -148,7 +148,7 @@ export default {
         padding-bottom: 26px;
         font-size: 18px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
         cursor: pointer;
         &.active {
           color: #FFCB2B;
@@ -158,12 +158,14 @@ export default {
     .search-bar {
       padding-bottom: 26px;
       input {
+        padding: 0 15px;
         width: 165px;
         height: 34px;
         border-radius: 10px;
         background-color: #EBEBEB;
         border: none;
         outline: none;
+        box-sizing: box-sizing;
       }
       span {
         margin-left: 12px;
@@ -191,7 +193,7 @@ export default {
         width: 220px;
         .img {
           width: 100%;
-          height: 110px;
+          height: 108px;
           background-position: 50%;
           background-size: cover;
           background-color: #FFCB2B;
@@ -203,7 +205,7 @@ export default {
         .media-t {
           font-size: 18px;
           font-family: PingFang SC Regular;
-          color: rgba(51,51,51,1);
+          color: #333;
         }
         .media-info {
           display: flex;
@@ -212,7 +214,7 @@ export default {
           .author {
             font-size: 13px;
             font-family: PingFang SC Regular;
-            color: rgba(51,51,51,1);
+            color: #333;
           }
           a {
             font-size: 13px;

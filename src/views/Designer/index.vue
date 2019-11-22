@@ -47,7 +47,7 @@ export default {
     margin: 39px 0;
     font-size: 18px;
     font-family: PingFang SC Regular;
-    color: rgba(51,51,51,1);
+    color: #333;
   }
   .designer-list {
     display: flex;
@@ -71,14 +71,14 @@ export default {
         width: 100%;
         font-size: 16px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
       }
       .info {
         margin-top: 16px;
         width: 100%;
         font-size: 14px;
         font-family: PingFang SC Regular;
-        color: rgba(51,51,51,1);
+        color: #333;
       }
     }
   }
