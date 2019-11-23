@@ -70,7 +70,7 @@ export default {
     background-color: #fff;
     letter-spacing: 2px;
     box-sizing: border-box;
-    box-shadow: 0px -34px 49px 9px rgba(236,236,236,1);
+    box-shadow: 0px -34px 49px 9px #bbb;
     z-index: 1000;
     .logo {
       line-height: 108px;

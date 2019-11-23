@@ -23,14 +23,14 @@
 
     <div class="layer">
       <div class="title">
-        <span>宅设好物推荐</span>
+        <span>宅设好物</span>
         <a @click="$router.push('/tools')">MORE</a>
       </div>
       <div class="layer-box">
         <swiper v-if="recommendList.length > 0" :options="toolOption" ref="toolsSwiper">
           <template v-for="(item, $index) in recommendList">
           <swiper-slide :key="$index" >
-            <div class="img" :style="{backgroundImage:`url(${item.src})`, boxShadow: $index === 0 ? '-12px 0px 0px #F2F1F1' : $index === 2 ? '12px 0px 0px #F2F1F1' : 'none'}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.src})`}"></div>
           </swiper-slide>
           </template>
         </swiper>
@@ -51,9 +51,9 @@
                     <div class="media-desc">{{item.desc}}</div>
                   </div>
                   <div class="media-right">
-                    <a class="btn" v-if="item.status === 0">报名</a>
-                    <a class="btn disabled" v-else-if="item.status === 1">已报名</a>
-                    <a class="btn disabled" v-else-if="item.status === 2">结束</a>
+                    <a class="btn" v-if="item.status === 0" @click="toActivity(item.id)">报名</a>
+                    <a class="btn disabled" v-else-if="item.status === 1" @click="toActivity(item.id)">已报名</a>
+                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">结束</a>
                   </div>
                 </div>
               </template>
@@ -116,9 +116,6 @@ export default {
         }
       },
       rightSwiperOption: {
-        // some swiper options/callbacks
-        // 所有的参数同 swiper 官方 api 参数
-        // ...
         autoplay: true,
         loop : true,
         delay: 1000,
@@ -129,11 +126,11 @@ export default {
         }
       },
       toolOption: {
-        autoplay: true,
+        // autoplay: true,
         loop : true,
         delay: 1000,
         slidesPerView: 3,
-        slidesPerGroup: 3,
+        // slidesPerGroup: 3,
         spaceBetween: 8,
       },
       bannerOneList: [],
@@ -231,6 +228,12 @@ export default {
         that.designerList = arr;
       });
     },
+    toActivity(id) {
+      this.$router.push({
+        path: '/activity/item',
+        query: { id },
+      })
+    },
   },
 }
 </script>
@@ -277,7 +280,7 @@ export default {
     background-color: #fff;
   }
   .layer {
-    margin-top: 42px;
+    margin-top: 31px;
     .title {
       margin-bottom: 22px;
       padding-left: 34px;
@@ -316,10 +319,7 @@ export default {
       }
 
       .swiper-container{
-        margin-left: -11px;
-        margin-right: -11px;
         margin-bottom: 12px;
-        padding:0 11px;
         width: 100%;
         height: 211px;
         .img {
@@ -334,6 +334,7 @@ export default {
         display: flex;
         justify-content: space-between;
         .box {
+          margin-bottom: 0;
           padding: 52px 32px 52px 42px;
           height: 659px;
           box-sizing: border-box;
