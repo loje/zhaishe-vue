@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="nav">
     <div class="nav-top">
       <div class="logo" @click="$router.push('/')">
         <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/93e2bac101ef97002df9/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112155535.png);"></div>

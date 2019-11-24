@@ -1,33 +1,28 @@
 <template>
-  <div>
-    <template v-if="$route.path !== '/activity/record'">
+  <div class="activity-page">
     <div class="max-width">
       <div class="banner">
-        <swiper :options="swiperOption" ref="bannerSwiper">
-          <template v-for="(item, $index) in banner">
-          <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
-          </swiper-slide>
-          </template>
-        </swiper>
-      </div>
-      <div class="activity-title">活动信息</div>
-      <div class="activity-detail">
-        <div class="info">
-          <p>主题：{{title}}</p>
-          <p>时间：{{time}}</p>
-          <p>地点：{{address}}</p>
-          <p>费用：{{fee}}</p>
-          <a class="btn" @click="toRecord">会后笔记</a>
+        <div class="banner-left"></div>
+        <div class="banner-mid">
+          <div class="title">{{title}}</div>
+          <div class="sub-title">{{desc}}</div>
+          <div class="info">
+            <p>活动时间：{{time}}</p>
+            <p>活动人数：{{number}}</p>
+            <p>活动方式：{{mode}}</p>
+            <p>活动费用：{{fee}}</p>
+          </div>
+          <div class="pv">浏览量：1000</div>
         </div>
-        <article v-html="content"></article>
+        <div class="banner-right">
+          <div class="icon-btn">
+            <div class="icon" @click="toRecord"></div>
+          </div>
+          <a class="btn" @click="apply">报名</a>
+        </div>
       </div>
-    </div>
-    <div class="price-layer">
-      <div class="max-width">
-        <div class="pv">浏览量：2018</div>
-        <div class="fee">费用：<span>50</span>元</div>
-        <a @click="apply">报名</a>
+      <div class="activity-detail">
+        <article v-html="content"></article>
       </div>
     </div>
 
@@ -66,49 +61,26 @@
         <span class="close" @click="qrcodeHide">关闭</span>
       </div>
     </div>
-    </template>
 
-    <router-view v-else></router-view>
   </div>
 </template>
 <script>
-import './../../assets/css/swiper.css'
-import { swiper, swiperSlide } from 'vue-awesome-swiper'
 
 export default {
-  components: {
-    swiper,
-    swiperSlide,
-  },
   data() {
     return {
       banner: [],
       title: '',
+      desc: '',
       time: '',
-      address: '',
+      mode: '',
       fee: '',
       content: '',
-      swiperOption: {
-        // some swiper options/callbacks
-        // 所有的参数同 swiper 官方 api 参数
-        // ...
-        autoplay: true,
-        loop : true,
-        delay: 1000,
-        pagination: {
-          el: '.swiper-pagination',
-        }
-      },
       applyShow: false,
       dialog: {
         img: '',
       },
       qrcodeShow: false
-    }
-  },
-  computed: {
-    swiper() {
-      return this.$refs.bannerSwiper.swiper;
     }
   },
   mounted() {
@@ -118,8 +90,10 @@ export default {
     query.find().then(function (res) {
       that.banner = res[0].attributes.banner || [];
       that.title = res[0].attributes.title || '';
+      that.desc = res[0].attributes.desc || '';
       that.time = res[0].attributes.time || '';
-      that.address = res[0].attributes.address || '';
+      that.number = res[0].attributes.number || 0;
+      that.mode = res[0].attributes.mode || '';
       that.fee = res[0].attributes.fee || '';
       that.content = res[0].attributes.content || '';
     });
@@ -143,54 +117,100 @@ export default {
 </script>
 <style lang="scss" scope>
   .banner {
+    display: flex;
+    align-items: top;
     margin-top: 20px;
     width: 100%;
     height: 426px;
     border-radius: 10px;
-    background-color: #FFCB2B;
+    background-color: #fff;
     overflow: hidden;
-    .swiper-container{
-      width: 100%;
+    .banner-left {
+      width: 428px;
       height: 100%;
-      .img {
-        width: 100%;
-        height: 100%;
-        background-position: 50%;
-        background-size: cover;
+      background-color: #FFCB2B;
+    }
+    .banner-mid {
+      padding: 80px 30px 40px 50px;
+      flex: 1;
+      height: 100%;
+      box-sizing: border-box;
+      .title {
+        font-size: 18px;
+        font-family: PingFang SC Regular;
+        color: rgba(102,102,102,1);
+        line-height: 18px;
+      }
+      .sub-title {
+        margin-top: 20px;
+        font-size: 24px;
+        font-family: PingFang SC Regular;
+        color: rgba(51,51,51,1);
+        line-height: 24px;
+      }
+      .info {
+        margin-top: 30px;
+        p {
+          margin-top: 14px;
+          margin-bottom: 0;
+          line-height: 17px;
+          color: #999;
+        }
+      }
+      .pv {
+        margin-top: 50px;
       }
     }
-  }
-  .activity-title {
-    margin-left: 25px;
-    margin-top: 33px;
-    font-size: 18px;
-    font-family: PingFang SC Regular;
-    color: #333;
-  }
-  .activity-detail {
-    margin-top: 20px;
-    padding: 71px 133px 61px 133px;
-    width: 100%;
-    background-color: #fff;
-    box-sizing: border-box;
-    .info {
+    .banner-right {
       position: relative;
+      text-align: right;
+      padding: 40px 40px 40px 0;
+      width: 210px;
+      box-sizing: border-box;
+      .icon-btn {
+        position: relative;
+        .icon {
+          display: inline-block;
+          width: 50px;
+          height: 50px;
+          border-radius: 10px;
+          background-color: #EBEBEB;
+          cursor: pointer;
+        }
+        .tips {
+          position: absolute;
+          right: 0;
+          top: 50px;
+          width: 169px;
+          height: 65px;
+        }
+      }
       .btn {
         position: absolute;
-        right: 0;
-        top: 0;
-        width: 147px;
-        height: 40px;
-        line-height: 40px;
-        background: #FFCB2B;
+        right: 40px;
+        bottom: 40px;
+        display: block;
+        width: 170px;
+        height: 50px;
+        line-height: 50px;
+        background-color: #FFCB2B;
         border-radius: 10px;
         text-align: center;
         font-size: 16px;
         font-family: PingFang SC Regular;
-        color: rgba(255,255,255,1);
+        color: #333;
         cursor: pointer;
       }
     }
+  }
+  .activity-detail {
+    margin-top: 30px;
+    margin-bottom: 138px;
+    padding: 86px 155px 105px 155px;
+    height: 1274px;
+    width: 100%;
+    background-color: #fff;
+    box-sizing: border-box;
     article {
       width: 100%;
       box-sizing: border-box;
@@ -199,52 +219,8 @@ export default {
       }
     }
   }
-  .price-layer {
-    width: 100%;
-    height: 89px;
-    background-color: #fff;
-    box-shadow: 0px 38px 79px 0px rgba(42,38,43,0.07);
-    .max-width {
-      height: 100%;
-      padding-right: 104px;
-      box-sizing: border-box;
-      font-size: 14px;
-      font-family: PingFang SC Regular;
-      color: #333;
-      text-align: right;
-      .pv {
-        display: inline-block;
-        margin-right: 38px;
-        height: 40px;
-        line-height: 40px;
-        vertical-align: bottom;
-      }
-      .fee {
-        display: inline-block;
-        margin-right: 38px;
-        vertical-align: bottom;
-        height: 40px;
-        line-height: 40px;
-        span {
-          font-size: 18px;
-        }
-      }
-      a {
-        display: inline-block;
-        vertical-align: bottom;
-        width: 147px;
-        height: 40px;
-        line-height: 40px;
-        background-color: #FFCB2B;
-        font-size: 16px;
-        font-family: PingFang SC Regular;
-        color: #333;
-        text-align: center;
-        border-radius: 10px;
-        cursor: pointer;
-      }
-    }
-  }
+  
+
   .dialog {
     position: fixed;
     left: 0;

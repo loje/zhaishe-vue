@@ -10,7 +10,7 @@
   <div class="price-layer">
     <div class="max-width">
       <div class="pv">浏览量：2018</div>
-      <div class="fee">费用：<span>50</span>元</div>
+      <div class="like-num">点赞数：201</div>
       <a @click="like">点赞</a>
     </div>
   </div>
@@ -38,18 +38,29 @@ export default {
       margin-bottom: 55px;
       font-size: 16px;
       font-family: PingFang SC Regular;
-      color: #FFCB2B;
+      a {
+        margin-right: 10px;
+        color: #FFCB2B;
+      }
+      span {
+        margin-left: 10px;
+        color: #333;
+      }
+    }
+    article {
+      height: 1445px;
     }
   }
 
   .price-layer {
+    margin-bottom: 2px;
     width: 100%;
     height: 89px;
     background-color: #fff;
     box-shadow: 0px 38px 79px 0px rgba(42,38,43,0.07);
     .max-width {
       height: 100%;
-      padding-right: 104px;
+      line-height: 89px;
       box-sizing: border-box;
       font-size: 14px;
       font-family: PingFang SC Regular;
@@ -57,15 +68,15 @@ export default {
       text-align: right;
       .pv {
         display: inline-block;
-        margin-right: 38px;
+        margin-right: 70px;
         height: 40px;
         line-height: 40px;
-        vertical-align: bottom;
+        vertical-align: middle;
       }
-      .fee {
+      .like-num {
         display: inline-block;
-        margin-right: 38px;
-        vertical-align: bottom;
+        margin-right: 70px;
+        vertical-align: middle;
         height: 40px;
         line-height: 40px;
         span {
@@ -74,11 +85,11 @@ export default {
       }
       a {
         display: inline-block;
-        vertical-align: bottom;
+        vertical-align: middle;
         width: 147px;
         height: 40px;
         line-height: 40px;
-        background-color: #FFCB2B;
+        background-color: #EBEBEB;
         font-size: 16px;
         font-family: PingFang SC Regular;
         color: #333;
