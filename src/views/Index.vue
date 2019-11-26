@@ -189,7 +189,7 @@ export default {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
+            src: res[i].attributes.img,
             title: res[i].attributes.title,
             desc: res[i].attributes.desc,
             status: res[i].attributes.status,
