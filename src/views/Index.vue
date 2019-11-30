@@ -51,9 +51,9 @@
                     <div class="media-desc">{{item.desc}}</div>
                   </div>
                   <div class="media-right">
-                    <a class="btn" v-if="item.status === 0" @click="toActivity(item.id)">报名</a>
-                    <a class="btn disabled" v-else-if="item.status === 1" @click="toActivity(item.id)">已报名</a>
-                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">结束</a>
+                    <a class="btn disabled" v-if="item.status === 0" @click="toActivity(item.id)">未开放</a>
+                    <a class="btn" v-else-if="item.status === 1" @click="toActivity(item.id)">可报名</a>
+                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">已结束</a>
                   </div>
                 </div>
               </template>
@@ -184,15 +184,20 @@ export default {
     getActivity() {
       let that = this;
       var query = new this.$AV.Query('activity');
+      var fileQuery = new this.$AV.Query('_File');
+
       let arr = [];
-      query.find().then(function (res) {
+      query.equalTo('notDelete', true);
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({
-            id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
-            title: res[i].attributes.title,
-            desc: res[i].attributes.desc,
-            status: res[i].attributes.status,
+          fileQuery.get(res[i].get('img').id).then((img) => {
+            arr.push({
+              id: res[i].attributes.id,
+              src: img.get('url'),
+              title: res[i].attributes.title,
+              desc: res[i].attributes.desc,
+              status: res[i].attributes.status,
+            });
           });
         }
         that.activityList = arr;
@@ -393,11 +398,21 @@ export default {
                   font-size: 14px;
                   font-family: PingFang SC Regular;
                   color: #666;
+                  overflow : hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
                 }
                 .media-desc {
                   font-size: 18px;
                   font-family: PingFang SC Regular;
                   color: #333;
+                  overflow : hidden;
+                  text-overflow: ellipsis;
+                  display: -webkit-box;
+                  -webkit-line-clamp: 2;
+                  -webkit-box-orient: vertical;
                 }
               }
               .media-right {

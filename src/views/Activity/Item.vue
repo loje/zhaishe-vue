@@ -2,21 +2,23 @@
   <div class="activity-page">
     <div class="max-width">
       <div class="banner">
-        <div class="banner-left"></div>
+        <div class="banner-left">
+          <div class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
+        </div>
         <div class="banner-mid">
           <div class="title">{{title}}</div>
           <div class="sub-title">{{desc}}</div>
           <div class="info">
-            <p>活动时间：{{time}}</p>
-            <p>活动人数：{{number}}</p>
+            <p>活动时间：{{starttime}} ~ {{endtime}}</p>
+            <p>活动人数：{{number > 0 ? number : '不限'}}</p>
             <p>活动方式：{{mode}}</p>
-            <p>活动费用：{{fee}}</p>
+            <p>活动费用：{{fee > 0 ? fee : '免费'}}</p>
           </div>
           <div class="pv">浏览量：1000</div>
         </div>
         <div class="banner-right">
-          <div class="icon-btn">
-            <div class="icon" @click="toRecord"></div>
+          <div class="icon-btn" @click="toRecord">
+            <div class="icon" @click="toRecord">会后笔记</div>
           </div>
           <a class="btn" @click="apply">报名</a>
         </div>
@@ -61,7 +63,6 @@
         <span class="close" @click="qrcodeHide">关闭</span>
       </div>
     </div>
-
   </div>
 </template>
 <script>
@@ -69,10 +70,12 @@
 export default {
   data() {
     return {
-      banner: [],
+      imgSrc: '',
       title: '',
       desc: '',
-      time: '',
+      starttime: '',
+      endtime: '',
+      number: 0,
       mode: '',
       fee: '',
       content: '',
@@ -86,16 +89,23 @@ export default {
   mounted() {
     const that = this;
     var query = new this.$AV.Query('activity');
-    query.equalTo('id', Number(this.$route.query.id));
-    query.find().then(function (res) {
-      that.banner = res[0].attributes.banner || [];
-      that.title = res[0].attributes.title || '';
-      that.desc = res[0].attributes.desc || '';
-      that.time = res[0].attributes.time || '';
-      that.number = res[0].attributes.number || 0;
-      that.mode = res[0].attributes.mode || '';
-      that.fee = res[0].attributes.fee || '';
-      that.content = res[0].attributes.content || '';
+    var activityModeQuery = new this.$AV.Query('activity_mode');
+    var img = new this.$AV.Query('_File');
+
+    query.get(this.$route.query.id).then((res) => {
+      img.get(res.get('img').id).then((src) => {
+        that.imgSrc = src.get('url') || '';
+      });
+      that.title = res.get('title') || '';
+      that.desc = res.get('desc') || '';
+      that.starttime = that.$moment(res.get('startTime')).format('YYYY-MM-DD HH:mm') || '';
+      that.endtime = that.$moment(res.get('endTime')).format('YYYY-MM-DD HH:mm') || '';
+      that.number = res.get('number') || 0;
+      activityModeQuery.get(res.get('mode').id).then((mode) => {
+        that.mode = mode.get('mode');
+      });
+      that.fee = res.get('fee') || '';
+      that.content = res.get('content') || '';
     });
   },
   methods: {
@@ -129,6 +139,12 @@ export default {
       width: 428px;
       height: 100%;
       background-color: #FFCB2B;
+      .img {
+        width: 100%;
+        height: 100%;
+        background-position: 50%;
+        background-size: cover;
+      }
     }
     .banner-mid {
       padding: 80px 30px 40px 50px;
@@ -171,11 +187,15 @@ export default {
         position: relative;
         .icon {
           display: inline-block;
-          width: 50px;
-          height: 50px;
-          border-radius: 10px;
+          // width: 50px;
+          padding: 0 15px;
+          height: 32px;
+          line-height: 32px;
+          border-radius: 6px;
           background-color: #EBEBEB;
           cursor: pointer;
+          font-size: 14px;
+          color: #666;
         }
         .tips {
           position: absolute;
@@ -207,19 +227,18 @@ export default {
     margin-top: 30px;
     margin-bottom: 138px;
     padding: 86px 155px 105px 155px;
-    height: 1274px;
+    min-height: 1274px;
     width: 100%;
     background-color: #fff;
     box-sizing: border-box;
     article {
       width: 100%;
       box-sizing: border-box;
-      > img {
+      img {
         max-width: 100%;
       }
     }
   }
-  
 
   .dialog {
     position: fixed;

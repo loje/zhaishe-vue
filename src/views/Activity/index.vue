@@ -40,17 +40,24 @@ export default {
     getActivity() {
       let that = this;
       var query = new this.$AV.Query('activity');
+      var fileQuery = new this.$AV.Query('_File');
+      var activityModeQuery = new this.$AV.Query('activity_mode');
+
       let arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({
-            id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
-            title: res[i].attributes.title,
-            time: that.$moment(res[i].attributes.time).format('YYYY-MM-DD'),
-            number: res[i].attributes.number,
-            mode: res[i].attributes.mode,
-            fee: res[i].attributes.fee,
+          fileQuery.get(res[i].get('img').id).then((img) => {
+            activityModeQuery.get(res[i].get('mode').id).then((mode) => {
+              arr.push({
+                id: res[i].id,
+                src: img.get('url'),
+                title: res[i].attributes.title,
+                time: that.$moment(res[i].attributes.time).format('YYYY-MM-DD'),
+                number: res[i].attributes.number,
+                mode: mode.get('mode'),
+                fee: res[i].attributes.fee,
+              });
+            });
           });
         }
         that.activityList = arr;
