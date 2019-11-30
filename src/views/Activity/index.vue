@@ -4,17 +4,17 @@
     <template v-for="(item, $index) in activityList">
       <div class="the-activity" :key="$index">
         <div class="activity-left">
-          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
+          <!-- <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div> -->
         </div>
         <div class="activity-right">
           <div class="activity-title">{{item.title}}</div>
           <div class="activity-info">
-            <div class="info">活动时间：{{item.time}}</div>
-            <div class="info">活动人数：{{item.number}}</div>
-            <div class="info">活动方式：{{item.mode}}</div>
-            <div class="info">活动费用：{{item.fee}}</div>
+            <!-- <div class="info">活动时间：{{item.time}}</div> -->
+            <!-- <div class="info">活动人数：{{item.number}}</div> -->
+            <!-- <div class="info">活动方式：{{item.mode}}</div> -->
+            <!-- <div class="info">活动费用：{{item.fee}}</div> -->
           </div>
-          <div class="activity-link" @click="tolink(item.id)">查看</div>          
+          <!-- <div class="activity-link" @click="tolink(item.id)">查看</div>           -->
         </div>
       </div>
     </template>
