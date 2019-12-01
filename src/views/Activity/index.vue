@@ -4,17 +4,17 @@
     <template v-for="(item, $index) in activityList">
       <div class="the-activity" :key="$index">
         <div class="activity-left">
-          <!-- <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div> -->
+          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
         </div>
         <div class="activity-right">
           <div class="activity-title">{{item.title}}</div>
           <div class="activity-info">
-            <!-- <div class="info">活动时间：{{item.time}}</div> -->
-            <!-- <div class="info">活动人数：{{item.number}}</div> -->
-            <!-- <div class="info">活动方式：{{item.mode}}</div> -->
-            <!-- <div class="info">活动费用：{{item.fee}}</div> -->
+            <div class="info">活动时间：{{item.time}}</div>
+            <div class="info">活动人数：{{item.number}}</div>
+            <div class="info">活动方式：{{item.mode}}</div>
+            <div class="info">活动费用：{{item.fee}}</div>
           </div>
-          <!-- <div class="activity-link" @click="tolink(item.id)">查看</div>           -->
+          <div class="activity-link" @click="tolink(item.id)">查看</div>          
         </div>
       </div>
     </template>
@@ -31,7 +31,6 @@ export default {
   },
   activated() {
     this.getActivity();
-    console.log(this.$route.path);
   },
   methods: {
     tolink(id) {
@@ -51,11 +50,11 @@ export default {
               arr.push({
                 id: res[i].id,
                 src: img.get('url'),
-                title: res[i].attributes.title,
+                title: res[i].get('title'),
                 time: that.$moment(res[i].attributes.time).format('YYYY-MM-DD'),
-                number: res[i].attributes.number,
+                number: res[i].get('number'),
                 mode: mode.get('mode'),
-                fee: res[i].attributes.fee,
+                fee: res[i].get('fee'),
               });
             });
           });

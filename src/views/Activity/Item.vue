@@ -147,7 +147,7 @@ export default {
       }
     }
     .banner-mid {
-      padding: 80px 30px 40px 50px;
+      padding: 30px;
       flex: 1;
       height: 100%;
       box-sizing: border-box;
@@ -155,11 +155,11 @@ export default {
         font-size: 18px;
         font-family: PingFang SC Regular;
         color: rgba(102,102,102,1);
-        line-height: 18px;
+        line-height: 24px;
       }
       .sub-title {
         margin-top: 20px;
-        font-size: 24px;
+        font-size: 14px;
         font-family: PingFang SC Regular;
         color: rgba(51,51,51,1);
         line-height: 24px;
@@ -180,14 +180,13 @@ export default {
     .banner-right {
       position: relative;
       text-align: right;
-      padding: 40px 40px 40px 0;
+      padding: 30px 30px 30px 0;
       width: 210px;
       box-sizing: border-box;
       .icon-btn {
         position: relative;
         .icon {
           display: inline-block;
-          // width: 50px;
           padding: 0 15px;
           height: 32px;
           line-height: 32px;
@@ -207,8 +206,8 @@ export default {
       }
       .btn {
         position: absolute;
-        right: 40px;
-        bottom: 40px;
+        right: 30px;
+        bottom: 30px;
         display: block;
         width: 170px;
         height: 50px;
