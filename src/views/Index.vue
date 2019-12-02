@@ -192,7 +192,7 @@ export default {
         for (let i = 0; i < res.length; i += 1) {
           fileQuery.get(res[i].get('img').id).then((img) => {
             arr.push({
-              id: res[i].attributes.id,
+              id: res[i].id,
               src: img.get('url'),
               title: res[i].attributes.title,
               desc: res[i].attributes.desc,

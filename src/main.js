@@ -29,10 +29,12 @@ Vue.prototype.$moment = moment
 Vue.config.productionTip = false
 
 router.afterEach(() => {
-  const $body = document.querySelector('body');
-  if ($body) {
-    $body.scrollTop = 0; // 设置滚动条重置到顶部
-  }
+  window,scrollTo(0,0);
+  // const $body = document.querySelector('body');
+  // if ($body) {
+  //   $body.scrollTop = 0; // 设置滚动条重置到顶部
+  // }
+  // window.addEventListener('scroll', 0);
 });
 
 new Vue({
