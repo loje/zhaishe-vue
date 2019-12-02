@@ -15,11 +15,11 @@
         <a class="btn">注册</a>
       </div>
     </div>
-    <div class="nav-secord" v-if="childRoutes.length > 0">
+    <!-- <div class="nav-secord" v-if="childRoutes.length > 0">
       <template v-for="(items, $index) in childRoutes">
       <router-link :key="$index" :to="items.path" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
       </template>
-    </div>
+    </div> -->
   </div>
 </template>
 
@@ -29,7 +29,7 @@ export default {
   data() {
     return {
       routes,
-      childRoutes: [],
+      // childRoutes: [],
       isIndex: false,
     }
   },
@@ -40,13 +40,13 @@ export default {
       } else {
         this.isIndex = false;
       }
-      this.childRoutes = [];
-      let allRoutes = this.$router.options.routes;
-      for (let i = 0; i < allRoutes.length; i += 1) {
-        if (from.path.indexOf(allRoutes[i].path) != -1 && allRoutes[i].children) {
-          this.childRoutes = allRoutes[i].children;
-        }
-      }
+      // this.childRoutes = [];
+      // let allRoutes = this.$router.options.routes;
+      // for (let i = 0; i < allRoutes.length; i += 1) {
+      //   if (from.path.indexOf(allRoutes[i].path) != -1 && allRoutes[i].children) {
+      //     this.childRoutes = allRoutes[i].children;
+      //   }
+      // }
     }
   },
 }
@@ -144,20 +144,20 @@ export default {
       }
     }
   }
-  .nav-secord {
-    padding: 10px 0;
-    width: 100%;
-    background-color: #fff;
-    border-top: 1px solid #EBEBEB;
-    text-align: center;
-    a {
-      display: inline-block;
-      margin: 0 45px;
-      font-size: 18px;
-      &.router-link-exact-active 
-      {
-        color: #FFCB2B;
-      }
-    }
-  }
+  // .nav-secord {
+  //   padding: 10px 0;
+  //   width: 100%;
+  //   background-color: #fff;
+  //   border-top: 1px solid #EBEBEB;
+  //   text-align: center;
+  //   a {
+  //     display: inline-block;
+  //     margin: 0 45px;
+  //     font-size: 18px;
+  //     &.router-link-exact-active 
+  //     {
+  //       color: #FFCB2B;
+  //     }
+  //   }
+  // }
 </style>

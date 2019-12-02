@@ -19,50 +19,50 @@ export const routes = [
   {
     path: '/activity',
     name: '活动',
-    component: () => import('@/views/Black'),
+    component: () => import('@/views/Activity/index'),
     meta: { menu: true, keepAlive: true },
-    children: [
-      {
-        path: '/activity',
-        name: '全部活动',
-        component: () => import('@/views/Activity/index'),
-        meta: { menu: true, keepAlive: true },
-      },
-      {
-        path: '/activity/zhaishe',
-        name: '宅设主办',
-        component: () => import('@/views/Activity/index'),
-        meta: { menu: true, keepAlive: true },
-      },
-      {
-        path: '/activity/recommend',
-        name: '推荐活动',
-        component: () => import('@/views/Activity/index'),
-        meta: { menu: true, keepAlive: true },
-      },
-      {
-        path: '/activity/cooperation',
-        name: '合作活动',
-        component: () => import('@/views/Activity/index'),
-        meta: { menu: true, keepAlive: true },
-      },
-      {
-        path: '/activity/symposium',
-        name: '探讨会',
-        component: () => import('@/views/Activity/index'),
-        meta: { menu: true, keepAlive: true },
-      },
-      {
-        path: '/activity/item',
-        name: '活动详情',
-        component: () => import('@/views/Activity/Item'),
-      },
-      {
-        path: '/activity/record',
-        name: '活动笔记',
-        component: () => import('@/views/Activity/Record'),
-      },
-    ],
+    // children: [
+    //   {
+    //     path: '/activity',
+    //     name: '全部活动',
+    //     component: () => import('@/views/Activity/index'),
+    //     meta: { menu: true, keepAlive: true },
+    //   },
+    //   {
+    //     path: '/activity/zhaishe',
+    //     name: '宅设主办',
+    //     component: () => import('@/views/Activity/index'),
+    //     meta: { menu: true, keepAlive: true },
+    //   },
+    //   {
+    //     path: '/activity/recommend',
+    //     name: '推荐活动',
+    //     component: () => import('@/views/Activity/index'),
+    //     meta: { menu: true, keepAlive: true },
+    //   },
+    //   {
+    //     path: '/activity/cooperation',
+    //     name: '合作活动',
+    //     component: () => import('@/views/Activity/index'),
+    //     meta: { menu: true, keepAlive: true },
+    //   },
+    //   {
+    //     path: '/activity/symposium',
+    //     name: '探讨会',
+    //     component: () => import('@/views/Activity/index'),
+    //     meta: { menu: true, keepAlive: true },
+    //   },
+    //   {
+    //     path: '/activity/item',
+    //     name: '活动详情',
+    //     component: () => import('@/views/Activity/Item'),
+    //   },
+    //   {
+    //     path: '/activity/record',
+    //     name: '活动笔记',
+    //     component: () => import('@/views/Activity/Record'),
+    //   },
+    // ],
   },{
     path: '/download',
     name: '资源',
@@ -82,6 +82,11 @@ export const routes = [
     meta: { menu: true, keepAlive: true },
   },
 ]
+
+const routerPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push(location) {
+  return routerPush.call(this, location).catch(error=> error)
+}
 
 const router = new VueRouter({
   mode: 'history',
