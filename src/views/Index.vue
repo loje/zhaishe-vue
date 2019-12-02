@@ -297,8 +297,8 @@ export default {
       }
       a {
         float: right;
-        display: inline-block;
-        vertical-align: middle;
+        // display: inline-block;
+        // vertical-align: middle;
         width: 120px;
         height: 50px;
         text-align: center;

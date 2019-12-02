@@ -9,6 +9,8 @@
           </div>
           <div class="activity-right">
             <div class="activity-title">{{item.title}}</div>
+            <div class="activity-desc">{{item.desc}}</div>
+
             <div class="activity-info">
               <div class="info">活动时间：{{item.time}}</div>
               <div class="info">活动人数：{{item.number}}</div>
@@ -105,6 +107,7 @@ export default {
                 id: res[i].id,
                 src: img.get('url'),
                 title: res[i].get('title'),
+                desc: res[i].get('desc'),
                 time: that.$moment(res[i].attributes.time).format('YYYY-MM-DD'),
                 number: res[i].get('number'),
                 mode: mode.get('mode'),
@@ -150,21 +153,30 @@ export default {
           position: relative;
           margin-left: 9px;
           flex: 1;
-          padding: 50px 65px;
+          padding: 39px 38px;
           height: 100%;
           background-color: #fff;
           border-radius: 10px;
           box-sizing: border-box;
           .activity-title{
-            margin-bottom: 31px;
-            font-size: 24px;
+            margin-bottom: 10px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: #333;
+          }
+          .activity-desc {
+            margin-bottom: 20px;
+            font-size: 18px;
+            overflow : hidden;
+            text-overflow: ellipsis;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
           }
           .activity-info {
             .info {
               margin-bottom: 10px;
-              font-size: 18px;
+              font-size: 16px;
               font-family: PingFang SC Regular;
               color: rgba(153,153,153,1);
             }
