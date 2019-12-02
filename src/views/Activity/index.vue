@@ -1,38 +1,35 @@
 <template>
-  <div>
-    <div class="activity-list max-width" v-if="$route.path !== '/activity/item'">
-      <div class="page-left">
-      <template v-for="(item, $index) in activityList">
-        <div class="the-activity" :key="$index">
-          <div class="activity-left">
-            <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
-          </div>
-          <div class="activity-right">
-            <div class="activity-title">{{item.title}}</div>
-            <div class="activity-desc">{{item.desc}}</div>
-
-            <div class="activity-info">
-              <div class="info">活动时间：{{item.time}}</div>
-              <div class="info">活动人数：{{item.number}}</div>
-              <div class="info">活动方式：{{item.mode}}</div>
-              <div class="info">活动费用：{{item.fee}}</div>
-            </div>
-            <div class="activity-link" @click="tolink(item.id)">查看</div>          
-          </div>
+  <div class="activity-list max-width">
+    <div class="page-left">
+    <template v-for="(item, $index) in activityList">
+      <div class="the-activity" :key="$index">
+        <div class="activity-left">
+          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
         </div>
-      </template>
+        <div class="activity-right">
+          <div class="activity-title">{{item.title}}</div>
+          <div class="activity-desc">{{item.desc}}</div>
+
+          <div class="activity-info">
+            <div class="info">活动时间：{{item.time}}</div>
+            <div class="info">活动人数：{{item.number}}</div>
+            <div class="info">活动方式：{{item.mode}}</div>
+            <div class="info">活动费用：{{item.fee}}</div>
+          </div>
+          <div class="activity-link" @click="tolink(item.id)">查看</div>          
+        </div>
       </div>
-      <div class="page-right">
-        <div class="menu-list">
-          <div @click="toggle('')" :class="active === '' ? 'menu active' : 'menu'">全部</div>
+    </template>
+    </div>
+    <div class="page-right">
+      <div class="menu-list">
+        <div @click="toggle('')" :class="active === '' ? 'menu active' : 'menu'">全部</div>
 
-          <template v-for="(item, $index) in sortList">
-          <div :key="$index" @click="toggle(item)" :class="active === item.id ? 'menu active' : 'menu'">{{item.sortName}}</div>
-          </template>
-        </div>
+        <template v-for="(item, $index) in sortList">
+        <div :key="$index" @click="toggle(item)" :class="active === item.id ? 'menu active' : 'menu'">{{item.sortName}}</div>
+        </template>
       </div>
     </div>
-    <router-view v-else></router-view>
   </div>
 </template>
 <script>
@@ -69,6 +66,7 @@ export default {
     },
     getSortList() {
       let that = this;
+      that.sortList = [];
       var query = new this.$AV.Query('activity_sort');
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
@@ -94,7 +92,7 @@ export default {
       var query = new this.$AV.Query('activity');
       var fileQuery = new this.$AV.Query('_File');
       var activityModeQuery = new this.$AV.Query('activity_mode');
-      
+      that.activityList = [];
       let arr = [];
       if (that.active) {
         query.equalTo('sort', that.$AV.Object.createWithoutData('activity_sort', that.active));

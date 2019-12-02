@@ -63,7 +63,20 @@ export const routes = [
     //     component: () => import('@/views/Activity/Record'),
     //   },
     // ],
-  },{
+  },
+  {
+    path: '/activity/item',
+    name: '活动详情',
+    component: () => import('@/views/Activity/Item'),
+    meta: { menu: false },
+  },
+  {
+    path: '/activity/record',
+    name: '活动笔记',
+    component: () => import('@/views/Activity/Record'),
+    meta: { menu: false },
+  },
+  {
     path: '/download',
     name: '资源',
     component: () => import('@/views/Download/index'),
