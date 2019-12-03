@@ -33,20 +33,20 @@
         <div class="dialog-flex">
           <div class="img" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
           <div class="right">
-            <div class="fee">报名费：50元</div>
+            <div class="fee">报名费：{{fee > 0 ? fee : '免费'}}</div>
             <div class="form-group">
               <span>姓名</span>
-              <input type="text" />
+              <input type="text" v-model="dialog.form.name" />
             </div>
             <div class="form-group">
               <span>电话</span>
-              <input type="text" />
+              <input type="text" v-model="dialog.form.mobilePhoneNumber" />
             </div>
             <div class="form-group">
               <span>微信</span>
-              <input type="text" />
+              <input type="text" v-model="dialog.form.wechatId"/>
             </div>
-            <div class="tips">电话格式错误</div>
+            <div class="tips" v-if="tips">{{tips}}</div>
           </div>
         </div>
         <a class="btn" @click="putApply">报名</a>
@@ -56,7 +56,7 @@
 
     <div class="dialog" v-if="qrcodeShow">
       <div class="dialog-box">
-        <div class="qrcode" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
+        <div class="qrcode" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png)"></div>
         <div class="text">
           报名成功<br/>24小时内小编会联系您进行支付
         </div>
@@ -82,8 +82,14 @@ export default {
       applyShow: false,
       dialog: {
         img: '',
+        form: {
+          name: '',
+          mobilePhoneNumber: '',
+          wechatId: '',
+        },
       },
-      qrcodeShow: false
+      qrcodeShow: false,
+      tips: '',
     }
   },
   mounted() {
@@ -110,11 +116,52 @@ export default {
   },
   methods: {
     apply() {
+      this.dialog.img = this.imgSrc;
       this.applyShow = true;
     },
     putApply() {
-      this.applyShow = false;
-      this.qrcodeShow = true;
+      if (!this.dialog.form.name) {
+        this.tips = '请填写名字';
+        return false;
+      }
+      if (!this.dialog.form.mobilePhoneNumber) {
+        this.tips = '请填写手机号码';
+        return false;
+      }
+      if (this.dialog.form.mobilePhoneNumber.length !== 11) {
+        this.tips = '手机号码格式错误';
+        return false;
+      }
+      if (!this.dialog.form.wechatId) {
+        this.tips = '请填写微信';
+        return false;
+      }
+      const that = this;
+      var User = this.$AV.Object.extend('_User');
+      var user = new User();
+
+      var activityObject = this.$AV.Object.createWithoutData('activity', that.$route.query.id);
+      user.set(that.dialog.form);
+      user.set('username', that.dialog.form.name);
+      user.set('password', '123456');
+      user.save().then(function (user) {
+        console.log(user);
+        var userObject = that.$AV.Object.createWithoutData('_User', user.id);
+        var ActivityPerson = new that.$AV.Object('activity_person');
+        ActivityPerson.set('activity', activityObject);
+        ActivityPerson.set('user', userObject);
+        ActivityPerson.save().then((res) => {
+          console.log(res);
+          that.applyShow = false;
+          that.qrcodeShow = true;
+        });
+      }, (error) => {
+        console.log(error);
+        that.tips = '保存失败，手机号/微信号或已被占用'
+        // 保存失败，可能是文件无法被读取，或者上传过程中出现问题
+      }).catch((err) => {
+        console.log(err);
+      });
     },
     qrcodeHide() {
       this.qrcodeShow = false;
@@ -263,6 +310,8 @@ export default {
           height: 300px;
           border-radius: 10px;
           background-color: #E7C352;
+          background-position: 50%;
+          background-size: cover;
         }
         .right {
           padding-left: 57px;
@@ -311,11 +360,14 @@ export default {
         color: #333;
         text-align: center;
         border-radius: 10px;
+        cursor: pointer;
       }
 
       .qrcode {
         width: 340px;
         height: 340px;
+        background-position: 50%;
+        background-size: cover;
       }
       .text {
         text-align: center;
