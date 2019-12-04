@@ -126,11 +126,9 @@ export default {
         }
       },
       toolOption: {
-        // autoplay: true,
         loop : true,
         delay: 1000,
         slidesPerView: 3,
-        // slidesPerGroup: 3,
         spaceBetween: 8,
       },
       bannerOneList: [],
@@ -148,9 +146,9 @@ export default {
     }
   },
   mounted() {
+    this.getActivity();
     this.getBanner();
     this.getRecommend();
-    this.getActivity();
     this.getDownload();
     this.getDesigner();
   },
@@ -184,20 +182,17 @@ export default {
     getActivity() {
       let that = this;
       var query = new this.$AV.Query('activity');
-      var fileQuery = new this.$AV.Query('_File');
 
       let arr = [];
       query.equalTo('notDelete', true);
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          fileQuery.get(res[i].get('img').id).then((img) => {
-            arr.push({
-              id: res[i].id,
-              src: img.get('url'),
-              title: res[i].attributes.title,
-              desc: res[i].attributes.desc,
-              status: res[i].attributes.status,
-            });
+          arr.push({
+            id: res[i].id,
+            title: res[i].get('title'),
+            src: res[i].get('imgSrc'),
+            desc: res[i].get('desc'),
+            status: res[i].get('status'),
           });
         }
         that.activityList = arr;

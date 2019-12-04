@@ -11,7 +11,7 @@
           <div class="activity-desc">{{item.desc}}</div>
 
           <div class="activity-info">
-            <div class="info">活动时间：{{item.time}}</div>
+            <div class="info">活动时间：{{item.startTime}} ~ {{item.endTime}}</div>
             <div class="info">活动人数：{{item.number}}</div>
             <div class="info">活动方式：{{item.mode}}</div>
             <div class="info">活动费用：{{item.fee}}</div>
@@ -26,7 +26,7 @@
         <div @click="toggle('')" :class="active === '' ? 'menu active' : 'menu'">全部</div>
 
         <template v-for="(item, $index) in sortList">
-        <div :key="$index" @click="toggle(item)" :class="active === item.id ? 'menu active' : 'menu'">{{item.sortName}}</div>
+          <div :key="$index" @click="toggle(item)" :class="active === item.value ? 'menu active' : 'menu'">{{item.label}}</div>
         </template>
       </div>
     </div>
@@ -36,13 +36,39 @@
 export default {
   data() {
     return {
-      sortList: [],
+      modeList: [
+        {
+          label: '线下活动',
+          value: 1,
+        },
+        {
+          label: '线上直播',
+          value: 2,
+        },
+      ],
+      sortList: [
+        {
+          label: '宅设主办',
+          value: 1,
+        },
+        {
+          label: '推荐活动',
+          value: 2,
+        },
+        {
+          label: '合作活动',
+          value: 3,
+        },
+        {
+          label: '探讨会',
+          value: 4,
+        },
+      ],
       activityList: [],
       active: '',
     }
   },
   activated() {
-    this.getSortList();
     this.getActivity();
   },
   computed: {
@@ -64,23 +90,11 @@ export default {
     tolink(id) {
       this.$router.push({path: '/activity/item', query: {id}});
     },
-    getSortList() {
-      let that = this;
-      that.sortList = [];
-      var query = new this.$AV.Query('activity_sort');
-      query.find().then((res) => {
-        for (let i = 0; i < res.length; i += 1) {
-          that.sortList.push({
-            id: res[i].id,
-            sortName: res[i].get('sortName'),
-          });
-        }
-      });
-    },
+
     toggle(item) {
       if (item) {
-        this.$router.push(`/activity?id=${item.id}`);
-        this.active = item.id;
+        this.$router.push(`/activity?id=${item.value}`);
+        this.active = item.value;
       } else {
         this.$router.push(`/activity`);
         this.active = '';
@@ -90,28 +104,23 @@ export default {
     getActivity() {
       let that = this;
       var query = new this.$AV.Query('activity');
-      var fileQuery = new this.$AV.Query('_File');
-      var activityModeQuery = new this.$AV.Query('activity_mode');
       that.activityList = [];
       let arr = [];
       if (that.active) {
-        query.equalTo('sort', that.$AV.Object.createWithoutData('activity_sort', that.active));
+        query.equalTo('sort', that.active);
       }
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
-          fileQuery.get(res[i].get('img').id).then((img) => {
-            activityModeQuery.get(res[i].get('mode').id).then((mode) => {
-              arr.push({
-                id: res[i].id,
-                src: img.get('url'),
-                title: res[i].get('title'),
-                desc: res[i].get('desc'),
-                time: that.$moment(res[i].attributes.time).format('YYYY-MM-DD'),
-                number: res[i].get('number'),
-                mode: mode.get('mode'),
-                fee: res[i].get('fee'),
-              });
-            });
+          arr.push({
+            id: res[i].id,
+            src: res[i].get('imgSrc'),
+            title: res[i].get('title'),
+            desc: res[i].get('desc'),
+            startTime: that.$moment(res[i].get('startTime')).format('YYYY-MM-DD'),
+            endTime: that.$moment(res[i].get('endTime')).format('YYYY-MM-DD'),
+            number: res[i].get('number'),
+            mode: that.modeList[res[i].get('mode') - 1].label,
+            fee: res[i].get('fee'),
           });
         }
         that.activityList = arr;

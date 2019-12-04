@@ -78,6 +78,34 @@ export default {
       number: 0,
       mode: '',
       fee: '',
+      modeList: [
+        {
+          label: '线下活动',
+          value: 1,
+        },
+        {
+          label: '线上直播',
+          value: 2,
+        },
+      ],
+      sortList: [
+        {
+          label: '宅设主办',
+          value: 1,
+        },
+        {
+          label: '推荐活动',
+          value: 2,
+        },
+        {
+          label: '合作活动',
+          value: 3,
+        },
+        {
+          label: '探讨会',
+          value: 4,
+        },
+      ],
       content: '',
       applyShow: false,
       dialog: {
@@ -95,21 +123,15 @@ export default {
   mounted() {
     const that = this;
     var query = new this.$AV.Query('activity');
-    var activityModeQuery = new this.$AV.Query('activity_mode');
-    var img = new this.$AV.Query('_File');
 
     query.get(this.$route.query.id).then((res) => {
-      img.get(res.get('img').id).then((src) => {
-        that.imgSrc = src.get('url') || '';
-      });
+      that.imgSrc = res.get('imgSrc') || '';
       that.title = res.get('title') || '';
       that.desc = res.get('desc') || '';
       that.starttime = that.$moment(res.get('startTime')).format('YYYY-MM-DD HH:mm') || '';
       that.endtime = that.$moment(res.get('endTime')).format('YYYY-MM-DD HH:mm') || '';
       that.number = res.get('number') || 0;
-      activityModeQuery.get(res.get('mode').id).then((mode) => {
-        that.mode = mode.get('mode');
-      });
+      that.mode = that.modeList[res.get('mode') - 1].label;
       that.fee = res.get('fee') || '';
       that.content = res.get('content') || '';
     });
