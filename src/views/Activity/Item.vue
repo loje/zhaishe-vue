@@ -271,7 +271,7 @@ export default {
           padding: 0 15px;
           height: 32px;
           line-height: 32px;
-          border-radius: 6px;
+          border-radius: 10px;
           background-color: #EBEBEB;
           cursor: pointer;
           font-size: 14px;

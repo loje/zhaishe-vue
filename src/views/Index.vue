@@ -47,8 +47,8 @@
                     <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
                   </div>
                   <div class="media-mid">
-                    <div class="media-title">{{item.title}}</div>
                     <div class="media-desc">{{item.desc}}</div>
+                    <div class="media-title">{{item.title}}</div>
                   </div>
                   <div class="media-right">
                     <a class="btn disabled" v-if="item.status === 0" @click="toActivity(item.id)">未开放</a>
@@ -388,7 +388,7 @@ export default {
               .media-mid {
                 margin-left: 28px;
                 width: 350px;
-                .media-title {
+                .media-desc {
                   margin-bottom: 9px;
                   font-size: 14px;
                   font-family: PingFang SC Regular;
@@ -399,7 +399,7 @@ export default {
                   -webkit-line-clamp: 2;
                   -webkit-box-orient: vertical;
                 }
-                .media-desc {
+                .media-title {
                   font-size: 18px;
                   font-family: PingFang SC Regular;
                   color: #333;

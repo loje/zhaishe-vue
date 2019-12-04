@@ -7,8 +7,8 @@
           <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
         </div>
         <div class="activity-right">
-          <div class="activity-title">{{item.title}}</div>
           <div class="activity-desc">{{item.desc}}</div>
+          <div class="activity-title">{{item.title}}</div>
 
           <div class="activity-info">
             <div class="info">活动时间：{{item.startTime}} ~ {{item.endTime}}</div>
@@ -166,13 +166,13 @@ export default {
           background-color: #fff;
           border-radius: 10px;
           box-sizing: border-box;
-          .activity-title{
+          .activity-desc {
             margin-bottom: 10px;
             font-size: 16px;
             font-family: PingFang SC Regular;
             color: #333;
           }
-          .activity-desc {
+          .activity-title{
             margin-bottom: 20px;
             font-size: 18px;
             overflow : hidden;
