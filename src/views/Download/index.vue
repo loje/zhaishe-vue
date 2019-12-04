@@ -132,6 +132,7 @@ export default {
   color: #333;
 }
 .the-layer {
+  margin-bottom: 20px;
   padding: 30px;
   width: 100%;
   background-color: #fff;
