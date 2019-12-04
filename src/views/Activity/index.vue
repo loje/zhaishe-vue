@@ -134,6 +134,7 @@ export default {
     display: flex;
     justify-content: baseline;
     padding: 50px 0;
+    min-height: 700px;
     box-sizing: border-box;
     .page-left {
       width: 913px;
@@ -207,6 +208,9 @@ export default {
       }
     }
     .page-right {
+      position: fixed;
+      top: 158px;
+      transform: translate(913px, 0px);
       margin-left: 20px;
       width: 300px;
       .menu-list {
