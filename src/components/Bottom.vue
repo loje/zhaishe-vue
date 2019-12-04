@@ -66,7 +66,7 @@ export default {
 <style lang="scss" scope>
   .bottom {
     width: 100%;
-    height: 187px;
+    height: 160px;
     background-color: #fff;
     .max-width {
       display: flex;
@@ -74,19 +74,19 @@ export default {
       .bottom-left {
         position: relative;
         flex: 1;
-        padding-top: 29px;
-        height: 187px;
+        padding-top: 20px;
+        height: 160px;
         box-sizing: border-box;
         .contect {
           display:inline-block;
-          margin-right: 121px;
+          margin-right: 80px;
           vertical-align: top;
           font-size: 14px;
           line-height: 14px;
           .text-block {
             margin-bottom: 20px;
             .text {
-              margin-bottom: 11px;
+              margin-bottom: 10px;
             }
           }
         }
@@ -94,16 +94,17 @@ export default {
           display: inline-flex;
           vertical-align: top;
           .title {
-            font-size: 16px;
+            margin-right: 20px;
+            font-size: 14px;
             font-family: PingFang SC Regular;
             color: #333;
           }
           .list {
             display: flex;
             .img {
-              margin-left: 50px;
-              width: 34px;
-              height: 34px;
+              margin-right: 50px;
+              width: 32px;
+              height: 32px;
               border-radius: 10px;
               background-position: 50%;
               background-size: contain;
@@ -125,7 +126,7 @@ export default {
         .text {
           display: inline-block;
           vertical-align: top;
-          margin-right: 34px;
+          margin-right: 20px;
           padding-top: 8px;
           font-size: 14px;
           font-family: PingFang SC Regular;
@@ -134,10 +135,11 @@ export default {
         .qrcode{
           display: inline-block;
           vertical-align: top;
-          width: 123px;
-          height: 123px;
+          width: 120px;
+          height: 120px;
           background-color: #fff;
           background-position: 50%;
+          background-size: contain;
         }
         
       }

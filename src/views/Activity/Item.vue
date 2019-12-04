@@ -212,12 +212,12 @@ export default {
     align-items: top;
     margin-top: 20px;
     width: 100%;
-    height: 426px;
+    height: 330px;
     border-radius: 10px;
     background-color: #fff;
     overflow: hidden;
     .banner-left {
-      width: 428px;
+      width: 330px;
       height: 100%;
       background-color: #FFCB2B;
       .img {
@@ -233,13 +233,13 @@ export default {
       height: 100%;
       box-sizing: border-box;
       .title {
-        font-size: 18px;
+        font-size: 16px;
         font-family: PingFang SC Regular;
         color: rgba(102,102,102,1);
         line-height: 24px;
       }
       .sub-title {
-        margin-top: 20px;
+        margin-top: 10px;
         font-size: 14px;
         font-family: PingFang SC Regular;
         color: rgba(51,51,51,1);
@@ -261,8 +261,8 @@ export default {
     .banner-right {
       position: relative;
       text-align: right;
-      padding: 30px 30px 30px 0;
-      width: 210px;
+      padding: 30px;
+      // width: 210px;
       box-sizing: border-box;
       .icon-btn {
         position: relative;
@@ -290,9 +290,9 @@ export default {
         right: 30px;
         bottom: 30px;
         display: block;
-        width: 170px;
-        height: 50px;
-        line-height: 50px;
+        width: 120px;
+        height: 40px;
+        line-height: 40px;
         background-color: #FFCB2B;
         border-radius: 10px;
         text-align: center;
@@ -304,10 +304,10 @@ export default {
     }
   }
   .activity-detail {
-    margin-top: 30px;
-    margin-bottom: 138px;
-    padding: 86px 155px 105px 155px;
-    min-height: 1274px;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 30px;
+    min-height: 400px;
     width: 100%;
     background-color: #fff;
     box-sizing: border-box;
@@ -333,7 +333,7 @@ export default {
     .dialog-box {
       position: relative;
       margin: auto;
-      padding: 59px 54px 30px 48px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 10px;
       z-index: 1;
@@ -348,17 +348,17 @@ export default {
           background-size: cover;
         }
         .right {
-          padding-left: 57px;
+          padding-left: 30px;
           .fee {
-            font-size: 18px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(243,107,107,1);
           }
           .form-group {
-            margin-top: 23px;
-            width: 382px;
+            margin-top: 15px;
+            // width: 382px;
             span {
-              font-size: 18px;
+              font-size: 16px;
               letter-spacing: 3px;
               font-family: PingFang SC Regular;
               color: #333;
@@ -366,16 +366,18 @@ export default {
             input {
               margin-left: 9px;
               padding: 0;
+              font-size: 16px;
               width: 330px;
-              height: 47px;
+              height: 40px;
+              line-height: 40px;
               border: none;
               outline: none;
               border-bottom: 1px solid #DDD;
             }
           }
           .tips {
-            margin-top: 27px;
-            font-size: 18px;
+            margin-top: 15px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(243,107,107,1);
           }
@@ -385,10 +387,10 @@ export default {
       .btn {
         display: block;
         margin: auto;
-        margin-top: 46px;
-        width: 400px;
-        height: 50px;
-        line-height: 50px;
+        margin-top: 15px;
+        width: 300px;
+        height: 40px;
+        line-height: 40px;
         background-color: rgba(241,196,74,1);
         font-family: PingFang SC Regular;
         color: #333;
@@ -405,7 +407,7 @@ export default {
       }
       .text {
         text-align: center;
-        font-size: 18px;
+        font-size: 16px;
         font-family: PingFang SC Regular;
         color: #333;
         line-height: 24px;
@@ -414,7 +416,7 @@ export default {
         position: absolute;
         right: 47px;
         top: 39px;
-        font-size: 18px;
+        font-size: 16px;
         font-family: PingFang SC Regular;
         color: #333;
         cursor: pointer;

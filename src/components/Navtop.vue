@@ -64,16 +64,16 @@ export default {
     top: 0;
     display: flex;
     justify-content: space-between;
-    padding: 0 50px;
+    padding: 0 30px;
     width: 100%;
-    height: 108px;
+    height: 90px;
     background-color: #fff;
     letter-spacing: 2px;
     box-sizing: border-box;
     box-shadow: 0px -34px 49px 9px #bbb;
     z-index: 1000;
     .logo {
-      line-height: 108px;
+      line-height: 90px;
       cursor: pointer;
       .img {
         display: inline-block;
@@ -95,14 +95,14 @@ export default {
       }
     }
     .nav {
-      width:900px;
+      width: 720px;
       display: flex;
       justify-content: space-between;
-      padding-top: 62px;
+      padding-top: 50px;
       a {
         display: inline-block;
-        width: 180px;
-        font-size: 18px;
+        width: 144px;
+        font-size: 16px;
         text-align: center;
         transition: color 0.5s;
         border-bottom: 4px solid #fff;
@@ -116,24 +116,25 @@ export default {
       }
     }
     .user-in {
-      width: 223px;
+      padding-top: 40px;
+      // width: 223px;
       text-align: right;
-      line-height: 108px;
+      // line-height: 90px;
       text-align: right;
       z-index: 1;
       a {
         display: inline-block;
-        font-size: 18px;
+        font-size: 16px;
         cursor: pointer;
         transition: color 0.5s;
         &:hover {
           color: #FFCB2B;
         }
         &.btn {
-          margin-left: 49px;
-          width: 120px;
-          height: 50px;
-          line-height: 50px;
+          margin-left: 30px;
+          width: 100px;
+          height: 40px;
+          line-height: 40px;
           background: #FFCB2B;
           border-radius: 10px;
           text-align: center;

@@ -44,8 +44,8 @@ export default {
 
 <style lang="scss" scoped>
   .title {
-    margin: 39px 0;
-    font-size: 18px;
+    margin: 20px 0;
+    font-size: 24px;
     font-family: PingFang SC Regular;
     color: #333;
   }
@@ -55,19 +55,19 @@ export default {
     .the-designer {
       margin-bottom: 41px;
       margin-right: 25px;
-      width: 234px;
+      width: 270px;
       &:nth-child(4n+4) {
         margin-right: 0;
       }
       .img {
         width: 100%;
-        height: 272px;
+        height: 270px;
         background-position: 50%;
         background-size: cover;
         border-radius: 10px;
       }
       .name {
-        margin-top: 16px;
+        margin-top: 15px;
         width: 100%;
         font-size: 16px;
         font-family: PingFang SC Regular;

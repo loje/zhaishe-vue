@@ -1,7 +1,7 @@
 body {
   margin: 0;
   padding: 0;
-  padding-top: 108px;
+  padding-top: 90px;
   background-color: rgb(235,235,235);
   font-family: PingFang SC Regular;
   overflow-y: scroll;
@@ -9,5 +9,5 @@ body {
 
 .max-width {
   margin: auto;
-  width: 1204px;
+  width: 1200px;
 }

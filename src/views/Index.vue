@@ -35,7 +35,7 @@
           </template>
         </swiper>
         <div class="box-2">
-          <div class="box box-col-2">
+          <div class="box col-2">
             <div class="box-title">
               <span>宅设活动</span>
               <a @click="$router.push('/activity')">MORE</a>
@@ -59,7 +59,7 @@
               </template>
             </div>
           </div>
-          <div class="box">
+          <div class="box col-1">
             <div class="box-title">
               <span>更多资源</span>
               <a @click="$router.push('/download')">MORE</a>
@@ -242,11 +242,11 @@ export default {
   .swiper-box {
     display: flex;
     width: 100%;
-    height: 380px;
+    height: 340px;
     border-radius: 10px;
     overflow: hidden;
     .box-left {
-      width: 761px;
+      width: 760px;
       height: 100%;
       background-color: #707A81;
       background-position: 50%;
@@ -263,7 +263,7 @@ export default {
       }
     }
     .box-right {
-      width: 443px;
+      width: 440px;
       .swiper-container{
         width: 100%;
         height: 100%;
@@ -288,21 +288,20 @@ export default {
         display: inline-block;
         vertical-align: middle;
         font-size: 24px;
-        line-height: 50px;
+        line-height: 40px;
       }
       a {
         float: right;
-        // display: inline-block;
-        // vertical-align: middle;
-        width: 120px;
-        height: 50px;
+        width: 100px;
+        height: 40px;
         text-align: center;
-        line-height: 50px;
+        line-height: 40px;
         background-color: #fff;
         color: #333;
         border-radius: 10px;
         cursor: pointer;
         font-family: PingFang SC Regular;
+        font-size: 16px;
         transition: background-color 0.5s;
         &:hover {
           background-color: #FFCB2B;
@@ -313,15 +312,15 @@ export default {
       width: 100%;
       .box {
         width: 396px;
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         background-color: #fff;
         border-radius: 10px;
       }
 
       .swiper-container{
-        margin-bottom: 12px;
+        margin-bottom: 8px;
         width: 100%;
-        height: 211px;
+        height: 210px;
         .img {
           width: 100%;
           height: 100%;
@@ -335,11 +334,11 @@ export default {
         justify-content: space-between;
         .box {
           margin-bottom: 0;
-          padding: 52px 32px 52px 42px;
-          height: 659px;
+          padding: 30px;
+          height: 600px;
           box-sizing: border-box;
           .box-title {
-            margin-bottom: 60px;
+            margin-bottom: 50px;
             span {
               font-size: 24px;
               line-height: 24px;
@@ -357,8 +356,8 @@ export default {
           }
           .title-list {
             .t {
-              margin-bottom: 30px;
-              font-size: 18px;
+              margin-bottom: 20px;
+              font-size: 16px;
               font-family: PingFang SC Regular;
               color: #666;
               span {
@@ -367,13 +366,17 @@ export default {
             }
           }
         }
-        .box-col-2 {
-          width: 797px;
-          height: 659px;
+        .col-1 {
+          margin-left: 8px;
+          width: 33.3%;
+        }
+        .col-2 {
+          width: 66.6%;
+          height: 600px;
           .media-list {
             .media {
               display: flex;
-              margin-bottom: 20px;
+              margin-bottom: 15px;
               width: 100%;
               align-items: center;
               .media-left {
@@ -415,11 +418,11 @@ export default {
                 text-align:right;
                 .btn {
                   display: inline-block;
-                  width: 120px;
-                  height: 50px;
-                  line-height: 50px;
+                  width: 100px;
+                  height: 40px;
+                  line-height: 40px;
                   background: #FFCB2B;
-                  font-size: 18px;
+                  font-size: 16px;
                   font-family: PingFang SC Regular;
                   color: #333;
                   border-radius: 10px;
@@ -436,23 +439,23 @@ export default {
       }
     }
     .people-box {
-      margin-bottom: 87px;
+      margin-bottom: 50px;
       display: flex;
       justify-content: space-between;
       .box {
-        width: 278px;
+        width: 270px;
         .img {
           width: 100%;
-          height: 349px;
+          height: 350px;
           background-color: #fff;
           border-radius: 10px;
           background-position: 50%;
           background-size: cover;
         }
         .name {
-          margin-top: 16px;
+          margin-top: 15px;
           text-align: center;
-          font-size: 18px;
+          font-size: 16px;
           font-family: PingFang SC Regular;
           color: #333;
         }

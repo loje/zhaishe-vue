@@ -28,7 +28,7 @@
       <div class="dialog-box">
         <div class="dialog-left">
           <div class="img" :style="{backgroundImage: `url(${dialogForm.src})`}"></div>
-          <input type="text" placeholder="请输入邀请码" />
+          <!-- <input type="text" placeholder="请输入邀请码" /> -->
         </div>
         <div class="dialog-right">
           <div class="form-t">
@@ -129,14 +129,14 @@ export default {
 
 <style lang="scss" scoped>
   .tools-page {
-    padding: 50px 0;
+    padding: 20px 0;
     .tool {
       display: flex;
-      margin-bottom: 20px;
+      margin-bottom: 15px;
       width: 100%;
       height: 330px;
       .tool-left {
-        width: 380px;
+        width: 330px;
         height: 100%;
         background-color: #fff;
         border-radius: 10px;
@@ -150,9 +150,9 @@ export default {
       }
       .tool-right {
         position: relative;
-        margin-left: 9px;
+        margin-left: 10px;
         flex: 1;
-        padding: 50px 65px;
+        padding: 30px;
         height: 100%;
         background-color: #fff;
         border-radius: 10px;
@@ -178,9 +178,9 @@ export default {
         }
         .tool-btm {
           position: absolute;
-          left: 65px;
-          bottom: 26px;
-          width: calc(100% - 130px);
+          left: 30px;
+          bottom: 30px;
+          width: calc(100% - 60px);
           .support {
             .support-t {
               font-size: 16px;
@@ -206,16 +206,16 @@ export default {
             width: 100%;
             justify-content: flex-end;
             a {
+              margin-right: 30px;
               font-size: 16px;
               font-family: PingFang SC Regular;
               color: rgba(92,157,255,1);
-              line-height: 45px;
+              line-height: 40px;
               cursor: pointer;
               &.btn {
-                margin-right: 57px;
-                width: 120px;
-                height: 45px;
-                background: rgba(241,196,74,1);
+                width: 100px;
+                height: 40px;
+                background: #FFCB2B;
                 color: #333;
                 text-align: center;
                 border-radius: 10px;
@@ -242,7 +242,7 @@ export default {
       position: relative;
       display: flex;
       margin: auto;
-      padding: 50px;
+      padding: 30px;
       background-color: #fff;
       border-radius: 10px;
       box-sizing: border-box;
@@ -250,8 +250,8 @@ export default {
       .dialog-left {
         text-align: center;
         .img {
-          width: 378px;
-          height: 350px;
+          width: 300px;
+          height: 300px;
           background-position: 50%;
           background-size: contain;
           background-repeat: no-repeat;
@@ -269,23 +269,24 @@ export default {
       }
 
       .dialog-right {
-        margin-left: 114px;
+        position: relative;
+        margin-left: 50px;
         .form-t {
-          margin-bottom: 33px;
+          margin-bottom: 15px;
           .original-price {
-            margin-right: 41px;
-            font-size: 18px;
+            margin-right: 20px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(153,153,153,1);
           }
           .group-price {
-            font-size: 18px;
+            font-size: 16px;
             font-family: PingFang SC Regular;
             color: rgba(243,107,107,1);
           }
         }
         .form-group {
-          margin-top: 22px;
+          margin-top: 15px;
           span {
             font-size: 16px;
             font-family: PingFang SC Regular;
@@ -294,32 +295,36 @@ export default {
           }
           input {
             margin-left: 7px;
-            width: 330px;
-            height: 47px;
-            line-height: 47px;
+            width: 300px;
+            height: 40px;
+            line-height: 40px;
+            font-size: 16px;
             border: none;
             outline: none;
             border-bottom: 1px solid #ddd;
           }
         }
         .tips {
-          margin-top: 27px;
-          margin-bottom: 44px;
+          margin-top: 15px;
+          margin-bottom: 15px;
           font-size: 16px;
           font-family: PingFang SC Regular;
-          width: 142px;
+          width: 100%;
           height: 23px;
           color: rgba(243,107,107,1);
         }
         .btn {
+          position: absolute;
+          left: 0;
+          bottom: 0;
           display: block;
           text-decoration: none;
           width: 100%;
-          height: 47px;
-          line-height: 47px;
+          height: 40px;
+          line-height: 40px;
           background: rgba(241,196,74,1);
           text-align: center;
-          font-size: 18px;
+          font-size: 16px;
           font-family: PingFang SC Regular;
           color: #333;
           border-radius: 10px;

@@ -29,30 +29,27 @@ export default {
 
 <style lang="scss" scoped>
   .about{
-    margin-top:30px;
-    margin-bottom: 62px;
-    padding: 85px 44px;
+    margin-top:20px;
+    margin-bottom: 20px;
+    padding: 30px;
     background-color: #fff;
     box-sizing: border-box;
     .title {
-      padding-bottom: 24px;
+      padding-bottom: 15px;
       border-bottom: 1px solid #EBEBEB;
-      font-size: 26px;
+      font-size: 24px;
       font-family: PingFang SC Semibold;
       color: #333;
     }
     .content {
-      margin-top: 31px;
-      margin-bottom: 81px;
-      font-size: 18px;
-      line-height: 36px;
+      margin-top: 20px;
+      margin-bottom: 50px;
+      font-size: 16px;
+      line-height: 32px;
       font-family: HYQiHei 45S;
       color: rgba(153,153,153,1);
       display: flex;
       justify-content: space-between;
-      .tag {
-
-      }
     }
   }
 </style>

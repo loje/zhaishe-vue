@@ -133,18 +133,18 @@ export default {
   .activity-list {
     display: flex;
     justify-content: baseline;
-    padding: 50px 0;
+    padding: 20px 0;
     min-height: 700px;
     box-sizing: border-box;
     .page-left {
-      width: 913px;
+      width: 900px;
       .the-activity {
         display: flex;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         width: 100%;
         height: 330px;
         .activity-left {
-          width: 380px;
+          width: 330px;
           height: 100%;
           background-color: #fff;
           border-radius: 10px;
@@ -161,20 +161,20 @@ export default {
           position: relative;
           margin-left: 9px;
           flex: 1;
-          padding: 39px 38px;
+          padding: 30px;
           height: 100%;
           background-color: #fff;
           border-radius: 10px;
           box-sizing: border-box;
           .activity-desc {
             margin-bottom: 10px;
-            font-size: 16px;
+            font-size: 14px;
             font-family: PingFang SC Regular;
             color: #333;
           }
           .activity-title{
             margin-bottom: 20px;
-            font-size: 18px;
+            font-size: 16px;
             overflow : hidden;
             text-overflow: ellipsis;
             display: -webkit-box;
@@ -191,11 +191,11 @@ export default {
           }
           .activity-link {
             position: absolute;
-            right: 36px;
+            right: 30px;
             bottom: 30px;
-            width: 120px;
-            height: 45px;
-            line-height: 45px;
+            width: 100px;
+            height: 40px;
+            line-height: 40px;
             background: rgba(241,196,74,1);
             font-size: 16px;
             font-family: PingFang SC Regular;
@@ -209,8 +209,8 @@ export default {
     }
     .page-right {
       position: fixed;
-      top: 158px;
-      transform: translate(913px, 0px);
+      top: 110px;
+      transform: translate(900px, 0px);
       margin-left: 20px;
       width: 300px;
       .menu-list {
@@ -220,11 +220,12 @@ export default {
         overflow: hidden;
         .menu {
           width: 100%;
-          height: 80px;
-          line-height: 80px;
-          font-size: 18px;
+          height: 60px;
+          line-height: 60px;
+          font-size: 16px;
           color: #333;
           text-align: center;
+          cursor: pointer;
           &.active {
             background-color: #FFCB2B;
           }

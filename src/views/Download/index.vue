@@ -125,14 +125,14 @@ export default {
 </script>
 <style lang="scss" scoped>
 .title {
-  margin-top: 33px;
-  margin-bottom: 20px;
+  margin-top: 20px;
+  margin-bottom: 15px;
   font-size: 24px;
   font-family: PingFang SC Regular;
   color: #333;
 }
 .the-layer {
-  padding: 41px 34px;
+  padding: 30px;
   width: 100%;
   background-color: #fff;
   box-sizing: border-box;
@@ -144,9 +144,9 @@ export default {
       flex: 1;
       .tab {
         display: inline-block;
-        margin-right: 65px;
-        padding-bottom: 26px;
-        font-size: 18px;
+        margin-right: 30px;
+        padding-bottom: 15px;
+        font-size: 16px;
         font-family: PingFang SC Regular;
         color: #333;
         cursor: pointer;
@@ -156,10 +156,10 @@ export default {
       }
     }
     .search-bar {
-      padding-bottom: 26px;
+      padding-bottom: 15px;
       input {
         padding: 0 15px;
-        width: 165px;
+        width: 160px;
         height: 34px;
         border-radius: 10px;
         background-color: #EBEBEB;
@@ -183,17 +183,17 @@ export default {
     .media {
       display: flex;
       align-items: center;
-      padding-right: 84px;
-      padding-top: 45px;
-      padding-bottom: 50px;
+      padding-right: 60px;
+      padding-top: 20px;
+      padding-bottom: 15px;
       width: 50%;
       box-sizing: border-box;
       border-bottom: 1px solid #EBEBEB;
       .media-left {
-        width: 220px;
+        width: 100px;
         .img {
           width: 100%;
-          height: 108px;
+          height: 100px;
           background-position: 50%;
           background-size: cover;
           background-color: #FFCB2B;
@@ -203,21 +203,21 @@ export default {
         flex: 1;
         padding-left: 25px;
         .media-t {
-          font-size: 18px;
+          font-size: 16px;
           font-family: PingFang SC Regular;
           color: #333;
         }
         .media-info {
           display: flex;
-          margin-top: 16px;
+          margin-top: 10px;
           justify-content: space-between;
           .author {
-            font-size: 13px;
+            font-size: 14px;
             font-family: PingFang SC Regular;
             color: #333;
           }
           a {
-            font-size: 13px;
+            font-size: 14px;
             font-family: PingFang SC Regular;
             color: rgba(92,157,255,1);
             cursor: pointer;
