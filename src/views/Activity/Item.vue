@@ -158,32 +158,67 @@ export default {
         this.tips = '请填写微信';
         return false;
       }
-      const that = this;
-      var User = this.$AV.Object.extend('_User');
-      var user = new User();
+      if (this.dialog.form.mobilePhoneNumber.length === 11) {
+        var apQuery = new this.$AV.Query('activity_person');
 
-      var activityObject = this.$AV.Object.createWithoutData('activity', that.$route.query.id);
-      user.set(that.dialog.form);
-      user.set('username', that.dialog.form.name);
-      user.set('password', '123456');
-      user.save().then(function (user) {
-        console.log(user);
-        var userObject = that.$AV.Object.createWithoutData('_User', user.id);
-        var ActivityPerson = new that.$AV.Object('activity_person');
-        ActivityPerson.set('activity', activityObject);
-        ActivityPerson.set('user', userObject);
-        ActivityPerson.save().then((res) => {
-          console.log(res);
-          that.applyShow = false;
-          that.qrcodeShow = true;
+        var userQuery = new this.$AV.Query('_User');
+        userQuery.equalTo('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
+        userQuery.find().then((user) => {
+          if (user.length > 0) {
+            apQuery.equalTo('user', user[0]);
+            apQuery.find().then((ap) => {
+              if (ap.length > 0) {
+                this.tips = '您已经报名啦，请等候管理员联系您';
+              } else {
+                var ActivityPerson = new this.$AV.Object('activity_person');
+                ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
+                ActivityPerson.set('user', this.$AV.Object.createWithoutData('_User', user[0].id));
+                ActivityPerson.save().then(() => {
+                  this.applyShow = false;
+                  this.qrcodeShow = true;
+                });
+              }
+            });
+          } else {
+            var User = this.$AV.Object.extend('_User');
+            var newuser = new User();
+            newuser.set(this.dialog.form);
+            newuser.set('username', this.dialog.form.name);
+            // user.set('password', '123456');
+            newuser.save().then((newUser) => {
+              var ActivityPerson = new this.$AV.Object('activity_person');
+              ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
+              ActivityPerson.set('user', this.$AV.Object.createWithoutData('_User', newUser.id));
+              ActivityPerson.save().then(() => {
+                this.applyShow = false;
+                this.qrcodeShow = true;
+              });
+            });
+          }
         });
-      }, (error) => {
-        console.log(error);
-        that.tips = '保存失败，手机号/微信号或已被占用'
-        // 保存失败，可能是文件无法被读取，或者上传过程中出现问题
-      }).catch((err) => {
-        console.log(err);
-      });
+      }
+
+      // const that = this;
+      // var User = this.$AV.Object.extend('_User');
+      // var user = new User();
+      // user.set(that.dialog.form);
+      // user.set('username', that.dialog.form.name);
+      // user.set('password', '123456');
+      // user.save().then((user) => {
+      //   var ActivityPerson = new that.$AV.Object('activity_person');
+      //   ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', that.$route.query.id));
+      //   ActivityPerson.set('user', that.$AV.Object.createWithoutData('_User', user.id));
+      //   ActivityPerson.save().then(() => {
+      //     that.applyShow = false;
+      //     that.qrcodeShow = true;
+      //   });
+      // }, (error) => {
+      //   console.log(error);
+      //   that.tips = '保存失败，手机号/微信号或已被占用'
+      //   // 保存失败，可能是文件无法被读取，或者上传过程中出现问题
+      // }).catch((err) => {
+      //   console.log(err);
+      // });
     },
     qrcodeHide() {
       this.qrcodeShow = false;
