@@ -184,7 +184,6 @@ export default {
             var newuser = new User();
             newuser.set(this.dialog.form);
             newuser.set('username', this.dialog.form.name);
-            // user.set('password', '123456');
             newuser.save().then((newUser) => {
               var ActivityPerson = new this.$AV.Object('activity_person');
               ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
@@ -197,28 +196,6 @@ export default {
           }
         });
       }
-
-      // const that = this;
-      // var User = this.$AV.Object.extend('_User');
-      // var user = new User();
-      // user.set(that.dialog.form);
-      // user.set('username', that.dialog.form.name);
-      // user.set('password', '123456');
-      // user.save().then((user) => {
-      //   var ActivityPerson = new that.$AV.Object('activity_person');
-      //   ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', that.$route.query.id));
-      //   ActivityPerson.set('user', that.$AV.Object.createWithoutData('_User', user.id));
-      //   ActivityPerson.save().then(() => {
-      //     that.applyShow = false;
-      //     that.qrcodeShow = true;
-      //   });
-      // }, (error) => {
-      //   console.log(error);
-      //   that.tips = '保存失败，手机号/微信号或已被占用'
-      //   // 保存失败，可能是文件无法被读取，或者上传过程中出现问题
-      // }).catch((err) => {
-      //   console.log(err);
-      // });
     },
     qrcodeHide() {
       this.qrcodeShow = false;
