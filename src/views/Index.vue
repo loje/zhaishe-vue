@@ -2,19 +2,19 @@
   <div class="max-width">
     <div class="swiper-box" style="margin-top: 20px;">
       <div class="box-left">
-        <swiper v-if="bannerOneList.length > 0" :options="leftSwiperOption" ref="leftSwiper">
-          <template v-for="(item, $index) in bannerOneList">
+        <swiper v-if="bannerLeft && bannerLeft.length > 0" :options="leftSwiperOption" ref="leftSwiper">
+          <template v-for="(item, $index) in bannerLeft">
           <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
           </swiper-slide>
           </template>
         </swiper>
       </div>
       <div class="box-right">
-        <swiper v-if="bannerTwoList.length > 0" :options="rightSwiperOption" ref="rightSwiper">
-          <template v-for="(item, $index) in bannerTwoList">
+        <swiper v-if="bannerRight && bannerRight.length > 0" :options="rightSwiperOption" ref="rightSwiper">
+          <template v-for="(item, $index) in bannerRight">
           <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item})`}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
           </swiper-slide>
           </template>
         </swiper>
@@ -131,8 +131,8 @@ export default {
         slidesPerView: 3,
         spaceBetween: 8,
       },
-      bannerOneList: [],
-      bannerTwoList: [],
+      bannerLeft: [],
+      bannerRight: [],
 
       recommendList: [],
       activityList: [],
@@ -154,18 +154,27 @@ export default {
   },
   methods: {
     getBanner() {
-      let that = this;
       var query = new this.$AV.Query('banner');
-      let aa = [];
-      let bb = [];
+      let bannerLeft = [];
+      let bannerRight = [];
 
-      query.find().then(function (res) {
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          aa = res[0].attributes.imgList;
-          bb = res[1].attributes.imgList;
+          if (res[i].get('position') && res[i].get('position') === 'left') {
+            bannerLeft.push({
+              id: res[i].id,
+              imgSrc: res[i].get('imgSrc')
+            });
+          }
+          if (res[i].get('position') && res[i].get('position') === 'right') {
+            bannerRight.push({
+              id: res[i].id,
+              imgSrc: res[i].get('imgSrc')
+            });
+          }
         }
-        that.bannerOneList = aa;
-        that.bannerTwoList = bb;
+        this.bannerLeft = bannerLeft;
+        this.bannerRight = bannerRight;
       });
     },
     getRecommend() {
