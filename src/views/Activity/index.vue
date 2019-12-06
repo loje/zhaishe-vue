@@ -1,25 +1,26 @@
 <template>
   <div class="activity-list max-width">
     <div class="page-left">
-    <template v-for="(item, $index) in activityList">
-      <div class="the-activity" :key="$index">
-        <div class="activity-left">
-          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
-        </div>
-        <div class="activity-right">
-          <div class="activity-desc">{{item.desc}}</div>
-          <div class="activity-title">{{item.title}}</div>
-
-          <div class="activity-info">
-            <div class="info">活动时间：{{item.startTime}} ~ {{item.endTime}}</div>
-            <div class="info">活动人数：{{item.number}}</div>
-            <div class="info">活动方式：{{item.mode}}</div>
-            <div class="info">活动费用：{{item.fee}}</div>
+      <loading v-if="loading === true"></loading>
+      <template v-else v-for="(item, $index) in activityList">
+        <div class="the-activity" :key="$index">
+          <div class="activity-left">
+            <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
           </div>
-          <div class="activity-link" @click="tolink(item.id)">查看</div>          
+          <div class="activity-right">
+            <div class="activity-desc">{{item.desc}}</div>
+            <div class="activity-title">{{item.title}}</div>
+
+            <div class="activity-info">
+              <div class="info">活动时间：{{item.startTime}} ~ {{item.endTime}}</div>
+              <div class="info">活动人数：{{item.number}}</div>
+              <div class="info">活动方式：{{item.mode}}</div>
+              <div class="info">活动费用：{{item.fee}}</div>
+            </div>
+            <div class="activity-link" @click="tolink(item.id)">查看</div>          
+          </div>
         </div>
-      </div>
-    </template>
+      </template>
     </div>
     <div class="page-right">
       <div class="menu-list">
@@ -33,9 +34,11 @@
   </div>
 </template>
 <script>
+import loading from '@/components/Loading';
 export default {
   data() {
     return {
+      loading: false,
       modeList: [
         {
           label: '线下活动',
@@ -67,6 +70,9 @@ export default {
       activityList: [],
       active: '',
     }
+  },
+  components: {
+    loading,
   },
   activated() {
     this.getActivity();
@@ -102,6 +108,7 @@ export default {
       this.getActivity();
     },
     getActivity() {
+      this.loading = true;
       let that = this;
       var query = new this.$AV.Query('activity');
       that.activityList = [];
@@ -110,6 +117,7 @@ export default {
         query.equalTo('sort', that.active);
       }
       query.find().then(function (res) {
+        that.loading = false;
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].id,

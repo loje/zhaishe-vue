@@ -2,9 +2,14 @@
   <div class="activity-page">
     <div class="max-width">
       <div class="banner">
+        <!-- <loading v-if="!imgSrc"></loading> -->
+        
         <div class="banner-left">
-          <div class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
+          <loading class="img" v-if="loading === true"></loading>
+          <div v-else class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
         </div>
+        <loading v-if="loading === true"></loading>
+        <template v-else>
         <div class="banner-mid">
           <div class="title">{{title}}</div>
           <div class="sub-title">{{desc}}</div>
@@ -22,9 +27,11 @@
           </div>
           <a class="btn" @click="apply">报名</a>
         </div>
+        </template>
       </div>
       <div class="activity-detail">
-        <article v-html="content"></article>
+        <loading v-if="!content"></loading>
+        <article v-else v-html="content"></article>
       </div>
     </div>
 
@@ -66,10 +73,14 @@
   </div>
 </template>
 <script>
-
+import loading from '@/components/Loading';
 export default {
+  components: {
+    loading,
+  },
   data() {
     return {
+      loading: false,
       imgSrc: '',
       title: '',
       desc: '',
@@ -121,22 +132,27 @@ export default {
     }
   },
   mounted() {
-    const that = this;
-    var query = new this.$AV.Query('activity');
-
-    query.get(this.$route.query.id).then((res) => {
-      that.imgSrc = res.get('imgSrc') || '';
-      that.title = res.get('title') || '';
-      that.desc = res.get('desc') || '';
-      that.starttime = that.$moment(res.get('startTime')).format('YYYY-MM-DD HH:mm') || '';
-      that.endtime = that.$moment(res.get('endTime')).format('YYYY-MM-DD HH:mm') || '';
-      that.number = res.get('number') || 0;
-      that.mode = that.modeList[res.get('mode') - 1].label;
-      that.fee = res.get('fee') || '';
-      that.content = res.get('content') || '';
-    });
+    this.getInfo();
   },
   methods: {
+    getInfo() {
+      const that = this;
+      this.loading = true;
+      var query = new this.$AV.Query('activity');
+
+      query.get(this.$route.query.id).then((res) => {
+        that.loading = false;
+        that.imgSrc = res.get('imgSrc') || '';
+        that.title = res.get('title') || '';
+        that.desc = res.get('desc') || '';
+        that.starttime = that.$moment(res.get('startTime')).format('YYYY-MM-DD HH:mm') || '';
+        that.endtime = that.$moment(res.get('endTime')).format('YYYY-MM-DD HH:mm') || '';
+        that.number = res.get('number') || 0;
+        that.mode = that.modeList[res.get('mode') - 1].label;
+        that.fee = res.get('fee') || '';
+        that.content = res.get('content') || '';
+      });
+    },
     apply() {
       this.dialog.img = this.imgSrc;
       this.applyShow = true;
@@ -183,7 +199,9 @@ export default {
             var User = this.$AV.Object.extend('_User');
             var newuser = new User();
             newuser.set(this.dialog.form);
-            newuser.set('username', this.dialog.form.name);
+            // newuser.set('username', this.dialog.form.name);
+            newuser.set('password', '123456');
+
             newuser.save().then((newUser) => {
               var ActivityPerson = new this.$AV.Object('activity_person');
               ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
@@ -219,7 +237,7 @@ export default {
     .banner-left {
       width: 330px;
       height: 100%;
-      background-color: #FFCB2B;
+      background-color: #eee;
       .img {
         width: 100%;
         height: 100%;

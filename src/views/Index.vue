@@ -2,7 +2,8 @@
   <div class="max-width">
     <div class="swiper-box" style="margin-top: 20px;">
       <div class="box-left">
-        <swiper v-if="bannerLeft && bannerLeft.length > 0" :options="leftSwiperOption" ref="leftSwiper">
+        <loading v-if="bannerLeft && bannerLeft.length === 0"></loading>
+        <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
           <template v-for="(item, $index) in bannerLeft">
           <swiper-slide :key="$index">
             <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
@@ -11,7 +12,8 @@
         </swiper>
       </div>
       <div class="box-right">
-        <swiper v-if="bannerRight && bannerRight.length > 0" :options="rightSwiperOption" ref="rightSwiper">
+        <loading v-if="bannerRight && bannerRight.length === 0"></loading>
+        <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
           <template v-for="(item, $index) in bannerRight">
           <swiper-slide :key="$index">
             <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
@@ -27,7 +29,8 @@
         <a @click="$router.push('/tools')">MORE</a>
       </div>
       <div class="layer-box">
-        <swiper v-if="recommendList.length > 0" :options="toolOption" ref="toolsSwiper">
+        <loading v-if="recommendList.length === 0"></loading>
+        <swiper v-else :options="toolOption" ref="toolsSwiper">
           <template v-for="(item, $index) in recommendList">
           <swiper-slide :key="$index" >
             <div class="img" :style="{backgroundImage:`url(${item.src})`}"></div>
@@ -41,7 +44,8 @@
               <a @click="$router.push('/activity')">MORE</a>
             </div>
             <div class="media-list">
-              <template v-for="(item, $index) in activityList">
+              <loading v-if="activityList.length === 0"></loading>
+              <template v-else v-for="(item, $index) in activityList">
                 <div class="media" :key="$index" v-if="$index < 4">
                   <div class="media-left">
                     <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
@@ -64,7 +68,8 @@
               <span>更多资源</span>
               <a @click="$router.push('/download')">MORE</a>
             </div>
-            <div class="title-list">
+            <loading v-if="downloadList.length === 0"></loading>
+            <div class="title-list" v-else>
               <template v-for="(item, $index) in downloadList">
                 <div class="t" :key="$index">
                 {{item.title}} <span>{{item.downloads}}</span>
@@ -81,7 +86,8 @@
         <span>宅设严选人</span>
         <a @click="$router.push('/designer')">MORE</a>
       </div>
-      <div class="people-box">
+      <loading v-if="designerList.length === 0"></loading>
+      <div class="people-box" v-else>
         <template v-for="(item, $index) in designerList">
         <div class="box" :key="$index">
           <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
@@ -94,11 +100,13 @@
 </template>
 
 <script>
+import loading from './../components/Loading';
 import './../assets/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
 
 export default {
   components: {
+    loading,
     swiper,
     swiperSlide,
   },
@@ -383,6 +391,7 @@ export default {
           width: 66.6%;
           height: 600px;
           .media-list {
+            position: relative;
             .media {
               display: flex;
               margin-bottom: 15px;
