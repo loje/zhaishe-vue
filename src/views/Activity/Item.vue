@@ -37,6 +37,7 @@
 
     <div class="dialog" v-if="applyShow">
       <div class="dialog-box">
+        <span class="close" @click="applyHide">关闭</span>
         <div class="dialog-flex">
           <div class="img" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
           <div class="right">
@@ -199,7 +200,7 @@ export default {
             var User = this.$AV.Object.extend('_User');
             var newuser = new User();
             newuser.set(this.dialog.form);
-            // newuser.set('username', this.dialog.form.name);
+            newuser.set('username', this.dialog.form.name);
             newuser.set('password', '123456');
 
             newuser.save().then((newUser) => {
@@ -214,6 +215,9 @@ export default {
           }
         });
       }
+    },
+    applyHide() {
+      this.applyShow = false;
     },
     qrcodeHide() {
       this.qrcodeShow = false;
@@ -432,11 +436,11 @@ export default {
       }
       .close {
         position: absolute;
-        right: 47px;
-        top: 39px;
+        right: 15px;
+        top: 15px;
         font-size: 16px;
         font-family: PingFang SC Regular;
-        color: #333;
+        color: #999;
         cursor: pointer;
         z-index: 2;
       }
