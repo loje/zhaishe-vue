@@ -11,3 +11,14 @@ body {
   margin: auto;
   width: 1200px;
 }
+
+
+.ql-align-left {
+  text-align: left;
+}
+.ql-align-center {
+  text-align: center;
+}
+.ql-align-right {
+  text-align: right;
+}
