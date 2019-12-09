@@ -6,7 +6,9 @@
         <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
           <template v-for="(item, $index) in bannerLeft">
           <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+              <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+            </div>
           </swiper-slide>
           </template>
         </swiper>
@@ -16,7 +18,9 @@
         <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
           <template v-for="(item, $index) in bannerRight">
           <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+              <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+            </div>
           </swiper-slide>
           </template>
         </swiper>
@@ -171,13 +175,15 @@ export default {
           if (res[i].get('position') && res[i].get('position') === 'left') {
             bannerLeft.push({
               id: res[i].id,
-              imgSrc: res[i].get('imgSrc')
+              imgSrc: res[i].get('imgSrc'),
+              link: res[i].get('link'),
             });
           }
           if (res[i].get('position') && res[i].get('position') === 'right') {
             bannerRight.push({
               id: res[i].id,
-              imgSrc: res[i].get('imgSrc')
+              imgSrc: res[i].get('imgSrc'),
+              link: res[i].get('link'),
             });
           }
         }
@@ -201,6 +207,8 @@ export default {
       var query = new this.$AV.Query('activity');
 
       let arr = [];
+      query.descending('endTime');
+      query.equalTo('isTop', true);
       query.equalTo('notDelete', true);
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
@@ -276,6 +284,11 @@ export default {
           height: 100%;
           background-position: 50%;
           background-size: cover;
+          .link {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
         }
       }
     }
@@ -408,22 +421,22 @@ export default {
               }
               .media-mid {
                 margin-left: 28px;
-                width: 350px;
-                .media-desc {
-                  margin-bottom: 9px;
-                  font-size: 14px;
+                width: 400px;
+                .media-title {
+                  font-size: 18px;
                   font-family: PingFang SC Regular;
-                  color: #666;
+                  color: #333;
                   overflow : hidden;
                   text-overflow: ellipsis;
                   display: -webkit-box;
                   -webkit-line-clamp: 2;
                   -webkit-box-orient: vertical;
                 }
-                .media-title {
-                  font-size: 18px;
+                .media-desc {
+                  margin-bottom: 9px;
+                  font-size: 14px;
                   font-family: PingFang SC Regular;
-                  color: #333;
+                  color: #666;
                   overflow : hidden;
                   text-overflow: ellipsis;
                   display: -webkit-box;

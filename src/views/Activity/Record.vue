@@ -2,7 +2,7 @@
 <div>
   <div class="record-layer max-width">
     <div class="bread-crumbs">
-      <a>返回内容</a> / <span>活动笔记</span>
+      <a @click="$router.back(-1)">返回内容</a> / <span>活动笔记</span>
     </div>
     <article v-html="content"></article>
   </div>
@@ -24,6 +24,14 @@ export default {
       content: '',
     }
   },
+  mounted() {
+    this.loading = true;
+    var query = new this.$AV.Query('activity');
+
+    query.get(this.$route.query.id).then((res) => {
+      this.content = res.get('note') || '';
+    });
+  },
   methods: {
     like() {},
   },
@@ -41,6 +49,7 @@ export default {
       a {
         margin-right: 10px;
         color: #FFCB2B;
+        cursor: pointer;
       }
       span {
         margin-left: 10px;

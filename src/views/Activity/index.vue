@@ -113,6 +113,7 @@ export default {
       var query = new this.$AV.Query('activity');
       that.activityList = [];
       let arr = [];
+      query.descending('updatedAt');
       if (that.active) {
         query.equalTo('sort', that.active);
       }
@@ -124,8 +125,8 @@ export default {
             src: res[i].get('imgSrc'),
             title: res[i].get('title'),
             desc: res[i].get('desc'),
-            startTime: that.$moment(res[i].get('startTime')).format('YYYY-MM-DD'),
-            endTime: that.$moment(res[i].get('endTime')).format('YYYY-MM-DD'),
+            startTime: that.$moment(res[i].get('startTime')).format('YYYY-MM-DD HH:mm'),
+            endTime: that.$moment(res[i].get('endTime')).format('YYYY-MM-DD HH:mm'),
             number: res[i].get('number'),
             mode: that.modeList[res[i].get('mode') - 1].label,
             fee: res[i].get('fee'),
@@ -142,7 +143,6 @@ export default {
     display: flex;
     justify-content: baseline;
     padding: 20px 0;
-    min-height: 700px;
     box-sizing: border-box;
     .page-left {
       width: 900px;
@@ -150,9 +150,9 @@ export default {
         display: flex;
         margin-bottom: 15px;
         width: 100%;
-        height: 330px;
+        height: 270px;
         .activity-left {
-          width: 330px;
+          width: 270px;
           height: 100%;
           background-color: #fff;
           border-radius: 10px;

@@ -2,7 +2,7 @@
   <div class="nav">
     <div class="nav-top">
       <div class="logo" @click="$router.push('/')">
-        <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/93e2bac101ef97002df9/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112155535.png);"></div>
+        <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/19531447caa4df280314/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191208223730.png);"></div>
         <span>设计师活动聚集地</span>
       </div>
       <div id="nav" class="nav">
@@ -28,7 +28,7 @@ import { routes } from './../router/index'
 export default {
   data() {
     return {
-      routes,
+      routes: routes[0].children,
       // childRoutes: [],
       isIndex: false,
     }
@@ -80,6 +80,9 @@ export default {
         margin-right: 16px;
         width: 181px;
         height: 52px;
+        background-position: 50%;
+        background-size: contain;
+        background-repeat: no-repeat;
         vertical-align: middle;
       }
       span {

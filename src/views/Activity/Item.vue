@@ -2,8 +2,6 @@
   <div class="activity-page">
     <div class="max-width">
       <div class="banner">
-        <!-- <loading v-if="!imgSrc"></loading> -->
-        
         <div class="banner-left">
           <loading class="img" v-if="loading === true"></loading>
           <div v-else class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
@@ -25,7 +23,9 @@
           <div class="icon-btn" @click="toRecord">
             <div class="icon" @click="toRecord">会后笔记</div>
           </div>
-          <a class="btn" @click="apply">报名</a>
+          <a class="btn disabled" v-if="status === 0">未开放</a>
+          <a class="btn" v-else-if="status === 1" @click="apply">可报名</a>
+          <a class="btn disabled" v-else-if="status === 2">已结束</a>
         </div>
         </template>
       </div>
@@ -89,6 +89,7 @@ export default {
       endtime: '',
       number: 0,
       mode: '',
+      status: 0,
       fee: '',
       modeList: [
         {
@@ -152,6 +153,7 @@ export default {
         that.mode = that.modeList[res.get('mode') - 1].label;
         that.fee = res.get('fee') || '';
         that.content = res.get('content') || '';
+        that.status = res.get('status');
       });
     },
     apply() {
@@ -223,7 +225,12 @@ export default {
       this.qrcodeShow = false;
     },
     toRecord() {
-      this.$router.push('/activity/record');
+      this.$router.push({
+        path: '/activity/record',
+        query: {
+          id: this.$route.query.id,
+        },
+      });
     },
   },
 };
@@ -322,6 +329,9 @@ export default {
         font-family: PingFang SC Regular;
         color: #333;
         cursor: pointer;
+        &.disabled {
+          background: #EBEBEB;
+        }
       }
     }
   }
