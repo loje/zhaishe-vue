@@ -55,13 +55,13 @@
                     <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
                   </div>
                   <div class="media-mid">
-                    <div class="media-desc">{{item.desc}}</div>
                     <div class="media-title">{{item.title}}</div>
+                    <div class="media-desc">{{item.desc}}</div>
                   </div>
                   <div class="media-right">
-                    <a class="btn disabled" v-if="item.status === 0" @click="toActivity(item.id)">未开放</a>
-                    <a class="btn" v-else-if="item.status === 1" @click="toActivity(item.id)">可报名</a>
-                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">已结束</a>
+                    <a class="btn disabled" v-if="item.status === 0" @click="toActivity(item.id)">查看</a>
+                    <a class="btn" v-else-if="item.status === 1" @click="toActivity(item.id)">查看</a>
+                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">查看</a>
                   </div>
                 </div>
               </template>
@@ -433,7 +433,7 @@ export default {
                   -webkit-box-orient: vertical;
                 }
                 .media-desc {
-                  margin-bottom: 9px;
+                  margin-top: 9px;
                   font-size: 14px;
                   font-family: PingFang SC Regular;
                   color: #666;

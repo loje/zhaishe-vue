@@ -42,6 +42,7 @@ export default {
     margin-top: 35px;
     padding: 68px 130px;
     background-color: #fff;
+    box-sizing: border-box;
     .bread-crumbs {
       margin-bottom: 55px;
       font-size: 16px;
@@ -57,7 +58,8 @@ export default {
       }
     }
     article {
-      height: 1445px;
+      width: 100%;
+      min-height: 1445px;
     }
   }
 
@@ -109,4 +111,13 @@ export default {
     }
   }
   
+</style>
+
+<style>
+p {
+  width: 100%;
+}
+p img {
+  max-width: 100%;
+}
 </style>
