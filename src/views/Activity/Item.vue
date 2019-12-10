@@ -17,7 +17,7 @@
             <p>活动方式：{{mode}}</p>
             <p>活动费用：{{fee > 0 ? fee : '免费'}}</p>
           </div>
-          <div class="pv">浏览量：1000</div>
+          <!-- <div class="pv">浏览量：1000</div> -->
         </div>
         <div class="banner-right">
           <div class="icon-btn" @click="toRecord">
@@ -184,6 +184,14 @@ export default {
         userQuery.equalTo('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
         userQuery.find().then((user) => {
           if (user.length > 0) {
+            if (user[0].get('name') !== this.dialog.form.name) {
+              this.tips = '名字或手机号有误，请检查或联系管理员';
+              return false;
+            }
+            if (user[0].get('wechatId') !== this.dialog.form.wechatId) {
+              this.tips = '微信号或手机号有误，请检查或联系管理员';
+              return false;
+            }
             apQuery.equalTo('user', user[0]);
             apQuery.find().then((ap) => {
               if (ap.length > 0) {
