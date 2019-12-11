@@ -26,7 +26,7 @@ export default {
   },
   mounted() {
     this.loading = true;
-    var query = new this.$AV.Query('activity');
+    var query = this.$Bmob.Query('activity');
 
     query.get(this.$route.query.id).then((res) => {
       this.content = res.get('note') || '';

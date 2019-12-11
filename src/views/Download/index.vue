@@ -53,7 +53,7 @@ export default {
     },
     getSort() {
       const that = this;
-      var query = new this.$AV.Query('download_sort');
+      var query = this.$Bmob.Query('download_sort');
       let arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
@@ -68,7 +68,7 @@ export default {
     getDownload() {
       this.text = '';
       let that = this;
-      var query = new this.$AV.Query('download');
+      var query = this.$Bmob.Query('download');
       let arr = [];
       if (this.isActive !== '') {
         query.equalTo('sortId', this.isActive);
@@ -89,7 +89,7 @@ export default {
     },
     search() {
       let that = this;
-      var query = new this.$AV.Query('download');
+      var query = this.$Bmob.Query('download');
       let arr = [];
       if (this.isActive !== '') {
         query.equalTo('sortId', this.isActive);
@@ -111,7 +111,7 @@ export default {
       });
     },
     download(item, i) {
-      var update = this.$AV.Object.createWithoutData('download', item.objectId);
+      var update = this.$Bmob.Object.createWithoutData('download', item.objectId);
       let newCouter = item.downloads + 1
       update.set('downloads', newCouter);
       update.save().then(() => {

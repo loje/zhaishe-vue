@@ -138,22 +138,28 @@ export default {
   },
   methods: {
     getInfo() {
-      const that = this;
       this.loading = true;
-      var query = new this.$AV.Query('activity');
-
+      var query = this.$Bmob.Query('activity');
       query.get(this.$route.query.id).then((res) => {
-        that.loading = false;
-        that.imgSrc = res.get('imgSrc') || '';
-        that.title = res.get('title') || '';
-        that.desc = res.get('desc') || '';
-        that.starttime = that.$moment(res.get('startTime')).format('YYYY-MM-DD HH:mm') || '';
-        that.endtime = that.$moment(res.get('endTime')).format('YYYY-MM-DD HH:mm') || '';
-        that.number = res.get('number') || 0;
-        that.mode = that.modeList[res.get('mode') - 1].label;
-        that.fee = res.get('fee') || '';
-        that.content = res.get('content') || '';
-        that.status = res.get('status');
+        for (let key in res.startTime) {
+          if (key === 'iso') {
+            this.starttime = res.startTime[key];
+          }
+        }
+        for (let key in res.endTime) {
+          if (key === 'iso') {
+            this.endtime = res.endTime[key];
+          }
+        }
+        this.loading = false;
+        this.imgSrc = res.imgSrc || '';
+        this.title = res.title || '';
+        this.desc = res.desc || '';
+        this.number = res.number || 0;
+        this.mode = this.modeList[res.mode - 1].label;
+        this.fee = res.fee || '';
+        this.content = res.content || '';
+        this.status = res.status;
       });
     },
     apply() {
@@ -178,49 +184,75 @@ export default {
         return false;
       }
       if (this.dialog.form.mobilePhoneNumber.length === 11) {
-        var apQuery = new this.$AV.Query('activity_person');
-
-        var userQuery = new this.$AV.Query('_User');
-        userQuery.equalTo('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
+        let apQuery = this.$Bmob.Query('activity_person');
+        
+        let userQuery = this.$Bmob.Query('_User');
+        userQuery.equalTo('mobilePhoneNumber', '==', this.dialog.form.mobilePhoneNumber);
         userQuery.find().then((user) => {
           if (user.length > 0) {
-            if (user[0].get('name') !== this.dialog.form.name) {
+            if (user[0].name !== this.dialog.form.name) {
               this.tips = '名字或手机号有误，请检查或联系管理员';
               return false;
             }
-            if (user[0].get('wechatId') !== this.dialog.form.wechatId) {
+            if (user[0].wechatId !== this.dialog.form.wechatId) {
               this.tips = '微信号或手机号有误，请检查或联系管理员';
               return false;
             }
-            apQuery.equalTo('user', user[0]);
+
+            const userPointer = this.$Bmob.Pointer('_User')
+            const userID = userPointer.set(user[0].objectId)
+            apQuery.equalTo("user","==", userID);
             apQuery.find().then((ap) => {
               if (ap.length > 0) {
                 this.tips = '您已经报名啦，请等候管理员联系您';
               } else {
-                var ActivityPerson = new this.$AV.Object('activity_person');
-                ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
-                ActivityPerson.set('user', this.$AV.Object.createWithoutData('_User', user[0].id));
+                let ActivityPerson = this.$Bmob.Query('activity_person');
+                const activityPointer = this.$Bmob.Pointer('activity')
+                const activityID = activityPointer.set(this.$route.query.id)
+
+                ActivityPerson.set('activity', activityID);
+                ActivityPerson.set('user', userID);
                 ActivityPerson.save().then(() => {
+                  this.tips = '';
+                  this.dialog = {
+                    form: {
+                      name: '',
+                      mobilePhoneNumber: '',
+                      wechatId: '',
+                    },
+                  };
                   this.applyShow = false;
                   this.qrcodeShow = true;
                 });
               }
             });
           } else {
-            var User = this.$AV.Object.extend('_User');
-            var newuser = new User();
-            newuser.set(this.dialog.form);
-            newuser.set('username', this.dialog.form.name);
-            newuser.set('password', '123456');
+            console.log('创建新用户');
+            userQuery.set('name', this.dialog.form.name);
+            userQuery.set('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
+            userQuery.set('wechatId', this.dialog.form.wechatId);
+            userQuery.set('username', this.dialog.form.name);
+            userQuery.set('password', '123456');
+            userQuery.save().then((newUser) => {
+              console.log('-----------newUser------------------');
+              console.log(newUser);
 
-            newuser.save().then((newUser) => {
-              var ActivityPerson = new this.$AV.Object('activity_person');
-              ActivityPerson.set('activity', this.$AV.Object.createWithoutData('activity', this.$route.query.id));
-              ActivityPerson.set('user', this.$AV.Object.createWithoutData('_User', newUser.id));
+              let ActivityPerson = this.$Bmob.Query('activity_person');
+              
+              const activityPointer = this.$Bmob.Pointer('activity')
+              const activityID = activityPointer.set(this.$route.query.id)
+
+              const userPointer = this.$Bmob.Pointer('_User')
+              const userID = userPointer.set(newUser.objectId)
+
+              ActivityPerson.set('activity', activityID);
+              ActivityPerson.set('user', userID);
               ActivityPerson.save().then(() => {
                 this.applyShow = false;
                 this.qrcodeShow = true;
               });
+            }).catch((err) => {
+              console.log(err);
             });
           }
         });

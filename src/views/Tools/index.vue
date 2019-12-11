@@ -80,7 +80,7 @@ export default {
   methods: {
     getProducts() {
       let that = this;
-      var query = new this.$AV.Query('product');
+      var query = this.$Bmob.Query('product');
       let arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
@@ -88,7 +88,7 @@ export default {
           if (res[i].attributes.system) {
             let sysList = res[i].attributes.system;
             for (let x = 0; x < sysList.length; x += 1) {
-              var querySys = new that.$AV.Query('support_sys');
+              var querySys = new that.$Bmob.Query('support_sys');
               querySys.equalTo('id', sysList[x]);
               querySys.find().then(function (result) {
                 arrb.push(result[0].attributes.icon);

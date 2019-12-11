@@ -43,7 +43,7 @@ export default {
   methods: {
     getLinks() {
       let that = this;
-      var query = new this.$AV.Query('link');
+      var query = this.$Bmob.Query('link');
       const arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {

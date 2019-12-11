@@ -110,26 +110,36 @@ export default {
     getActivity() {
       this.loading = true;
       let that = this;
-      var query = new this.$AV.Query('activity');
+      var query = this.$Bmob.Query('activity');
       that.activityList = [];
       let arr = [];
-      query.descending('updatedAt');
+      query.order('-updatedAt');
       if (that.active) {
-        query.equalTo('sort', that.active);
+        query.equalTo('sort', '==', that.active);
       }
-      query.find().then(function (res) {
+      query.find().then((res) => {
         that.loading = false;
         for (let i = 0; i < res.length; i += 1) {
+          for (let key in res[i].startTime) {
+            if (key === 'iso') {
+              res[i].startTime = res[i].startTime[key];
+            }
+          }
+          for (let key in res[i].endTime) {
+            if (key === 'iso') {
+              res[i].endTime = res[i].endTime[key];
+            }
+          }
           arr.push({
-            id: res[i].id,
-            src: res[i].get('imgSrc'),
-            title: res[i].get('title'),
-            desc: res[i].get('desc'),
-            startTime: that.$moment(res[i].get('startTime')).format('YYYY-MM-DD HH:mm'),
-            endTime: that.$moment(res[i].get('endTime')).format('YYYY-MM-DD HH:mm'),
-            number: res[i].get('number'),
-            mode: that.modeList[res[i].get('mode') - 1].label,
-            fee: res[i].get('fee'),
+            id: res[i].objectId,
+            src: res[i].imgSrc,
+            title: res[i].title,
+            desc: res[i].desc,
+            startTime: that.$moment(res[i].startTime).format('YYYY-MM-DD HH:mm'),
+            endTime: that.$moment(res[i].endTime).format('YYYY-MM-DD HH:mm'),
+            number: res[i].number,
+            mode: that.modeList[res[i].mode - 1].label,
+            fee: res[i].fee,
           });
         }
         that.activityList = arr;

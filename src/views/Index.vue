@@ -166,24 +166,24 @@ export default {
   },
   methods: {
     getBanner() {
-      var query = new this.$AV.Query('banner');
+      var query = this.$Bmob.Query('banner');
       let bannerLeft = [];
       let bannerRight = [];
 
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          if (res[i].get('position') && res[i].get('position') === 'left') {
+          if (res[i].position && res[i].position === 'left') {
             bannerLeft.push({
               id: res[i].id,
-              imgSrc: res[i].get('imgSrc'),
-              link: res[i].get('link'),
+              imgSrc: res[i].imgSrc,
+              link: res[i].link,
             });
           }
-          if (res[i].get('position') && res[i].get('position') === 'right') {
+          if (res[i].position && res[i].position === 'right') {
             bannerRight.push({
-              id: res[i].id,
-              imgSrc: res[i].get('imgSrc'),
-              link: res[i].get('link'),
+              id: res[i].objectId,
+              imgSrc: res[i].imgSrc,
+              link: res[i].link,
             });
           }
         }
@@ -193,31 +193,31 @@ export default {
     },
     getRecommend() {
       let that = this;
-      var query = new this.$AV.Query('product');
+      var query = this.$Bmob.Query('product');
       let arr = [];
-      query.find().then(function (res) {
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({id: res[i].attributes.id, src: res[i].attributes.img.attributes.url});
+          arr.push({id: res[i].objectId, src: res[i].img});
         }
         that.recommendList = arr;
       });
     },
     getActivity() {
       let that = this;
-      var query = new this.$AV.Query('activity');
+      var query = this.$Bmob.Query('activity');
 
       let arr = [];
-      query.descending('endTime');
-      query.equalTo('isTop', true);
-      query.equalTo('notDelete', true);
+      query.order('-endTime');
+      query.equalTo('isTop', '==', true);
+      query.equalTo('notDelete', '==', true);
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            id: res[i].id,
-            title: res[i].get('title'),
-            src: res[i].get('imgSrc'),
-            desc: res[i].get('desc'),
-            status: res[i].get('status'),
+            id: res[i].objectId,
+            title: res[i].title,
+            src: res[i].imgSrc,
+            desc: res[i].desc,
+            status: res[i].status,
           });
         }
         that.activityList = arr;
@@ -225,14 +225,14 @@ export default {
     },
     getDownload() {
       let that = this;
-      var query = new this.$AV.Query('download');
+      var query = this.$Bmob.Query('download');
       let arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            id: res[i].attributes.id,
-            title: res[i].attributes.title,
-            downloads: res[i].attributes.downloads,
+            id: res[i].objectId,
+            title: res[i].title,
+            downloads: res[i].downloads,
           });
         }
         that.downloadList = arr;
@@ -240,14 +240,15 @@ export default {
     },
     getDesigner() {
       let that = this;
-      var query = new this.$AV.Query('designer');
+      var query = this.$Bmob.Query('designer');
       let arr = [];
-      query.find().then(function (res) {
+      query.find().then((res) => {
+        console.log(res);
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
-            name: res[i].attributes.name,
+            id: res[i].objectId,
+            src: res[i].img,
+            name: res[i].name,
           });
         }
         that.designerList = arr;

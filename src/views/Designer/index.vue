@@ -24,7 +24,7 @@ export default {
   methods: {
     getlist() {
       let that = this;
-      var query = new this.$AV.Query('designer');
+      var query = this.$Bmob.Query('designer');
       let arr = [];
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
