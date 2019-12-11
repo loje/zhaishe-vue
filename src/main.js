@@ -23,7 +23,7 @@ Vue.use(VueAwesomeSwiper, /* { default global options } */)
 // });
 // Vue.prototype.$AV = AV;
 import Bmob from "hydrogen-js-sdk";
-Bmob.initialize("4dcf39d90a4913b4", "900620");
+Bmob.initialize("4dcf39d90a4913b4", "900620", "b7bbafa0f02dd8b6d4e93fea9efd96aa");
 Vue.prototype.$Bmob = Bmob;
 
 Bmob.debug(false);

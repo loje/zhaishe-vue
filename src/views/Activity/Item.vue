@@ -260,7 +260,7 @@ export default {
           this.qrcodeShow = true;
         });
       }).catch(err => {
-      console.log(err)
+        console.log(err)
       });
 
 
