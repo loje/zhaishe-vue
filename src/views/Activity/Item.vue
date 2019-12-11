@@ -48,7 +48,7 @@
             </div>
             <div class="form-group">
               <span>电话</span>
-              <input type="text" v-model="dialog.form.mobilePhoneNumber" />
+              <input type="text" v-model="dialog.form.mobilePhoneNumber" maxlength="11" />
             </div>
             <div class="form-group">
               <span>微信</span>
@@ -234,9 +234,6 @@ export default {
             userQuery.set('username', this.dialog.form.name);
             userQuery.set('password', '123456');
             userQuery.save().then((newUser) => {
-              console.log('-----------newUser------------------');
-              console.log(newUser);
-
               let ActivityPerson = this.$Bmob.Query('activity_person');
               
               const activityPointer = this.$Bmob.Pointer('activity')
@@ -253,6 +250,7 @@ export default {
               });
             }).catch((err) => {
               console.log(err);
+              this.tips = err.error;
             });
           }
         });
@@ -428,7 +426,6 @@ export default {
           }
           .form-group {
             margin-top: 15px;
-            // width: 382px;
             span {
               font-size: 16px;
               letter-spacing: 3px;
