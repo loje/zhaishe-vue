@@ -85,24 +85,24 @@ export default {
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
           let arrb = [];
-          if (res[i].attributes.system) {
-            let sysList = res[i].attributes.system;
+          if (res[i].system) {
+            let sysList = res[i].system;
             for (let x = 0; x < sysList.length; x += 1) {
-              var querySys = new that.$Bmob.Query('support_sys');
-              querySys.equalTo('id', sysList[x]);
-              querySys.find().then(function (result) {
-                arrb.push(result[0].attributes.icon);
+              var querySys = that.$Bmob.Query('support_sys');
+              querySys.equalTo('id', '==', sysList[x]);
+              querySys.find().then((result) => {
+                arrb.push(result[0].icon);
               });
             }
           }
           
           arr.push({
-            id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
-            title: res[i].attributes.title,
-            desc: res[i].attributes.desc,
-            groupPrice: res[i].attributes.groupPrice,
-            price: res[i].attributes.price,
+            id: res[i].objectId,
+            src: res[i].img,
+            title: res[i].title,
+            desc: res[i].desc,
+            groupPrice: res[i].groupPrice,
+            price: res[i].price,
             sys: arrb,
           });
         }
