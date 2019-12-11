@@ -131,6 +131,7 @@ export default {
       },
       qrcodeShow: false,
       tips: '',
+      userId: '',
     }
   },
   mounted() {
@@ -228,33 +229,69 @@ export default {
             });
           } else {
             console.log('创建新用户');
-            userQuery.set('name', this.dialog.form.name);
-            userQuery.set('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
-            userQuery.set('wechatId', this.dialog.form.wechatId);
-            userQuery.set('username', this.dialog.form.name);
-            userQuery.set('password', '123456');
-            userQuery.save().then((newUser) => {
-              let ActivityPerson = this.$Bmob.Query('activity_person');
-              
-              const activityPointer = this.$Bmob.Pointer('activity')
-              const activityID = activityPointer.set(this.$route.query.id)
-
-              const userPointer = this.$Bmob.Pointer('_User')
-              const userID = userPointer.set(newUser.objectId)
-
-              ActivityPerson.set('activity', activityID);
-              ActivityPerson.set('user', userID);
-              ActivityPerson.save().then(() => {
-                this.applyShow = false;
-                this.qrcodeShow = true;
-              });
-            }).catch((err) => {
-              console.log(err);
-              this.tips = err.error;
-            });
+            this.toApply();
           }
         });
       }
+    },
+    toApply() {
+      let params = {
+        name: this.dialog.form.name,
+        mobilePhoneNumber: this.dialog.form.mobilePhoneNumber,
+        wechatId: this.dialog.form.wechatId,
+        username: this.dialog.form.name,
+        password: '123456',
+      }
+      this.$Bmob.User.register(params).then((newUser) => {
+        console.log(newUser);
+        this.userId = newUser.objectId;
+        let ActivityPerson = this.$Bmob.Query('activity_person');
+
+        const activityPointer = this.$Bmob.Pointer('activity')
+        const activityID = activityPointer.set(this.$route.query.id)
+
+        const userPointer = this.$Bmob.Pointer('_User')
+        const userID = userPointer.set(newUser.objectId)
+
+        ActivityPerson.set('activity', activityID);
+        ActivityPerson.set('user', userID);
+        ActivityPerson.save().then(() => {
+          this.applyShow = false;
+          this.qrcodeShow = true;
+        });
+      }).catch(err => {
+      console.log(err)
+      });
+
+
+
+      // const userQuery = this.$Bmob.Query('_User');
+      // userQuery.set('name', this.dialog.form.name);
+      // userQuery.set('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
+      // userQuery.set('wechatId', this.dialog.form.wechatId);
+      // userQuery.set('username', this.dialog.form.name);
+      // userQuery.set('password', '123456');
+      // userQuery.save().then((newUser) => {
+      //   console.log(newUser);
+      //   this.userId = newUser.objectId;
+      //   let ActivityPerson = this.$Bmob.Query('activity_person');
+
+      //   const activityPointer = this.$Bmob.Pointer('activity')
+      //   const activityID = activityPointer.set(this.$route.query.id)
+
+      //   const userPointer = this.$Bmob.Pointer('_User')
+      //   const userID = userPointer.set(newUser.objectId)
+
+      //   ActivityPerson.set('activity', activityID);
+      //   ActivityPerson.set('user', userID);
+      //   ActivityPerson.save().then(() => {
+      //     this.applyShow = false;
+      //     this.qrcodeShow = true;
+      //   });
+      // }).catch((err) => {
+      //   console.log(err);
+      //   this.tips = err.error;
+      // });
     },
     applyHide() {
       this.applyShow = false;
