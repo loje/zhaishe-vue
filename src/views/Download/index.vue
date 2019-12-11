@@ -58,8 +58,8 @@ export default {
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            id: res[i].attributes.id,
-            name: res[i].attributes.name,
+            id: res[i].objectId,
+            name: res[i].name,
           });
         }
         that.sortList = arr;
@@ -71,17 +71,16 @@ export default {
       var query = this.$Bmob.Query('download');
       let arr = [];
       if (this.isActive !== '') {
-        query.equalTo('sortId', this.isActive);
+        query.equalTo('sortId', '==', this.isActive);
       }
-      query.find().then(function (res) {
-        console.log(res);
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            objectId: res[i].id,
-            id: res[i].attributes.id,
-            src: res[i].attributes.img ? res[i].attributes.img.attributes.url : undefined,
-            title: res[i].attributes.title,
-            downloads: res[i].attributes.downloads,
+            objectId: res[i].objectId,
+            id: res[i].id,
+            src: res[i].img ? res[i].img: undefined,
+            title: res[i].title,
+            downloads: res[i].downloads,
           });
         }
         that.downloadList = arr;
@@ -92,19 +91,19 @@ export default {
       var query = this.$Bmob.Query('download');
       let arr = [];
       if (this.isActive !== '') {
-        query.equalTo('sortId', this.isActive);
+        query.equalTo('sortId', '==', this.isActive);
       }
       if (this.text !== '') {
-        query.contains('title', this.text);
+        query.contains('title', '==', this.text);
       }
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            objectId: res[i].id,
-            id: res[i].attributes.id,
-            src: res[i].attributes.img ? res[i].attributes.img.attributes.url : undefined,
-            title: res[i].attributes.title,
-            downloads: res[i].attributes.downloads,
+            objectId: res[i].objectId,
+            id: res[i].id,
+            src: res[i].img ? res[i].img : undefined,
+            title: res[i].title,
+            downloads: res[i].downloads,
           });
         }
         that.downloadList = arr;
