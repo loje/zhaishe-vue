@@ -2,7 +2,7 @@
   <div class="max-width">
     <div class="swiper-box" style="margin-top: 20px;">
       <div class="box-left">
-        <loading v-if="bannerLeft && bannerLeft.length === 0"></loading>
+        <loading v-if="bannerLoading"></loading>
         <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
           <template v-for="(item, $index) in bannerLeft">
           <swiper-slide :key="$index">
@@ -14,7 +14,7 @@
         </swiper>
       </div>
       <div class="box-right">
-        <loading v-if="bannerRight && bannerRight.length === 0"></loading>
+        <loading v-if="bannerLoading"></loading>
         <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
           <template v-for="(item, $index) in bannerRight">
           <swiper-slide :key="$index">
@@ -33,7 +33,7 @@
         <a @click="$router.push('/tools')">MORE</a>
       </div>
       <div class="layer-box">
-        <loading v-if="recommendList.length === 0"></loading>
+        <loading v-if="recommendLoading"></loading>
         <swiper v-else :options="toolOption" ref="toolsSwiper">
           <template v-for="(item, $index) in recommendList">
           <swiper-slide :key="$index" >
@@ -48,7 +48,7 @@
               <a @click="$router.push('/activity')">MORE</a>
             </div>
             <div class="media-list">
-              <loading v-if="activityList.length === 0"></loading>
+              <loading v-if="activityLoading"></loading>
               <template v-else v-for="(item, $index) in activityList">
                 <div class="media" :key="$index" v-if="$index < 4">
                   <div class="media-left">
@@ -72,7 +72,7 @@
               <span>更多资源</span>
               <a @click="$router.push('/download')">MORE</a>
             </div>
-            <loading v-if="downloadList.length === 0"></loading>
+            <loading v-if="downloadLoading"></loading>
             <div class="title-list" v-else>
               <template v-for="(item, $index) in downloadList">
                 <div class="t" :key="$index">
@@ -90,7 +90,7 @@
         <span>宅设严选人</span>
         <a @click="$router.push('/designer')">MORE</a>
       </div>
-      <loading v-if="designerList.length === 0"></loading>
+      <loading v-if="designerLoading"></loading>
       <div class="people-box" v-else>
         <template v-for="(item, $index) in designerList">
         <div class="box" :key="$index">
@@ -145,11 +145,19 @@ export default {
       },
       bannerLeft: [],
       bannerRight: [],
+      bannerLoading: false,
 
       recommendList: [],
+      recommendLoading: false,
+
       activityList: [],
+      activityLoading: false,
+
       downloadList: [],
+      downloadLoading: false,
+
       designerList: [],
+      designerLoading: false,
     }
   },
   computed: {
@@ -169,8 +177,9 @@ export default {
       var query = this.$Bmob.Query('banner');
       let bannerLeft = [];
       let bannerRight = [];
-
+      this.bannerLoading = true;
       query.find().then((res) => {
+        this.bannerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
           if (res[i].position && res[i].position === 'left') {
             bannerLeft.push({
@@ -192,25 +201,27 @@ export default {
       });
     },
     getRecommend() {
-      let that = this;
       var query = this.$Bmob.Query('product');
       let arr = [];
+      this.recommendLoading = true;
       query.find().then((res) => {
+        this.recommendLoading = false;
         for (let i = 0; i < res.length; i += 1) {
           arr.push({id: res[i].objectId, src: res[i].img});
         }
-        that.recommendList = arr;
+        this.recommendList = arr;
       });
     },
     getActivity() {
-      let that = this;
       var query = this.$Bmob.Query('activity');
 
       let arr = [];
       query.order('-endTime');
       query.equalTo('isTop', '==', true);
       query.equalTo('notDelete', '==', true);
+      this.activityLoading = true;
       query.find().then((res) => {
+        this.activityLoading = false;
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].objectId,
@@ -220,14 +231,15 @@ export default {
             status: res[i].status,
           });
         }
-        that.activityList = arr;
+        this.activityList = arr;
       });
     },
     getDownload() {
-      let that = this;
       var query = this.$Bmob.Query('download');
       let arr = [];
-      query.find().then(function (res) {
+      this.designerLoading = true;
+      query.find().then((res) => {
+        this.designerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].objectId,
@@ -235,15 +247,15 @@ export default {
             downloads: res[i].downloads,
           });
         }
-        that.downloadList = arr;
+        this.downloadList = arr;
       });
     },
     getDesigner() {
-      let that = this;
       var query = this.$Bmob.Query('designer');
       let arr = [];
+      this.designerLoading = true;
       query.find().then((res) => {
-        console.log(res);
+        this.designerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].objectId,
@@ -251,7 +263,7 @@ export default {
             name: res[i].name,
           });
         }
-        that.designerList = arr;
+        this.designerList = arr;
       });
     },
     toActivity(id) {
