@@ -28,11 +28,14 @@
     </div>
 
     <div class="layer">
+      <template v-if="this.recommendList.length > 0">
       <div class="title">
         <span>宅设好物</span>
         <a @click="$router.push('/tools')">MORE</a>
       </div>
+      </template>
       <div class="layer-box">
+        <template v-if="this.recommendList.length > 0">
         <loading v-if="recommendLoading"></loading>
         <swiper v-else :options="toolOption" ref="toolsSwiper">
           <template v-for="(item, $index) in recommendList">
@@ -41,6 +44,7 @@
           </swiper-slide>
           </template>
         </swiper>
+        </template>
         <div class="box-2">
           <div class="box col-2">
             <div class="box-title">
@@ -204,10 +208,13 @@ export default {
       var query = this.$Bmob.Query('product');
       let arr = [];
       this.recommendLoading = true;
+      query.equalTo('recommend', '===', true);
+      query.equalTo('status', '===', 0);
+      query.equalTo('notDelete', '===', true);
       query.find().then((res) => {
         this.recommendLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({id: res[i].objectId, src: res[i].img});
+          arr.push({id: res[i].objectId, src: res[i].imgSrc});
         }
         this.recommendList = arr;
       });

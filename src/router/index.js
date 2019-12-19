@@ -21,6 +21,12 @@ export const routes = [
         component: () => import('@/views/Tools/index'),
       },
       {
+        path: '/tools/item',
+        name: '工具详情',
+        component: () => import('@/views/Tools/Item'),
+        meta: { menu: false },
+      },
+      {
         path: '/activity',
         name: '活动',
         component: () => import('@/views/Activity/index'),

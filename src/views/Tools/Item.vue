@@ -1,29 +1,41 @@
 <template>
-  <div class="tools-page max-width">
-    <div class="tool" v-for="item in productList" :key="item.id">
-      <div class="tool-left">
-        <div class="img" :style="{backgroundImage: `url(${item.src})`}" @click="$router.push(`/tools/item?id=${item.id}`)"></div>
-      </div>
-      <div class="tool-right">
-        <div class="tool-title">{{item.title}}</div>
-        <div class="tool-desc">{{item.desc}}</div>
-        <div class="tool-btm">
-          <div class="support">
-            <div class="support-t">支持系统</div>
-            <div class="sys-list">
-              <template v-for="(i, $index) in item.sys" >
-                <span class="sys" :key="$index">
-                  <span v-html="i.icon"></span>
-                  <!-- <sub class="t" :key="$index">{{i.title}}</sub> -->
-                </span>
-              </template>
+  <div class="tools-page">
+    <div class="max-width">
+      <div class="media">
+        <div class="media-left">
+          <loading class="img" v-if="loading === true"></loading>
+          <div v-else class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
+        </div>
+        <loading v-if="loading === true"></loading>
+        <template v-else>
+        <div class="media-right">
+          <div class="media-info">
+            <div class="title">{{title}}</div>
+            <div class="sub-title">{{desc}}</div>
+
+            <div class="support">
+              <div class="support-t">支持系统</div>
+              <div class="sys-list">
+                <template v-for="(i, $index) in sys" >
+                  <div class="tools-sys" :key="$index" v-html="i.icon">
+                    <!-- <sub class="t" :key="$index">{{i.title}}</sub> -->
+                  </div>
+                </template>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <a class="btn" @click="showBuy">购买</a>
+              <a>下载</a>
             </div>
           </div>
-          <div class="btn-group">
-            <a class="btn" @click="showBuy(item)">购买</a>
-            <a>下载</a>
-          </div>
         </div>
+        </template>
+      </div>
+
+      <div class="tools-detail">
+        <loading v-if="loading === true"></loading>
+        <article v-else v-html="content"></article>
       </div>
     </div>
 
@@ -31,7 +43,6 @@
       <div class="dialog-box">
         <div class="dialog-left">
           <div class="img" :style="{backgroundImage: `url(${dialogForm.src})`}"></div>
-          <!-- <input type="text" placeholder="请输入邀请码" /> -->
         </div>
         <div class="dialog-right">
           <div class="form-t">
@@ -66,57 +77,72 @@
     </div>
   </div>
 </template>
+
 <script>
+import loading from '@/components/Loading';
 export default {
+  components: {
+    loading,
+  },
   data() {
     return {
-      productList: [],
+      loading: false,
+      imgSrc: '',
+      title: '',
+      desc: '',
+      sys: [],
+      content: '',
+
       dialogForm: '',
       tips: '',
 
       dialogQrcode: false,
     }
   },
-  activated() {
-    this.getProducts();
+  mounted() {
+    this.getinfo();
   },
   methods: {
-    getProducts() {
-      let that = this;
+    getinfo() {
+      this.loading = true;
       var query = this.$Bmob.Query('product');
-      let arr = [];
-      query.find().then(function (res) {
-        for (let i = 0; i < res.length; i += 1) {
+      query.get(this.$route.query.id).then((res) => {
+        this.loading = false;
+        this.imgSrc = res.imgSrc || '';
+        this.title = res.title || '';
+        this.desc = res.desc || '';
+        this.content = res.content;
+        this.groupPrice = res.groupPrice;
+        this.price = res.price;
+
+        if (res.system) {
+          let sysList = res.system;
           let arrb = [];
-          if (res[i].system) {
-            let sysList = res[i].system;
-            var querySys = that.$Bmob.Query('support_sys');
-            for (let x = 0; x < sysList.length; x += 1) {
-              querySys.get(sysList[x]).then((result) => {
-                arrb.push({
-                  id: result.objectId,
-                  icon: result.icon,
-                  title: result.title,
-                });
+          var querySys = this.$Bmob.Query('support_sys');
+          for (let x = 0; x < sysList.length; x += 1) {
+            querySys.get(sysList[x]).then((result) => {
+              arrb.push({
+                id: result.objectId,
+                icon: result.icon,
+                title: result.title,
               });
-            }
+            });
           }
-          
-          arr.push({
-            id: res[i].objectId,
-            src: res[i].imgSrc,
-            title: res[i].title,
-            desc: res[i].desc,
-            groupPrice: res[i].groupPrice,
-            price: res[i].price,
-            sys: arrb,
-          });
+          this.sys = arrb;
         }
-        that.productList = arr;
       });
     },
-    showBuy(item) {
-      this.dialogForm = item;
+
+    showBuy() {
+      this.dialogForm = {
+        id: this.$route.query.id,
+        src: this.imgSrc,
+        title: this.title,
+        desc: this.desc,
+        groupPrice: this.groupPrice,
+        price: this.price,
+        sys: this.sys,
+      };
     },
     buy() {
       this.dialogForm = '';
@@ -133,106 +159,98 @@ export default {
 };
 </script>
 
+<style>
+.tools-sys .icon{
+  display: block;
+  width: 24px;
+  height: 24px;
+}
+</style>
+
 <style lang="scss" scoped>
-  .tools-page {
-    padding: 20px 0;
-    .tool {
-      display: flex;
-      margin-bottom: 15px;
-      width: 100%;
-      height: 330px;
-      .tool-left {
-        width: 330px;
+  .media {
+    display: flex;
+    align-items: top;
+    margin-top: 20px;
+    width: 100%;
+    height: 330px;
+    overflow: hidden;
+    .media-left {
+      width: 330px;
+      height: 100%;
+      background-color: #fff;
+      border-radius: 10px;
+      .img {
+        width: 100%;
         height: 100%;
-        background-color: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        .img {
-          width: 100%;
-          height: 100%;
-          background-position: 50%;
-          background-size: contain;
-          background-repeat: no-repeat;
-          cursor: pointer;
-        }
+        background-position: 50%;
+        background-size: cover;
       }
-      .tool-right {
+    }
+    .media-right {
+      flex: 1;
+      height: 100%;
+      box-sizing: border-box;
+      padding-left: 10px;
+      .media-info {
         position: relative;
-        margin-left: 10px;
-        flex: 1;
         padding: 30px;
         height: 100%;
         background-color: #fff;
         border-radius: 10px;
         box-sizing: border-box;
-        .tool-title{
+        .title {
           font-size: 24px;
-          font-family: PingFang SC Medium;
+          font-family: PingFang SC Regular;
           color: #333;
+          line-height: 24px;
         }
-        .tool-desc {
-          margin-top: 25px;
-          font-size: 16px;
-          line-height: 30px;
-          font-family: PingFang SC Light;
-          color: rgba(153,153,153,1);
-          text-overflow: -o-ellipsis-lastline;
-          overflow: hidden;
-          text-overflow: ellipsis;
-          display: -webkit-box;
-          -webkit-line-clamp: 2;
-          line-clamp: 2;
-          -webkit-box-orient: vertical;
+        .sub-title {
+          margin-top: 15px;
+          font-size: 14px;
+          font-family: PingFang SC Regular;
+          color: #999;
+          line-height: 24px;
         }
-        .tool-btm {
-          position: absolute;
-          left: 30px;
-          bottom: 30px;
-          width: calc(100% - 60px);
-          .support {
-            .support-t {
-              font-size: 16px;
-              font-family: PingFang SC Light;
-              color: #FFCB2B;
-              line-height: 30px;
-            }
-            .sys-list {
-              margin-top: 11px;
-              .sys {
-                display: inline-block;
-                margin-right: 25px;
-                line-height: 36px;
-                >>>.icon {
-                  display: block;
-                  width: 32px;
-                  height: 32px;
-                }
-                .t {
-                  font-size: 12px;
-                  color: #ccc;
-                }
-              }
+        .support {
+          margin-top: 20px;
+          .support-t {
+            font-size: 16px;
+            font-family: PingFang SC Light;
+            color: #FFCB2B;
+            line-height: 30px;
+          }
+          .sys-list {
+            margin-top: 11px;
+            .tools-sys {
+              display: inline-block;
+              margin-right: 25px;
+              line-height: 24px;
             }
           }
-          .btn-group {
-            display: flex;
-            width: 100%;
-            justify-content: flex-end;
-            a {
-              margin-right: 30px;
-              font-size: 16px;
-              font-family: PingFang SC Regular;
-              color: rgba(92,157,255,1);
-              line-height: 40px;
-              cursor: pointer;
-              &.btn {
-                width: 100px;
-                height: 40px;
-                background: #FFCB2B;
-                color: #333;
-                text-align: center;
-                border-radius: 10px;
-              }
+        }
+
+        .btn-group {
+          position: absolute;
+          right: 30px;
+          bottom: 30px;
+          display: flex;
+          width: 100%;
+          justify-content: flex-end;
+          a {
+            margin-right: 30px;
+            font-size: 16px;
+            font-family: PingFang SC Regular;
+            color: rgba(92,157,255,1);
+            line-height: 40px;
+            cursor: pointer;
+            &.btn {
+              width: 100px;
+              height: 40px;
+              background: #FFCB2B;
+              color: #333;
+              text-align: center;
+              border-radius: 10px;
             }
           }
         }
@@ -240,6 +258,23 @@ export default {
     }
   }
 
+  .tools-detail {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 30px;
+    min-height: 800px;
+    width: 100%;
+    background-color: #fff;
+    border-radius: 10px;
+    box-sizing: border-box;
+    article {
+      width: 100%;
+      box-sizing: border-box;
+      img {
+        max-width: 100%;
+      }
+    }
+  }
 
   .dialogForm {
     position: fixed;
@@ -395,5 +430,4 @@ export default {
       z-index: 0;
     }
   }
-  
 </style>
