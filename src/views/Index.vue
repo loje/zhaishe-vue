@@ -422,7 +422,6 @@ export default {
               word-break: break-all;
               box-sizing: border-box;
               span {
-                // float: right;
                 position: absolute;
                 right: 0;
                 top:0;

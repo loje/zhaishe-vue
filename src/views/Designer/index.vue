@@ -61,7 +61,7 @@ export default {
       }
       .img {
         width: 100%;
-        height: 270px;
+        height: 350px;
         background-position: 50%;
         background-size: cover;
         border-radius: 10px;
