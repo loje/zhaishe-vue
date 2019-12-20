@@ -22,3 +22,7 @@ body {
 .ql-align-right {
   text-align: right;
 }
+
+article img {
+  max-width: 100%;
+}

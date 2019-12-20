@@ -30,6 +30,23 @@
         </template>
       </div>
     </div>
+
+    <div class="dialog" v-if="visible === true">
+      <div class="dialog-flex">
+        <span class="dialog-close" @click="visible = false">关闭</span>
+        <div class="dialog-title">{{dialog.title}}</div>
+        <div class="line"></div>
+        <div class="link">
+          <a :href="dialog.link" target="blank">下载链接：{{dialog.link}}</a>
+        </div>
+        <div class="code">
+          <div class="code-panel" id="inviteCode">{{dialog.code}}</div>
+          <div class="copy" @click="copyit">复制</div>
+        </div>
+        <div class="tips">{{tips}}</div>
+      </div>
+      <div class="dialog-bg"></div>
+    </div>
   </div>
 </template>
 <script>
@@ -40,6 +57,9 @@ export default {
       downloadList: [],
       isActive: '',
       text: '2019',
+      visible: false,
+      dialog: {},
+      tips: '复制百度云密码前往下载',
     }
   },
   mounted() {
@@ -52,17 +72,16 @@ export default {
       this.getDownload();
     },
     getSort() {
-      const that = this;
       var query = this.$Bmob.Query('download_sort');
       let arr = [];
-      query.find().then(function (res) {
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             id: res[i].objectId,
             name: res[i].name,
           });
         }
-        that.sortList = arr;
+        this.sortList = arr;
       });
     },
     getDownload() {
@@ -70,18 +89,32 @@ export default {
       let that = this;
       var query = this.$Bmob.Query('download');
       let arr = [];
-      if (this.isActive !== '') {
-        query.equalTo('sortId', '==', this.isActive);
-      }
+      // if (this.isActive !== '') {
+      //   query.equalTo('sortId', '==', this.isActive);
+      // }
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({
-            objectId: res[i].objectId,
-            id: res[i].id,
-            src: res[i].img ? res[i].img: undefined,
-            title: res[i].title,
-            downloads: res[i].downloads,
-          });
+          if (this.isActive !== '') {
+            if (this.isActive === res[i].sort) {
+              arr.push({
+                objectId: res[i].objectId,
+                src: res[i].imgSrc,
+                title: res[i].title,
+                link: res[i].link,
+                code: res[i].code,
+                downloads: res[i].downloads,
+              });
+            }
+          } else {
+            arr.push({
+              objectId: res[i].objectId,
+              src: res[i].imgSrc,
+              title: res[i].title,
+              link: res[i].link,
+              code: res[i].code,
+              downloads: res[i].downloads,
+            });
+          }
         }
         that.downloadList = arr;
       });
@@ -90,34 +123,46 @@ export default {
       let that = this;
       var query = this.$Bmob.Query('download');
       let arr = [];
-      if (this.isActive !== '') {
-        query.equalTo('sortId', '==', this.isActive);
-      }
+
+      this.isActive = '';
       if (this.text !== '') {
-        query.contains('title', '==', this.text);
+        query.equalTo('title', '==', this.text);
       }
       query.find().then(function (res) {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
             objectId: res[i].objectId,
-            id: res[i].id,
-            src: res[i].img ? res[i].img : undefined,
+            src: res[i].imgSrc,
             title: res[i].title,
+            link: res[i].link,
+            code: res[i].code,
             downloads: res[i].downloads,
           });
         }
         that.downloadList = arr;
       });
     },
-    download(item, i) {
-      var update = this.$Bmob.Object.createWithoutData('download', item.objectId);
-      let newCouter = item.downloads + 1
-      update.set('downloads', newCouter);
-      update.save().then(() => {
-        this.downloadList[i].downloads = newCouter;
-      }),((error) => {
-        console.log(error);
-      });
+    download(data) {
+      this.visible = true;
+      this.dialog = data;
+    },
+    copyit() {
+      const that = this;
+      document.execCommand(this.dialog.code);
+      // alert('已复制！');
+      var Url2 = document.getElementById("inviteCode").innerText;
+      var oInput = document.createElement("input");
+      oInput.value = Url2;
+      document.body.appendChild(oInput);
+      oInput.select(); // 选择对象
+      document.execCommand("Copy"); // 执行浏览器复制命令
+      oInput.className = "oInput";
+      oInput.style.display = "none";
+      this.tips = '密码复制成功！';
+      let s = setTimeout(() => {
+        that.tips = '复制百度云密码前往下载';
+        clearTimeout(s);
+      },2000);
     },
   },
 };
@@ -190,10 +235,10 @@ export default {
       box-sizing: border-box;
       border-bottom: 1px solid #EBEBEB;
       .media-left {
-        width: 100px;
+        width: 220px;
         .img {
-          width: 100%;
-          height: 100px;
+          width: 220px;
+          height: 110px;
           background-position: 50%;
           background-size: cover;
           background-color: #FFCB2B;
@@ -206,6 +251,12 @@ export default {
           font-size: 16px;
           font-family: PingFang SC Regular;
           color: #333;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          display: -webkit-box;
+          -webkit-line-clamp: 2;
+          -webkit-box-orient: vertical;
+          word-break: break-all;
         }
         .media-info {
           display: flex;
@@ -225,6 +276,92 @@ export default {
         }
       }
     }
+  }
+}
+.dialog {
+  position: fixed;
+  left: 0;
+  top: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  .dialog-flex {
+    position: relative;
+    padding: 10px;
+    width: 640px;
+    height: 350px;
+    background-color: #fff;
+    border-radius: 10px;
+    text-align: center;
+    box-sizing: border-box;
+    z-index: 1;
+    .dialog-close {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      cursor: pointer;
+      color: #333;
+    }
+    .dialog-title {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      height: 145px;
+      font-size: 24px;
+      word-break: break-all;
+      color: #333;
+    }
+    .line {
+      width: 100%;
+      height: 1px;
+      border-top: 1px dotted #EBEBEB;
+    }
+    .link {
+      padding-top: 15px;
+      a {
+        color: #5C9DFF;
+        font-size: 14px;
+      }
+    }
+    .code {
+      padding-top: 15px;
+      text-align: center;
+      .code-panel {
+        display: inline-block;
+        vertical-align: middle;
+        width: 200px;
+        height: 40px;
+        line-height: 40px;
+        background-color: #EBEBEB;
+        color: #333;
+        border-radius: 10px;
+      }
+      .copy {
+        margin-left: 15px;
+        display: inline-block;
+        vertical-align: middle;
+        cursor: pointer;
+        color: #333333;
+      }
+    }
+    .tips {
+      padding-top: 30px;
+      color: #999;
+      font-size: 14px;
+    }
+  }
+  .dialog-bg {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.75);
+    z-index: 0;
   }
 }
 </style>

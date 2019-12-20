@@ -405,13 +405,27 @@ export default {
             }
           }
           .title-list {
+            width: 100%;
             .t {
+              position: relative;
+              padding-right: 30px;
+              width: 100%;
               margin-bottom: 20px;
               font-size: 16px;
               font-family: PingFang SC Regular;
               color: #666;
+              overflow : hidden;
+              text-overflow: ellipsis;
+              display: -webkit-box;
+              -webkit-line-clamp: 1;
+              -webkit-box-orient: vertical;
+              word-break: break-all;
+              box-sizing: border-box;
               span {
-                float: right;
+                // float: right;
+                position: absolute;
+                right: 0;
+                top:0;
               }
             }
           }

@@ -273,6 +273,12 @@ export default {
       img {
         max-width: 100%;
       }
+      p {
+        width: 100%;
+         img {
+          max-width: 100%;
+        }
+      }
     }
   }
 

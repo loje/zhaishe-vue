@@ -91,6 +91,7 @@ export default {
       mode: '',
       status: 0,
       fee: '',
+      note: '',
       modeList: [
         {
           label: '线下活动',
@@ -161,6 +162,7 @@ export default {
         this.fee = res.fee || '';
         this.content = res.content || '';
         this.status = res.status;
+        this.note = res.note;
       });
     },
     apply() {
@@ -300,12 +302,13 @@ export default {
       this.qrcodeShow = false;
     },
     toRecord() {
-      this.$router.push({
-        path: '/activity/record',
-        query: {
-          id: this.$route.query.id,
-        },
-      });
+      // this.$router.push({
+      //   path: '/activity/record',
+      //   query: {
+      //     id: this.$route.query.id,
+      //   },
+      // });
+      window.open(this.note);
     },
   },
 };
