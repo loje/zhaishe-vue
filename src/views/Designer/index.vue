@@ -25,6 +25,7 @@ export default {
     getlist() {
       let that = this;
       var query = this.$Bmob.Query('designer');
+      query.equalTo('notDelete', '===', true);
       let arr = [];
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
