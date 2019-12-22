@@ -1,6 +1,6 @@
 <template>
   <div class="max-width">
-    <div class="swiper-box" style="margin-top: 20px;">
+    <div class="swiper-box">
       <div class="box-left">
         <loading v-if="bannerLoading"></loading>
         <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
@@ -89,7 +89,7 @@
       </div>
     </div>
 
-    <div class="layer">
+    <div class="layer" v-if="designerList.length > 0">
       <div class="title">
         <span>宅设严选人</span>
         <a @click="$router.push('/designer')">MORE</a>
@@ -261,6 +261,7 @@ export default {
       var query = this.$Bmob.Query('designer');
       let arr = [];
       this.designerLoading = true;
+      query.equalTo('isTop', '===', true);
       query.find().then((res) => {
         this.designerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
@@ -286,6 +287,8 @@ export default {
 <style lang="scss" scope>
   .swiper-box {
     display: flex;
+    margin-top: 20px;
+    margin-bottom: 31px;
     width: 100%;
     height: 340px;
     border-radius: 10px;
@@ -330,7 +333,7 @@ export default {
     background-color: #fff;
   }
   .layer {
-    margin-top: 31px;
+    margin-bottom: 31px;
     .title {
       margin-bottom: 22px;
       padding-left: 34px;
