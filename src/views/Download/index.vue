@@ -1,6 +1,6 @@
 <template>
   <div class="max-width">
-    <div class="title">下载专区</div>
+    <!-- <div class="title">下载专区</div> -->
     <div class="the-layer">
       <div class="layer-bar">
         <div class="tabs">
@@ -168,15 +168,15 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-.title {
-  margin-top: 20px;
-  margin-bottom: 15px;
-  font-size: 24px;
-  font-family: PingFang SC Regular;
-  color: #333;
-}
+// .title {
+//   margin-top: 20px;
+//   margin-bottom: 15px;
+//   font-size: 24px;
+//   font-family: PingFang SC Regular;
+//   color: #333;
+// }
 .the-layer {
-  margin-bottom: 20px;
+  margin: 20px 0;
   padding: 30px;
   width: 100%;
   background-color: #fff;

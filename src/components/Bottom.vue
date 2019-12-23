@@ -45,12 +45,12 @@ export default {
       let that = this;
       var query = this.$Bmob.Query('link');
       const arr = [];
-      query.find().then(function (res) {
+      query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
-            id: res[i].attributes.id,
-            src: res[i].attributes.img.attributes.url,
-            link: res[i].attributes.link,
+            id: res[i].objectId,
+            src: res[i].src,
+            link: res[i].link,
           });
         }
         that.linkList = arr;
