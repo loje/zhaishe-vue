@@ -40,7 +40,9 @@
         <swiper v-else :options="toolOption" ref="toolsSwiper">
           <template v-for="(item, $index) in recommendList">
           <swiper-slide :key="$index" >
-            <div class="img" :style="{backgroundImage:`url(${item.src})`}"></div>
+            <div class="img" :style="{backgroundImage:`url(${item.src})`}">
+              <router-link :to="{path: '/tools/item', query: { id: item.id }}" class="link"></router-link>
+            </div>
           </swiper-slide>
           </template>
         </swiper>
@@ -96,12 +98,16 @@
       </div>
       <loading v-if="designerLoading"></loading>
       <div class="people-box" v-else>
-        <template v-for="(item, $index) in designerList">
-        <div class="box" :key="$index">
-          <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
-          <div class="name">{{item.name}}</div>
-        </div>
-        </template>
+        <swiper :options="designerSwiperOption" ref="designerSwiper">
+          <template v-for="(item, $index) in designerList">
+          <swiper-slide :key="$index">
+          <div class="box">
+            <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
+            <div class="name">{{item.name}}</div>
+          </div>
+          </swiper-slide>
+          </template>
+        </swiper>
       </div>
     </div>
   </div>
@@ -162,6 +168,14 @@ export default {
 
       designerList: [],
       designerLoading: false,
+
+      designerSwiperOption: {
+        loop : true,
+        autoplay: true,
+        delay: 1000,
+        slidesPerView: 5,
+        spaceBetween: 40,
+      },
     }
   },
   computed: {
@@ -380,6 +394,11 @@ export default {
           background-position: 50%;
           background-size: cover;
           border-radius: 10px;
+          .link {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
         }
       }
       .box-2 {
@@ -510,10 +529,10 @@ export default {
       display: flex;
       justify-content: space-between;
       .box {
-        width: 270px;
+        width: 200px;
         .img {
           width: 100%;
-          height: 350px;
+          height: 250px;
           background-color: #fff;
           border-radius: 10px;
           background-position: 50%;
