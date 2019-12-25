@@ -149,7 +149,6 @@ export default {
       },2000);
     },
     countDownload(id, count) {
-
       let download = this.$Bmob.Query('download');
       download.set('id', id);
       download.set('downloads', count + 1);
