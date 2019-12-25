@@ -14,14 +14,14 @@
               <template v-for="(i, $index) in item.sys" >
                 <span class="sys" :key="$index">
                   <span v-html="i.icon"></span>
-                  <!-- <sub class="t" :key="$index">{{i.title}}</sub> -->
                 </span>
               </template>
             </div>
           </div>
           <div class="btn-group">
             <a class="btn" @click="showBuy(item)">购买</a>
-            <a>下载</a>
+            <!-- <a >下载</a> -->
+            <router-link :to="{path: '/download', query: { keyword: item.title }}">下载</router-link>
           </div>
         </div>
       </div>

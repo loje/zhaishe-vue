@@ -1,6 +1,5 @@
 <template>
   <div class="max-width">
-    <!-- <div class="title">下载专区</div> -->
     <div class="the-layer">
       <div class="layer-bar">
         <div class="tabs">
@@ -9,7 +8,7 @@
         </div>
         <div class="search-bar">
           <input type="text" v-model="text" placeholder="请输入标题关键字" />
-          <span @click="search">搜索</span>
+          <span @click="getDownload">搜索</span>
         </div>
       </div>
       
@@ -22,7 +21,7 @@
           <div class="media-right">
             <div class="media-t">{{item.title}}</div>
             <div class="media-info">
-              <span class="author">宅设小编</span>
+              <span class="author">{{item.author}}</span>
               <a @click="download(item, $index)">下载</a>
             </div>
           </div>
@@ -56,13 +55,18 @@ export default {
       sortList: [],
       downloadList: [],
       isActive: '',
-      text: '2019',
+      text: '',
       visible: false,
       dialog: {},
       tips: '复制百度云密码前往下载',
     }
   },
-  mounted() {
+  activated() {
+    if (this.$route.query && this.$route.query.keyword) {
+      this.text = this.$route.query.keyword;
+    } else {
+      this.text = '';
+    }
     this.getSort();
     this.getDownload();
   },
@@ -85,13 +89,13 @@ export default {
       });
     },
     getDownload() {
-      this.text = '';
-      let that = this;
-      var query = this.$Bmob.Query('download');
       let arr = [];
-      // if (this.isActive !== '') {
-      //   query.equalTo('sortId', '==', this.isActive);
-      // }
+      var query = this.$Bmob.Query('download');
+      query.equalTo('notDelete', '===', true);
+      if (this.text !== '') {
+        this.isActive = '';
+        query.equalTo('title', '==', this.text);
+      }
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           if (this.isActive !== '') {
@@ -100,6 +104,7 @@ export default {
                 objectId: res[i].objectId,
                 src: res[i].imgSrc,
                 title: res[i].title,
+                author: res[i].author,
                 link: res[i].link,
                 code: res[i].code,
                 downloads: res[i].downloads,
@@ -110,38 +115,17 @@ export default {
               objectId: res[i].objectId,
               src: res[i].imgSrc,
               title: res[i].title,
+              author: res[i].author,
               link: res[i].link,
               code: res[i].code,
               downloads: res[i].downloads,
             });
           }
         }
-        that.downloadList = arr;
+        this.downloadList = arr;
       });
     },
-    search() {
-      let that = this;
-      var query = this.$Bmob.Query('download');
-      let arr = [];
 
-      this.isActive = '';
-      if (this.text !== '') {
-        query.equalTo('title', '==', this.text);
-      }
-      query.find().then(function (res) {
-        for (let i = 0; i < res.length; i += 1) {
-          arr.push({
-            objectId: res[i].objectId,
-            src: res[i].imgSrc,
-            title: res[i].title,
-            link: res[i].link,
-            code: res[i].code,
-            downloads: res[i].downloads,
-          });
-        }
-        that.downloadList = arr;
-      });
-    },
     download(data) {
       this.visible = true;
       this.dialog = data;
@@ -168,13 +152,6 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-// .title {
-//   margin-top: 20px;
-//   margin-bottom: 15px;
-//   font-size: 24px;
-//   font-family: PingFang SC Regular;
-//   color: #333;
-// }
 .the-layer {
   margin: 20px 0;
   padding: 30px;

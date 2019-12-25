@@ -259,6 +259,7 @@ export default {
       var query = this.$Bmob.Query('download');
       let arr = [];
       this.designerLoading = true;
+      query.equalTo('notDelete', '===', true);
       query.find().then((res) => {
         this.designerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
