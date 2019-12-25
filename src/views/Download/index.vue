@@ -36,7 +36,7 @@
         <div class="dialog-title">{{dialog.title}}</div>
         <div class="line"></div>
         <div class="link">
-          <a :href="dialog.link" target="blank">下载链接：{{dialog.link}}</a>
+          <a :href="dialog.link" target="blank" @click="countDownload(dialog.objectId, dialog.downloads)">下载链接：{{dialog.link}}</a>
         </div>
         <div class="code">
           <div class="code-panel" id="inviteCode">{{dialog.code}}</div>
@@ -147,6 +147,17 @@ export default {
         that.tips = '复制百度云密码前往下载';
         clearTimeout(s);
       },2000);
+    },
+    countDownload(id, count) {
+
+      let download = this.$Bmob.Query('download');
+      download.set('id', id);
+      download.set('downloads', count + 1);
+      download.save().then(() => {
+        this.visible = false;
+        this.dialog = {};
+        this.getDownload();
+      });
     },
   },
 };

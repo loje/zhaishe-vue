@@ -30,7 +30,7 @@
       <div class="dialog-box">
         <div class="dialog-left">
           <div class="img" :style="{backgroundImage: `url(${dialogForm.src})`}"></div>
-          <!-- <input type="text" placeholder="请输入邀请码" /> -->
+          <input type="text" placeholder="请输入邀请码" />
         </div>
         <div class="dialog-right">
           <div class="form-t">
@@ -270,13 +270,14 @@ export default {
         }
         input {
           width: 273px;
-          height: 47px;
+          height: 40px;
           background: rgba(235,235,235,1);
           border: none;
           outline: none;
           border-radius: 10px;
           text-align: center;
           font-size: 18px;
+          box-sizing: border-box;
         }
       }
 
