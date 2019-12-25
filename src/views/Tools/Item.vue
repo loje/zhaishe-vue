@@ -17,16 +17,14 @@
               <div class="support-t">支持系统</div>
               <div class="sys-list">
                 <template v-for="(i, $index) in sys" >
-                  <div class="tools-sys" :key="$index" v-html="i.icon">
-                    <!-- <sub class="t" :key="$index">{{i.title}}</sub> -->
-                  </div>
+                  <div class="tools-sys" :key="$index" v-html="i.icon"></div>
                 </template>
               </div>
             </div>
 
             <div class="btn-group">
               <a class="btn" @click="showBuy">购买</a>
-              <a>下载</a>
+              <router-link :to="{path: '/download', query: { keyword: title }}">下载</router-link>
             </div>
           </div>
         </div>
