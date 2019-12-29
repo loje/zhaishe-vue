@@ -1,114 +1,150 @@
 <template>
-  <div class="max-width">
-    <div class="swiper-box">
-      <div class="box-left">
-        <loading v-if="bannerLoading"></loading>
-        <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
-          <template v-for="(item, $index) in bannerLeft">
-          <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
-              <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
-            </div>
-          </swiper-slide>
-          </template>
-        </swiper>
+  <div>
+    <div class="max-width">
+      <div class="swiper-box">
+        <div class="box-left">
+          <loading v-if="bannerLoading"></loading>
+          <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
+            <template v-for="(item, $index) in bannerLeft">
+            <swiper-slide :key="$index">
+              <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+                <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+              </div>
+            </swiper-slide>
+            </template>
+          </swiper>
+        </div>
+        <div class="box-right">
+          <loading v-if="bannerLoading"></loading>
+          <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
+            <template v-for="(item, $index) in bannerRight">
+            <swiper-slide :key="$index">
+              <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+                <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+              </div>
+            </swiper-slide>
+            </template>
+          </swiper>
+        </div>
       </div>
-      <div class="box-right">
-        <loading v-if="bannerLoading"></loading>
-        <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
-          <template v-for="(item, $index) in bannerRight">
-          <swiper-slide :key="$index">
-            <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
-              <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
-            </div>
-          </swiper-slide>
-          </template>
-        </swiper>
-      </div>
-    </div>
 
-    <div class="layer">
-      <template v-if="this.recommendList.length > 0">
-      <div class="title">
-        <span>宅设好物</span>
-        <a @click="$router.push('/tools')">MORE</a>
-      </div>
-      </template>
-      <div class="layer-box">
-        <template v-if="this.recommendList.length > 0">
-        <loading v-if="recommendLoading"></loading>
-        <swiper v-else :options="toolOption" ref="toolsSwiper">
-          <template v-for="(item, $index) in recommendList">
-          <swiper-slide :key="$index" >
-            <div class="img" :style="{backgroundImage:`url(${item.src})`}">
-              <router-link :to="{path: '/tools/item', query: { id: item.id }}" class="link"></router-link>
-            </div>
-          </swiper-slide>
-          </template>
-        </swiper>
-        </template>
-        <div class="box-2">
-          <div class="box col-2">
-            <div class="box-title">
-              <span>宅设活动</span>
-              <a @click="$router.push('/activity')">MORE</a>
-            </div>
-            <div class="media-list">
-              <loading v-if="activityLoading"></loading>
-              <template v-else v-for="(item, $index) in activityList">
-                <div class="media" :key="$index" v-if="$index < 4">
-                  <div class="media-left">
-                    <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
-                  </div>
-                  <div class="media-mid">
-                    <div class="media-title">{{item.title}}</div>
-                    <div class="media-desc">{{item.desc}}</div>
-                  </div>
-                  <div class="media-right">
-                    <a class="btn disabled" v-if="item.status === 0" @click="toActivity(item.id)">查看</a>
-                    <a class="btn" v-else-if="item.status === 1" @click="toActivity(item.id)">查看</a>
-                    <a class="btn disabled" v-else-if="item.status === 2" @click="toActivity(item.id)">查看</a>
-                  </div>
-                </div>
-              </template>
+      <div class="layer">
+        <div class="layer-flex">
+          <div class="layer-title">
+            <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
+            <div class="title">Eagle素材包</div>
+            <div class="more">···</div>
+          </div>
+          <div class="layer-list">
+            <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
+              <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+              <div class="title">{{item.title}}</div>
+              <div class="item-right">{{item.author}}</div>
             </div>
           </div>
-          <div class="box col-1">
-            <div class="box-title">
-              <span>更多资源</span>
-              <a @click="$router.push('/download')">MORE</a>
+        </div>
+        <div class="layer-flex">
+          <div class="layer-title">
+            <div class="icon"></div>
+            <div class="title">设计师工具</div>
+            <div class="more">···</div>
+          </div>
+          <div class="layer-block">
+            <div class="block-item" v-for="(item, $index) in recommendList" :key="$index">
+              <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+              <div class="title">{{item.title}}</div>
             </div>
-            <loading v-if="downloadLoading"></loading>
-            <div class="title-list" v-else>
-              <template v-for="(item, $index) in downloadList">
-                <div class="t" :key="$index">
-                {{item.title}} <span>{{item.downloads}}</span>
-                </div>
-              </template>
+            <div class="block-item more-item">
+              <div class="icon">加入宅设</div>
+              <div class="title">其他</div>
+            </div>
+          </div>
+        </div>
+        <div class="layer-flex">
+          <div class="layer-title">
+            <div class="icon"></div>
+            <div class="title">私单墙</div>
+            <div class="more">···</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="activity-layer">
+      <div class="max-width">
+        <div class="layer-title">
+          <div class="title">宅设分享会</div>
+          <div class="layer-nav">
+            <div class="nav active">宅社主办</div>
+            <div class="nav">其他活动</div>
+          </div>
+          <div class="pages">
+            <div class="prev">上一页</div>
+            <div class="page-list">
+              <div class="page">1</div>
+              <div class="page">2</div>
+              <div class="page">3</div>
+              <div class="page more">···</div>
+              <div class="page">10</div>
+            </div>
+            <div class="prev">下一页</div>
+          </div>
+        </div>
+
+        <div class="activity-list">
+          <div class="the-activity" v-for="(item, $index) in activityList" :key="$index">
+            <div class="activity-left">
+              <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+            </div>
+            <div class="activity-mid">
+              <div class="title">{{item.title}}</div>
+              <div class="desc">{{item.desc}}</div>
+              <div class="tag"></div>
+            </div>
+            <div class="activity-right">
+              <div class="btn">查看活动</div>
+              <div class="price">￥60 ~ ￥120</div>
+              <div class="toggle" @click="toggle($index)">查看分享人</div>
+            </div>
+            <div class="speaker-list" v-show="item.toggleStatus === true">
+              <div class="speaker">
+                <div class="img"></div>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-
-    <div class="layer" v-if="designerList.length > 0">
-      <div class="title">
-        <span>宅设严选人</span>
-        <a @click="$router.push('/designer')">MORE</a>
+    <div class="designer-layer">
+      <div class="max-width">
+        <div class="layer-title">
+          <div class="title">宅设分享人<span>宅设大咖组</span></div>
+          <div class="more">···</div>
+        </div>
+        <div class="people-box">
+          <loading v-if="designerLoading"></loading>
+          <swiper v-else :options="designerSwiperOption" ref="designerSwiper">
+            <template v-for="(item, $index) in designerList">
+            <swiper-slide :key="$index">
+            <div class="box">
+              <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
+              <div class="info">
+                <div class="name">{{item.name}}</div>
+                <div class="title">
+                  <span>title1</span>
+                  <span>title2</span>
+                </div>
+                <div class="btn">个人链接</div>
+                <div class="get">找他接单</div>
+              </div>
+            </div>
+            </swiper-slide>
+            </template>
+          </swiper>
+        </div>
       </div>
-      <loading v-if="designerLoading"></loading>
-      <div class="people-box" v-else>
-        <swiper :options="designerSwiperOption" ref="designerSwiper">
-          <template v-for="(item, $index) in designerList">
-          <swiper-slide :key="$index">
-          <div class="box">
-            <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
-            <div class="name">{{item.name}}</div>
-          </div>
-          </swiper-slide>
-          </template>
-        </swiper>
-      </div>
+    </div>
+    <div class="btm-bannner">
+      <img src="../assets/img/btm_tips.png" />
     </div>
   </div>
 </template>
@@ -143,16 +179,17 @@ export default {
         delay: 1000,
         direction : 'vertical',
         slidesPerView : 2,
+        spaceBetween : 20,
         pagination: {
           el: '.swiper-pagination',
         }
       },
-      toolOption: {
-        loop : true,
-        delay: 1000,
-        slidesPerView: 3,
-        spaceBetween: 8,
-      },
+      // toolOption: {
+      //   loop : true,
+      //   delay: 1000,
+      //   slidesPerView: 3,
+      //   spaceBetween: 8,
+      // },
       bannerLeft: [],
       bannerRight: [],
       bannerLoading: false,
@@ -170,8 +207,8 @@ export default {
       designerLoading: false,
 
       designerSwiperOption: {
-        loop : true,
         autoplay: true,
+        loop : true,
         delay: 1000,
         slidesPerView: 5,
         spaceBetween: 40,
@@ -184,11 +221,11 @@ export default {
     }
   },
   mounted() {
+    this.getDesigner();
     this.getActivity();
     this.getBanner();
     this.getRecommend();
     this.getDownload();
-    this.getDesigner();
   },
   methods: {
     getBanner() {
@@ -228,7 +265,11 @@ export default {
       query.find().then((res) => {
         this.recommendLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({id: res[i].objectId, src: res[i].imgSrc});
+          arr.push({
+            id: res[i].objectId,
+            title: res[i].title,
+            imgSrc: res[i].imgSrc
+          });
         }
         this.recommendList = arr;
       });
@@ -247,9 +288,10 @@ export default {
           arr.push({
             id: res[i].objectId,
             title: res[i].title,
-            src: res[i].imgSrc,
+            imgSrc: res[i].imgSrc,
             desc: res[i].desc,
             status: res[i].status,
+            toggleStatus: false,
           });
         }
         this.activityList = arr;
@@ -260,13 +302,21 @@ export default {
       let arr = [];
       this.designerLoading = true;
       query.equalTo('notDelete', '===', true);
+      query.equalTo('isTop', '===', true);
       query.find().then((res) => {
         this.designerLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          arr.push({
-            id: res[i].objectId,
-            title: res[i].title,
-            downloads: res[i].downloads,
+          let sort = this.$Bmob.Query('download_sort');
+          sort.get(res[i].sort).then((s) => {
+            if (s.name === 'Eagle分类素材包') {
+              arr.push({
+                id: res[i].objectId,
+                title: res[i].title,
+                sort: s.name,
+                imgSrc: res[i].imgSrc,
+                author: res[i].author,
+              });
+            }
           });
         }
         this.downloadList = arr;
@@ -295,6 +345,14 @@ export default {
         query: { id },
       })
     },
+    toggle(i) {
+      for (let x = 0; x < this.activityList.length; x += 1) {
+        if (x !== i) {
+          this.activityList[x].toggleStatus = false;
+        }
+      }
+      this.activityList[i].toggleStatus = !this.activityList[i].toggleStatus;
+    },
   },
 }
 </script>
@@ -302,16 +360,15 @@ export default {
 <style lang="scss" scope>
   .swiper-box {
     display: flex;
-    margin-top: 20px;
-    margin-bottom: 31px;
+    margin-top: 30px;
+    margin-bottom: 40px;
     width: 100%;
     height: 340px;
-    border-radius: 10px;
     overflow: hidden;
     .box-left {
-      width: 760px;
+      padding-right: 20px;
+      width: 700px;
       height: 100%;
-      background-color: #707A81;
       background-position: 50%;
       background-size: cover;
       .swiper-container{
@@ -331,7 +388,7 @@ export default {
       }
     }
     .box-right {
-      width: 440px;
+      width: 400px;
       .swiper-container{
         width: 100%;
         height: 100%;
@@ -347,206 +404,471 @@ export default {
   .swiper-pagination-bullet-active {
     background-color: #fff;
   }
+
   .layer {
-    margin-bottom: 31px;
-    .title {
-      margin-bottom: 22px;
-      padding-left: 34px;
-      span {
-        display: inline-block;
-        vertical-align: middle;
-        font-size: 24px;
-        line-height: 40px;
-      }
-      a {
-        float: right;
-        width: 100px;
-        height: 40px;
-        text-align: center;
-        line-height: 40px;
-        background-color: #fff;
-        color: #333;
-        border-radius: 10px;
-        cursor: pointer;
-        font-family: PingFang SC Regular;
-        font-size: 16px;
-        transition: background-color 0.5s;
-        &:hover {
-          background-color: #FFCB2B;
+    display: flex;
+    width: 100%;
+    margin-bottom: 40px;
+    justify-content: space-between;
+    .layer-flex {
+      padding: 20px;
+      height: 260px;
+      width: 350px;
+      background-color: #fff;
+      overflow: hidden;
+      box-sizing: border-box;
+      .layer-title {
+        position: relative;
+        margin-bottom: 20px;
+        padding-right: 50px;
+        width: 100%;
+        height: 22px;
+        box-sizing: border-box;
+        .icon {
+          display: inline-block;
+          width: 22px;
+          height: 22px;
+          background-color: #ccc;
+          border-radius: 50%;
+          vertical-align: middle;
+        }
+        .title {
+          display: inline-block;
+          margin-left: 10px;
+          font-size: 16px;
+          font-family: PingFangSC;
+          font-weight: bold;
+          color: #383838;
+          line-height: 22px;
+          vertical-align: middle;
+        }
+        .more {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 40px;
+          height: 22px;
+          line-height: 22px;
+          text-align: center;
+          border: 1px solid #F2F2F2;
+          letter-spacing: 2px;
+          color: #F4C51D;
+          font-size: 24px;
+          border-radius: 2px;
+          transition: all ease 0.25s;
+          cursor: pointer;
+          &:hover {
+            border-color: #F4C51D;
+            background-color: rgba(244,197,29,0.3);
+          }
         }
       }
-    }
-    .layer-box {
-      width: 100%;
-      .box {
-        width: 396px;
-        margin-bottom: 8px;
-        background-color: #fff;
-        border-radius: 10px;
+      .layer-list {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+        justify-content: space-between;
+        .list-item {
+          position: relative;
+          display: flex;
+          margin-bottom: 13px;
+          align-items: center;
+          width: 100%;
+          font-size: 12px;
+          line-height: 20px;
+          cursor: pointer;
+          .icon {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background-position: 50%;
+            background-size: cover;
+          }
+          .title {
+            flex: 1;
+            padding-left: 5px;
+            height: 20px;
+            color: #888;
+          }
+          .item-right {
+            width: 80px;
+            text-align: right;
+            color: #888;
+          }
+          &:last-child {
+            margin-bottom: 0;
+          }
+          &:hover {
+            .title {
+              color: #F4C51D;
+            }
+            .item-right {
+              color: #F4C51D;
+            }
+          }
+        }
       }
 
-      .swiper-container{
-        margin-bottom: 8px;
+      .layer-block {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
         width: 100%;
-        height: 210px;
-        .img {
-          width: 100%;
-          height: 100%;
-          background-position: 50%;
-          background-size: cover;
-          border-radius: 10px;
-          .link {
-            display: block;
-            width: 100%;
-            height: 100%;
+        .block-item {
+          margin-bottom: 10px;
+          width: 33.33%;
+          height: 90px;
+          .icon {
+            margin: auto;
+            width: 50px;
+            height: 50px;
+            background-position: 50%;
+            background-size: cover;
+          }
+          .title {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #888;
+            text-align: center;
+          }
+
+          &.more-item {
+            .icon {
+              display: flex;
+              align-items: center;
+              padding: 0 10px;
+              border: 2px solid #F2F2F2;
+              box-sizing: border-box;
+              font-size: 12px;
+              color: #888;
+            }
           }
         }
       }
-      .box-2 {
+    }
+  }
+
+  .activity-layer {
+    background-color: #fff;
+    .max-width {
+      margin: auto;
+      .layer-title {
         display: flex;
-        justify-content: space-between;
-        .box {
-          margin-bottom: 0;
-          padding: 30px;
-          height: 600px;
-          box-sizing: border-box;
-          .box-title {
-            margin-bottom: 50px;
-            span {
-              font-size: 24px;
-              line-height: 24px;
+        margin-bottom: 30px;
+        align-items: center;
+        width: 100%;
+        height: 50px;
+        border-bottom: 1px solid #F2F2F2;
+        box-sizing: border-box;
+        .title {
+          padding-left: 10px;
+          width: 280px;
+          font-size: 16px;
+          font-family: PingFangSC;
+          font-weight: bold;
+          color: #383838;
+          line-height: 50px;
+          vertical-align: middle;
+        }
+        .layer-nav {
+          flex: 1;
+          display: flex;
+          .nav {
+            margin: 0 30px;
+            height: 50px;
+            line-height: 50px;
+            border-bottom: 4px solid transparent;
+            box-sizing: border-box;
+            cursor: pointer;
+            &:hover, &.active {
+              color: #F4C51D;
+              border-bottom: 4px solid #F4C51D;
             }
-            a {
-              float: right;
-              font-size: 14px;
-              transition: color 0.5s;
-              line-height: 24px;
+          }
+        }
+        .pages {
+          .prev {
+            display: inline-block;
+            padding: 0 15px;
+            height: 50px;
+            line-height: 50px;
+            vertical-align: middle;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+          }
+          .page-list {
+            display: inline-block;
+            vertical-align: middle;
+            .page {
+              display: inline-block;
+              width: 34px;
+              height: 50px;
+              line-height: 50px;
+              vertical-align: middle;
+              text-align: center;
               cursor: pointer;
+              font-weight: bold;
+              transition: all ease 0.25s;
+              &.more {
+                color: #D8D8D8;
+                font-weight: normal;
+                letter-spacing: 4px;
+              }
               &:hover {
-                color: #FFCB2B;
+                background-color: #F4C51D;
+                color: #000;
               }
             }
           }
-          .title-list {
-            width: 100%;
-            .t {
-              position: relative;
-              padding-right: 30px;
-              width: 100%;
-              margin-bottom: 20px;
-              font-size: 16px;
-              font-family: PingFang SC Regular;
-              color: #666;
-              overflow : hidden;
-              text-overflow: ellipsis;
-              display: -webkit-box;
-              -webkit-line-clamp: 1;
-              -webkit-box-orient: vertical;
-              word-break: break-all;
-              box-sizing: border-box;
-              span {
-                position: absolute;
-                right: 0;
-                top:0;
-              }
-            }
+          .next {
+            display: inline-block;
+            padding: 0 15px;
+            height: 50px;
+            line-height: 50px;
+            vertical-align: middle;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
           }
         }
-        .col-1 {
-          margin-left: 8px;
-          width: 33.3%;
-        }
-        .col-2 {
-          width: 66.6%;
-          height: 600px;
-          .media-list {
+      }
+
+      .activity-list {
+        .the-activity {
+          display: flex;
+          flex-wrap: wrap;
+          margin-bottom: 50px;
+          width: 100%;
+          &:last-child {
+            margin-bottom: 0;
+          }
+          .activity-left {
+            width: 280px;
+            height: 160px;
+            .img {
+              width: 280px;
+              height: 160px;
+              background-color: #888;
+              border-radius: 3px;
+              background-position: 50%;
+              background-size: cover;
+            }
+          }
+          .activity-mid {
+            flex: 1;
+            padding: 0 30px;
+            box-sizing: border-box;
+            .title {
+              margin-bottom: 10px;
+              font-size: 20px;
+              font-family: PingFangSC;
+              font-weight: 600;
+              color: #262626;
+              line-height: 32px;
+            }
+            .desc {
+              font-size: 14px;
+              color: #888;
+              line-height: 24px;
+            }
+          }
+          .activity-right {
             position: relative;
-            .media {
-              display: flex;
-              margin-bottom: 15px;
-              width: 100%;
-              align-items: center;
-              .media-left {
-                .img {
-                  width: 102px;
-                  height: 102px;
-                  background-position: 50%;
-                  background-size: cover;
-                  border-radius: 10px; 
-                }
+            width: 120px;
+            height: 160px;
+            text-align: right;
+            .btn {
+              display: inline-block;
+              width: 100px;
+              height: 40px;
+              line-height: 38px;
+              text-align: center;
+              cursor: pointer;
+              border-radius: 3px;
+              border: 2px solid #F4C51D;
+              box-sizing: border-box;
+              font-size: 14px;
+              font-weight: bold;
+              color: #262626;
+              &:hover {
+                background-color: rgba(244,197,29,0.30);
               }
-              .media-mid {
-                margin-left: 28px;
-                width: 400px;
-                .media-title {
-                  font-size: 18px;
-                  font-family: PingFang SC Regular;
-                  color: #333;
-                  overflow : hidden;
-                  text-overflow: ellipsis;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 2;
-                  -webkit-box-orient: vertical;
-                }
-                .media-desc {
-                  margin-top: 9px;
-                  font-size: 14px;
-                  font-family: PingFang SC Regular;
-                  color: #666;
-                  overflow : hidden;
-                  text-overflow: ellipsis;
-                  display: -webkit-box;
-                  -webkit-line-clamp: 2;
-                  -webkit-box-orient: vertical;
-                }
-              }
-              .media-right {
-                flex: 1;
-                text-align:right;
-                .btn {
-                  display: inline-block;
-                  width: 100px;
-                  height: 40px;
-                  line-height: 40px;
-                  background: #FFCB2B;
-                  font-size: 16px;
-                  font-family: PingFang SC Regular;
-                  color: #333;
-                  border-radius: 10px;
-                  text-align: center;
-                  cursor: pointer;
-                  &.disabled {
-                    background: #EBEBEB;
-                  }
-                }
+            }
+            .price {
+              margin-top: 10px;
+              font-size: 16px;
+              font-family: PingFangSC;
+              font-weight: 600;
+              color: rgba(244,117,29,1);
+              line-height: 22px;
+            }
+            .toggle {
+              position: absolute;
+              right: 0;
+              bottom: 0;
+              color: #2B2B2B;
+              font-size: 12px;
+              cursor: pointer;
+            }
+          }
+          .speaker-list {
+            display: none;
+            margin-top: 20px;
+            width: 100%;
+            background-color: #FCFCFC;
+            .speaker {
+              padding: 19px 30px;
+              .img {
+                width: 80px;
+                height: 80px;
               }
             }
           }
         }
       }
     }
-    .people-box {
-      margin-bottom: 50px;
-      display: flex;
-      justify-content: space-between;
-      .box {
-        width: 200px;
-        .img {
-          width: 100%;
-          height: 250px;
-          background-color: #fff;
-          border-radius: 10px;
-          background-position: 50%;
-          background-size: cover;
-        }
-        .name {
-          margin-top: 15px;
-          text-align: center;
+  }
+
+  .designer-layer {
+    padding-top: 50px;
+    padding-bottom: 30px;
+    background-color: #fff;
+    .max-width {
+      margin: auto;
+      .layer-title {
+        position: relative;
+        margin-bottom: 20px;
+        padding-right: 50px;
+        width: 100%;
+        height: 22px;
+        box-sizing: border-box;
+        .title {
+          display: inline-block;
           font-size: 16px;
-          font-family: PingFang SC Regular;
-          color: #333;
+          font-family: PingFangSC;
+          font-weight: bold;
+          color: #383838;
+          line-height: 22px;
+          vertical-align: middle;
+          span {
+            margin-left: 20px;
+            font-size: 14px;
+            font-family: PingFangSC;
+            font-weight: 400;
+            color: rgba(136,136,136,1);
+            line-height: 20px;
+          }
+        }
+        .more {
+          position: absolute;
+          right: 0;
+          top: 0;
+          width: 40px;
+          height: 22px;
+          line-height: 22px;
+          text-align: center;
+          border: 1px solid #F2F2F2;
+          letter-spacing: 2px;
+          color: #F4C51D;
+          font-size: 24px;
+          border-radius: 2px;
+          transition: all ease 0.25s;
+          cursor: pointer;
+          &:hover {
+            border-color: #F4C51D;
+            background-color: rgba(244,197,29,0.3);
+          }
         }
       }
+      .people-box {
+        width: 100%;
+        .box {
+          position: relative;
+          width: 100%;
+          height: 340px;
+          border: 1px solid #D8D8D8;
+          overflow: hidden;
+          box-sizing: border-box;
+          .img {
+            position: relative;
+            width: 100%;
+            height: 230px;
+            background-color: #fff;
+            background-position: 50%;
+            background-size: cover;
+            z-index: 0;
+          }
+          .info {
+            position: absolute;
+            left: 0;
+            bottom: -150px;
+            padding: 25px 15px 15px 15px;
+            width: 100%;
+            height: 260px;
+            background-color: #fff;
+            box-sizing: border-box;
+            transition: all ease-in-out 0.25s;
+            &:hover {
+              bottom: 0px;
+            }
+            .name {
+              font-size: 16px;
+              line-height: 20px;
+              font-family: PingFang SC Regular;
+              color: #383838;
+            }
+            .title {
+              margin-top: 20px;
+              color: #888;
+              font-size: 12px;
+              line-height: 17px;
+              span {
+                margin-top: 3px;
+                display: block;
+                &:first-child {
+                  margin-top: 0;
+                }
+              }
+            }
+            .btn {
+              display: block;
+              margin-top: 40px;
+              width: 66px;
+              height: 25px;
+              line-height: 25px;
+              text-align: center;
+              color: #333;
+              font-size: 12px;
+              text-align: center;
+              border-radius: 2px;
+              background-color: #F4C51D;
+              cursor: pointer;
+            }
+            .get {
+              margin-top: 50px;
+              font-size: 16px;
+              font-family: PingFangSC;
+              font-weight: bold;
+              color: rgba(51,51,51,1);
+              line-height: 22px;
+              cursor: pointer;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .btm-bannner {
+    width: 100%;
+    background-image: url(../assets/img/btm_tips.png);
+    background-position: 50%;
+    background-color: #fff;
+    img {
+      display: block;
+      margin: auto;
+      max-width: 100%;
     }
   }
 </style>
