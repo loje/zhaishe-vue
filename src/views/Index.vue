@@ -149,7 +149,7 @@
                 <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
               </div>
               <div class="activity-mid">
-                <div class="title"><span>最新活动</span>{{item.title}}</div>
+                <div class="title"><span v-if="pageAct === 1 && $index === 0">最新活动</span>{{item.title}}</div>
                 <div class="desc">{{item.desc}}</div>
                 <div class="tag">
                   <span>宅设分享会</span>
