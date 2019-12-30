@@ -45,12 +45,14 @@
         </div>
         <div class="layer-flex">
           <div class="layer-title">
-            <div class="icon"></div>
+            <div class="icon">
+              <i class="iconfont">&#xe62b;</i>
+            </div>
             <div class="title">设计师工具</div>
             <div class="more">···</div>
           </div>
           <div class="layer-block">
-            <div class="block-item" v-for="(item, $index) in recommendList" :key="$index">
+            <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
               <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
               <div class="title">{{item.title}}</div>
             </div>
@@ -62,9 +64,56 @@
         </div>
         <div class="layer-flex">
           <div class="layer-title">
-            <div class="icon"></div>
+            <div class="icon">
+              <i class="iconfont" style="color:#197AFF;">&#xe665;</i>
+            </div>
             <div class="title">私单墙</div>
-            <div class="more">···</div>
+            <div class="handle">
+              <div class="prev">
+                <i class="iconfont">&#xe693;</i>
+              </div>
+              <div class="next">
+                <i class="iconfont">&#xe600;</i>
+              </div>
+            </div>
+          </div>
+          <div class="layer-list">
+            <div class="list-item" >
+              <div class="icon">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              </div>
+              <div class="title">web设计</div>
+              <div class="item-right">2天前发布</div>
+            </div>
+            <div class="list-item" >
+              <div class="icon">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              </div>
+              <div class="title">web设计</div>
+              <div class="item-right">2天前发布</div>
+            </div>
+            <div class="list-item" >
+              <div class="icon">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              </div>
+              <div class="title">web设计</div>
+              <div class="item-right">2天前发布</div>
+            </div>
+            <div class="list-item" >
+              <div class="icon">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              </div>
+              <div class="title">web设计</div>
+              <div class="item-right">2天前发布</div>
+            </div>
+            <div class="list-item" >
+              <div class="icon">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              </div>
+              <div class="title">web设计</div>
+              <div class="item-right">2天前发布</div>
+            </div>
+            <div class="pulish">我要发布</div>
           </div>
         </div>
       </div>
@@ -74,19 +123,19 @@
         <div class="layer-title">
           <div class="title">宅设分享会</div>
           <div class="layer-nav">
-            <div class="nav active">宅社主办</div>
-            <div class="nav">其他活动</div>
+            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActivity('宅设主办', 1)">宅社主办</div>
+            <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActivity('其他活动', 1)">其他活动</div>
           </div>
           <div class="pages">
-            <div class="prev">上一页</div>
+            <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
             <div class="page-list">
-              <div class="page">1</div>
-              <div class="page">2</div>
+              <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
+              <!-- <div class="page">2</div>
               <div class="page">3</div>
               <div class="page more">···</div>
-              <div class="page">10</div>
+              <div class="page">10</div> -->
             </div>
-            <div class="prev">下一页</div>
+            <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
           </div>
         </div>
 
@@ -96,18 +145,62 @@
               <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
             </div>
             <div class="activity-mid">
-              <div class="title">{{item.title}}</div>
+              <div class="title"><span>最新活动</span>{{item.title}}</div>
               <div class="desc">{{item.desc}}</div>
-              <div class="tag"></div>
+              <div class="tag">
+                <span>宅设分享会</span>
+                <span class="sort">活动标签：线下活动、线上直播</span>
+                <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
+                <span class="num">参与人数：{{item.number}}</span>
+              </div>
             </div>
             <div class="activity-right">
-              <div class="btn">查看活动</div>
+              <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
               <div class="price">￥60 ~ ￥120</div>
-              <div class="toggle" @click="toggle($index)">查看分享人</div>
+              <div class="toggle" @click="toggle($index)"><i class="iconfont">&#xe667;</i>查看分享人</div>
             </div>
             <div class="speaker-list" v-show="item.toggleStatus === true">
               <div class="speaker">
                 <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
+              </div>
+              <div class="speaker">
+                <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
+              </div>
+              <div class="speaker">
+                <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
+              </div>
+              <div class="speaker">
+                <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
+              </div>
+              <div class="speaker">
+                <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
+              </div>
+              <div class="speaker">
+                <div class="img"></div>
+                <div class="speaker-right">
+                  <div class="title">宅设分享人：赛狗</div>
+                  <div class="theme">《游戏视觉表达式》</div>
+                </div>
               </div>
             </div>
           </div>
@@ -197,8 +290,14 @@ export default {
       recommendList: [],
       recommendLoading: false,
 
+      actTab: '宅设主办',
+      actTotal: 0, // 总条数
+      actPages: 0, // 总页数
+      actLimit: 5, // 每页条数
       activityList: [],
       activityLoading: false,
+      skipAct: 0, // 跳过数量
+      pageAct: 1, // 当前页数
 
       downloadList: [],
       downloadLoading: false,
@@ -222,7 +321,7 @@ export default {
   },
   mounted() {
     this.getDesigner();
-    this.getActivity();
+    this.getActCount();
     this.getBanner();
     this.getRecommend();
     this.getDownload();
@@ -274,23 +373,75 @@ export default {
         this.recommendList = arr;
       });
     },
-    getActivity() {
+    getActCount() {
       var query = this.$Bmob.Query('activity');
+      query.equalTo('notDelete', '==', true);
+      query.count().then((total) => {
+        this.actTotal = total;
+        this.actPages = parseInt(total / this.actLimit);
+        if (total % this.actLimit > 0) {
+          this.actPages = this.actPages + 1;
+        }
+        console.log(this.actPages);
+        this.getActivity(this.actTab, 1);
+      });
+    },
+    getActivity(actTab, page) {
+      console.log(this.actPages);
+      this.actTab = actTab;
+
+      if (page) {
+        if (page > this.actPages) {
+          this.pageAct = this.actPages;
+        } else if (page < 0) {
+          this.pageAct = 1;
+        } else {
+          this.pageAct = page;
+        }
+      } else {
+        this.pageAct = 1
+      }
+      
+      var query = this.$Bmob.Query('activity');
+      this.skipAct = this.actLimit * (this.pageAct - 1);
 
       let arr = [];
       query.order('-endTime');
-      query.equalTo('isTop', '==', true);
+      // query.equalTo('isTop', '==', true);
       query.equalTo('notDelete', '==', true);
+      if (actTab === '宅设主办') {
+        query.equalTo('sort', '==', 1);
+      } else {
+        query.equalTo('sort', '!=', 1);
+      }
+      query.equalTo('notDelete', '==', true);
+
+      query.skip(this.skipAct);
+      query.limit(this.actLimit);
       this.activityLoading = true;
       query.find().then((res) => {
         this.activityLoading = false;
         for (let i = 0; i < res.length; i += 1) {
+          // console.log(res[i].startTime.ios);
+          for (let key in res[i].startTime) {
+            if (key === 'iso') {
+              res[i].startTime = res[i].startTime[key];
+            }
+          }
+          for (let key in res[i].endTime) {
+            if (key === 'iso') {
+              res[i].endTime = res[i].endTime[key];
+            }
+          }
           arr.push({
             id: res[i].objectId,
             title: res[i].title,
             imgSrc: res[i].imgSrc,
             desc: res[i].desc,
             status: res[i].status,
+            number: res[i].number,
+            startTime: res[i].startTime,
+            endTime: res[i].endTime,
             toggleStatus: false,
           });
         }
@@ -428,9 +579,12 @@ export default {
           display: inline-block;
           width: 22px;
           height: 22px;
-          background-color: #ccc;
           border-radius: 50%;
           vertical-align: middle;
+          i {
+            font-size: 22px;
+            color: #EDB61B;
+          }
         }
         .title {
           display: inline-block;
@@ -462,6 +616,30 @@ export default {
             background-color: rgba(244,197,29,0.3);
           }
         }
+        .handle {
+          position: absolute;
+          right: 0;
+          top: -4px;
+          display: flex;
+          .prev, .next {
+            width: 20px;
+            height: 28px;
+            line-height: 28px;
+            text-align: center;
+            border: 1px solid #F2F2F2;
+            border-radius: 2px;
+            cursor: pointer;
+            i {
+              color: #F4C51D;
+            }
+            &:hover {
+              border-color: #F4C51D;
+            }
+          }
+          .prev{
+            margin-right: 15px;
+          }
+        }
       }
       .layer-list {
         display: flex;
@@ -483,6 +661,9 @@ export default {
             border-radius: 50%;
             background-position: 50%;
             background-size: cover;
+            i {
+              display: block;
+            }
           }
           .title {
             flex: 1;
@@ -507,6 +688,17 @@ export default {
             }
           }
         }
+        .pulish {
+          display: block;
+          margin: auto;
+          text-align: center;
+          font-size: 12px;
+          font-family: PingFangSC;
+          font-weight: 400;
+          color: rgba(244,117,29,1);
+          line-height: 17px;
+          cursor: pointer;
+        }
       }
 
       .layer-block {
@@ -518,6 +710,7 @@ export default {
           margin-bottom: 10px;
           width: 33.33%;
           height: 90px;
+          cursor: pointer;
           .icon {
             margin: auto;
             width: 50px;
@@ -615,7 +808,7 @@ export default {
                 font-weight: normal;
                 letter-spacing: 4px;
               }
-              &:hover {
+              &:hover, &.active {
                 background-color: #F4C51D;
                 color: #000;
               }
@@ -635,10 +828,11 @@ export default {
       }
 
       .activity-list {
+        width: 100%;
         .the-activity {
           display: flex;
           flex-wrap: wrap;
-          margin-bottom: 50px;
+          margin-bottom: 60px;
           width: 100%;
           &:last-child {
             margin-bottom: 0;
@@ -656,7 +850,9 @@ export default {
             }
           }
           .activity-mid {
+            position: relative;
             flex: 1;
+            height: 160px;
             padding: 0 30px;
             box-sizing: border-box;
             .title {
@@ -666,11 +862,46 @@ export default {
               font-weight: 600;
               color: #262626;
               line-height: 32px;
+              span {
+                display: inline-block;
+                margin-right: 10px;
+                padding: 0 5px;
+                height: 18px;
+                line-height: 18px;
+                font-size: 12px;
+                border: 1px solid #FF5D01;
+                border-radius: 2px;
+                color: #FF5D01;
+                vertical-align: middle;
+              }
             }
             .desc {
               font-size: 14px;
               color: #888;
               line-height: 24px;
+            }
+            .tag {
+              position: absolute;
+              left: 30px;
+              bottom: 0;
+              width: 100%;
+              font-size: 12px;
+              line-height: 17px;
+              span {
+                color: #262626;
+              }
+              .sort {
+                color: #888;
+                margin-left: 25px;
+              }
+              .time {
+                color: #888;
+                margin-left: 25px;
+              }
+              .num {
+                color: #888;
+                margin-left: 25px;
+              }
             }
           }
           .activity-right {
@@ -710,18 +941,46 @@ export default {
               color: #2B2B2B;
               font-size: 12px;
               cursor: pointer;
+              i {
+                margin-right: 5px;
+                font-size: 12px;
+                color: #231916;
+              }
             }
           }
           .speaker-list {
-            display: none;
             margin-top: 20px;
             width: 100%;
             background-color: #FCFCFC;
+            white-space:nowrap;
+            overflow: auto;
             .speaker {
+              display: inline-block;
               padding: 19px 30px;
+              vertical-align: middle;
               .img {
+                display: inline-block;
                 width: 80px;
                 height: 80px;
+                border-radius: 50%;
+                background-color: #999;
+                vertical-align: middle;
+              }
+              .speaker-right {
+                display: inline-block;
+                vertical-align: middle;
+                padding-left: 15px;
+                .title {
+                  font-size: 14px;
+                  line-height: 20px;
+                  color: #2B2B2B;
+                }
+                .theme {
+                  margin-top: 10px;
+                  font-size: 12px;
+                  line-height: 17px;
+                  color: #2B2B2B;
+                }
               }
             }
           }

@@ -1,5 +1,5 @@
 <template>
-  <div class="activity-list max-width">
+  <div class="activity-page max-width">
     <div class="page-left">
       <loading v-if="loading === true"></loading>
       <template v-else v-for="(item, $index) in activityList">
@@ -149,7 +149,7 @@ export default {
 };
 </script>
 <style lang="scss" scope>
-  .activity-list {
+  .activity-page {
     display: flex;
     justify-content: baseline;
     padding: 20px 0;

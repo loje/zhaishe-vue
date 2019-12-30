@@ -1,0 +1,114 @@
+{
+  "id": "1507333",
+  "name": "宅设",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "",
+  "glyphs": [
+    {
+      "icon_id": "318441",
+      "name": "windows",
+      "font_class": "windows",
+      "unicode": "e659",
+      "unicode_decimal": 58969
+    },
+    {
+      "icon_id": "647147",
+      "name": "工具",
+      "font_class": "gongju",
+      "unicode": "e62b",
+      "unicode_decimal": 58923
+    },
+    {
+      "icon_id": "662411",
+      "name": "列表",
+      "font_class": "liebiao",
+      "unicode": "e665",
+      "unicode_decimal": 58981
+    },
+    {
+      "icon_id": "836716",
+      "name": "linux",
+      "font_class": "linux",
+      "unicode": "e765",
+      "unicode_decimal": 59237
+    },
+    {
+      "icon_id": "1017255",
+      "name": "安卓",
+      "font_class": "anzhuo",
+      "unicode": "e677",
+      "unicode_decimal": 58999
+    },
+    {
+      "icon_id": "2006805",
+      "name": "左",
+      "font_class": "you",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
+      "icon_id": "3238372",
+      "name": "左",
+      "font_class": "left-jf",
+      "unicode": "e693",
+      "unicode_decimal": 59027
+    },
+    {
+      "icon_id": "3419815",
+      "name": "search close",
+      "font_class": "searchclose",
+      "unicode": "ea13",
+      "unicode_decimal": 59923
+    },
+    {
+      "icon_id": "6171700",
+      "name": "任务-我的en+",
+      "font_class": "renwu",
+      "unicode": "eacd",
+      "unicode_decimal": 60109
+    },
+    {
+      "icon_id": "6446291",
+      "name": "链接",
+      "font_class": "tianchongxing-",
+      "unicode": "e63c",
+      "unicode_decimal": 58940
+    },
+    {
+      "icon_id": "6458949",
+      "name": "微信",
+      "font_class": "weixin",
+      "unicode": "e644",
+      "unicode_decimal": 58948
+    },
+    {
+      "icon_id": "8328256",
+      "name": "登录",
+      "font_class": "login",
+      "unicode": "e651",
+      "unicode_decimal": 58961
+    },
+    {
+      "icon_id": "9512488",
+      "name": "苹果",
+      "font_class": "apple-fill",
+      "unicode": "e60e",
+      "unicode_decimal": 58894
+    },
+    {
+      "icon_id": "10322038",
+      "name": "loading-solid",
+      "font_class": "loading-solid",
+      "unicode": "e60f",
+      "unicode_decimal": 58895
+    },
+    {
+      "icon_id": "11093968",
+      "name": "展 开",
+      "font_class": "zhankai",
+      "unicode": "e667",
+      "unicode_decimal": 58983
+    }
+  ]
+}
