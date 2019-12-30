@@ -49,7 +49,7 @@
               <i class="iconfont">&#xe62b;</i>
             </div>
             <div class="title">设计师工具</div>
-            <div class="more">···</div>
+            <div class="more" @click="$router.push({path: '/tools'})">···</div>
           </div>
           <div class="layer-block">
             <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
@@ -140,70 +140,75 @@
         </div>
 
         <div class="activity-list">
-          <div class="the-activity" v-for="(item, $index) in activityList" :key="$index">
-            <div class="activity-left">
-              <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+          <template v-if="activityList.length === 0">
+            <div style="text-align:center; color:#999;">暂无数据</div>
+          </template>
+          <template v-else>
+            <div class="the-activity" v-for="(item, $index) in activityList" :key="$index">
+              <div class="activity-left">
+                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+              </div>
+              <div class="activity-mid">
+                <div class="title"><span>最新活动</span>{{item.title}}</div>
+                <div class="desc">{{item.desc}}</div>
+                <div class="tag">
+                  <span>宅设分享会</span>
+                  <span class="sort">活动标签：线下活动、线上直播</span>
+                  <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
+                  <span class="num">参与人数：{{item.number}}</span>
+                </div>
+              </div>
+              <div class="activity-right">
+                <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
+                <div class="price">￥{{item.fee}}</div>
+                <div class="toggle" @click="toggle($index)"><i class="iconfont">&#xe667;</i>查看分享人</div>
+              </div>
+              <div class="speaker-list" v-show="item.toggleStatus === true">
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+                <div class="speaker">
+                  <div class="img"></div>
+                  <div class="speaker-right">
+                    <div class="title">宅设分享人：赛狗</div>
+                    <div class="theme">《游戏视觉表达式》</div>
+                  </div>
+                </div>
+              </div>
             </div>
-            <div class="activity-mid">
-              <div class="title"><span>最新活动</span>{{item.title}}</div>
-              <div class="desc">{{item.desc}}</div>
-              <div class="tag">
-                <span>宅设分享会</span>
-                <span class="sort">活动标签：线下活动、线上直播</span>
-                <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
-                <span class="num">参与人数：{{item.number}}</span>
-              </div>
-            </div>
-            <div class="activity-right">
-              <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
-              <div class="price">￥60 ~ ￥120</div>
-              <div class="toggle" @click="toggle($index)"><i class="iconfont">&#xe667;</i>查看分享人</div>
-            </div>
-            <div class="speaker-list" v-show="item.toggleStatus === true">
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-              <div class="speaker">
-                <div class="img"></div>
-                <div class="speaker-right">
-                  <div class="title">宅设分享人：赛狗</div>
-                  <div class="theme">《游戏视觉表达式》</div>
-                </div>
-              </div>
-            </div>
-          </div>
+          </template>
         </div>
       </div>
     </div>
@@ -382,12 +387,10 @@ export default {
         if (total % this.actLimit > 0) {
           this.actPages = this.actPages + 1;
         }
-        console.log(this.actPages);
         this.getActivity(this.actTab, 1);
       });
     },
     getActivity(actTab, page) {
-      console.log(this.actPages);
       this.actTab = actTab;
 
       if (page) {
@@ -440,6 +443,7 @@ export default {
             desc: res[i].desc,
             status: res[i].status,
             number: res[i].number,
+            fee: res[i].fee,
             startTime: res[i].startTime,
             endTime: res[i].endTime,
             toggleStatus: false,
