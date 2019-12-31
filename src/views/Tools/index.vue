@@ -15,10 +15,19 @@
           <div class="prev">上一页</div>
           <div class="page-list">
             <div class="page">1</div>
+            <div class="page">2</div>
+            <div class="page">3</div>
+            <div class="page">4</div>
+            <div class="page">5</div>
+            <div class="page">6</div>
           </div>
           <div class="next">下一页</div>
           
-          <div class="search-bar"></div>
+          <div class="search-bar">
+            <i class="iconfont">&#xe652;</i>
+            <input type="text" />
+            <span>搜索</span>
+          </div>
         </div>
       </div>
       <div class="layout-right"></div>
@@ -191,6 +200,7 @@ export default {
 <style lang="scss" scoped>
   .tools-page {
     padding: 20px 0;
+    background-color: #fff;
     .swiper-container {
       width: 100%;
       .swiper-slide {
@@ -215,10 +225,77 @@ export default {
     }
 
     .the-layout {
-      display: flex;
+      margin-top: 20px;
       width: 100%;
       .layout-left {
+        position: relative;
         width: 790px;
+        border-bottom: 1px solid #F2F2F2;
+        text-align: center;
+        .pages {
+          .prev, .next {
+            display: inline-block;
+            vertical-align: middle;
+            line-height: 50px;
+            color: #888;
+            font-size: 12px;
+          }
+          .page-list {
+            display: inline-flex;
+            margin: 0 15px;
+            line-height: 50px;
+            vertical-align: middle;
+            .page {
+              width: 34px;
+              height: 50px;
+              line-height: 50px;
+              font-size: 16px;
+              font-weight: bold;
+              color: #000;
+              text-align: center;
+              cursor: pointer;
+              &:hover {
+                color: #fff;
+                background-color: #F4C51D;
+              }
+            }
+          }
+        }
+        .search-bar {
+          position: absolute;
+          right: 0;
+          bottom: 10px;
+          display: flex;
+          align-items: center;
+          width: 170px;
+          height: 30px;
+          background-color: #FCFCFC;
+          i {
+            display: inline-block;
+            width: 24px;
+            line-height: 30px;
+            color: #888;
+          }
+          input {
+            padding: 0px 5px;
+            width: 110px;
+            height: 30px;
+            border:none;
+            outline: none;
+            background-color: transparent;
+            box-sizing: border-box;
+          }
+          span {
+            display: inline-block;
+            width: 24px;
+            text-align: right;
+            word-break: keep-all;
+            line-height: 30px;
+            font-size: 12px;
+            color: #888;
+            cursor: pointer;
+          }
+        }
       }
       .layout-right {
         flex: 1;
