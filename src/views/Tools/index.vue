@@ -29,8 +29,39 @@
             <span>搜索</span>
           </div>
         </div>
+
+        <div class="tools-list">
+          <div class="the-tool" v-for="(item, $index) in productList" :key="$index">
+            <div class="tool-left">
+              <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+            </div>
+            <div class="tool-middle">
+              <div class="title">{{item.title}}</div>
+              <div class="desc">{{item.desc}}</div>
+            </div>
+            <div class="tool-right">
+              <router-link class="btn" :to="{push: '/tools/item', query: { id: item.id }}">购买</router-link>
+              <router-link class="link" :to="{push: '/tools/item', query: { id: item.id }}">团购</router-link>
+              <!-- <router-link class="link" :to="{push: '/tools/item', query: { id: item.id }}">返利</router-link> -->
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="layout-right"></div>
+      <div class="layout-right">
+        <div class="right-block"></div>
+        <div class="right-tips">
+          <div class="title">购买需知</div>
+          <div class="text">平台可提供优惠购买服务，购买的时请加小编微信：zhaishehui01 </div>
+          <div class="text"><span>团购 - </span>我们需要凑满人数才会统一发出，所以不是第一时间拿到，请联系小编，及时跟进</div>
+          <div class="text"><span>返利券 - </span>小编会给出返利，可以凭优返利购买，记得找请找小编领取</div>
+          <div class="text"><span>无提示 - </span>无优惠，只推荐</div>
+        </div>
+        <div class="right-link">我有好工具需要曝光</div>
+
+        <div class="wechat-img">
+          <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png" />
+        </div>
+      </div>
     </div>
     <!-- <div class="tool" v-for="item in productList" :key="item.id">
       <div class="tool-left">
@@ -119,7 +150,8 @@ export default {
         slidesPerView: 3,
         spaceBetween: 30,
       },
-      // productList: [],
+
+      productList: [],
       // dialogForm: '',
       // tips: '',
 
@@ -146,38 +178,37 @@ export default {
       });
     },
     getProducts() {
-      // let that = this;
-      // var query = this.$Bmob.Query('product');
-      // let arr = [];
-      // query.find().then(function (res) {
-      //   for (let i = 0; i < res.length; i += 1) {
-      //     let arrb = [];
-      //     if (res[i].system) {
-      //       let sysList = res[i].system;
-      //       var querySys = that.$Bmob.Query('support_sys');
-      //       for (let x = 0; x < sysList.length; x += 1) {
-      //         querySys.get(sysList[x]).then((result) => {
-      //           arrb.push({
-      //             id: result.objectId,
-      //             icon: result.icon,
-      //             title: result.title,
-      //           });
-      //         });
-      //       }
-      //     }
+      var query = this.$Bmob.Query('product');
+      let arr = [];
+      query.find().then((res) => {
+        for (let i = 0; i < res.length; i += 1) {
+          let arrb = [];
+          if (res[i].system) {
+            let sysList = res[i].system;
+            var querySys = this.$Bmob.Query('support_sys');
+            for (let x = 0; x < sysList.length; x += 1) {
+              querySys.get(sysList[x]).then((result) => {
+                arrb.push({
+                  id: result.objectId,
+                  icon: result.icon,
+                  title: result.title,
+                });
+              });
+            }
+          }
           
-      //     arr.push({
-      //       id: res[i].objectId,
-      //       src: res[i].imgSrc,
-      //       title: res[i].title,
-      //       desc: res[i].desc,
-      //       groupPrice: res[i].groupPrice,
-      //       price: res[i].price,
-      //       sys: arrb,
-      //     });
-      //   }
-      //   that.productList = arr;
-      // });
+          arr.push({
+            id: res[i].objectId,
+            imgSrc: res[i].imgSrc,
+            title: res[i].title,
+            desc: res[i].desc,
+            groupPrice: res[i].groupPrice,
+            price: res[i].price,
+            sys: arrb,
+          });
+        }
+        this.productList = arr;
+      });
     },
     // showBuy(item) {
     //   this.dialogForm = item;
@@ -225,14 +256,20 @@ export default {
     }
 
     .the-layout {
+      display: flex;
       margin-top: 20px;
       width: 100%;
       .layout-left {
-        position: relative;
-        width: 790px;
-        border-bottom: 1px solid #F2F2F2;
-        text-align: center;
+        flex: 1;
+        padding-right: 60px;
+        box-sizing: border-box;
         .pages {
+          position: relative;
+          margin-bottom: 20px;
+          width: 100%;
+          height: 50px;
+          border-bottom: 1px solid #F2F2F2;
+          text-align: center;
           .prev, .next {
             display: inline-block;
             vertical-align: middle;
@@ -260,45 +297,161 @@ export default {
               }
             }
           }
-        }
-        .search-bar {
-          position: absolute;
-          right: 0;
-          bottom: 10px;
-          display: flex;
-          align-items: center;
-          width: 170px;
-          height: 30px;
-          background-color: #FCFCFC;
-          i {
-            display: inline-block;
-            width: 24px;
-            line-height: 30px;
-            color: #888;
-          }
-          input {
-            padding: 0px 5px;
-            width: 110px;
+
+          .search-bar {
+            position: absolute;
+            right: 0;
+            bottom: 10px;
+            display: flex;
+            align-items: center;
+            width: 170px;
             height: 30px;
-            border:none;
-            outline: none;
-            background-color: transparent;
-            box-sizing: border-box;
+            background-color: #FCFCFC;
+            i {
+              display: inline-block;
+              width: 24px;
+              line-height: 30px;
+              color: #888;
+            }
+            input {
+              padding: 0px 5px;
+              width: 110px;
+              height: 30px;
+              border:none;
+              outline: none;
+              background-color: transparent;
+              box-sizing: border-box;
+            }
+            span {
+              display: inline-block;
+              width: 24px;
+              text-align: right;
+              word-break: keep-all;
+              line-height: 30px;
+              font-size: 12px;
+              color: #888;
+              cursor: pointer;
+            }
           }
-          span {
-            display: inline-block;
-            width: 24px;
-            text-align: right;
-            word-break: keep-all;
-            line-height: 30px;
-            font-size: 12px;
-            color: #888;
-            cursor: pointer;
+        }
+
+        .tools-list {
+          width: 100%;
+          .the-tool {
+            display: flex;
+            margin-bottom: 25px;
+            width: 100%;
+            height: 110px;
+            &:last-child {
+              margin-bottom: 0;
+            }
+            .tool-left {
+              width: 190px;
+              height: 100%;
+              .img {
+                width: 100%;
+                height: 100%;
+                background-position: 50%;
+                background-size: cover;
+                border: 1px solid #D8D8D8;
+                border-radius: 2px;
+                box-sizing: border-box;
+              }
+            }
+            .tool-middle {
+              flex: 1;
+              padding-top: 15px;
+              padding-left: 25px;
+              padding-right: 25px;
+              box-sizing: border-box;
+              .title {
+                font-size: 16px;
+                font-weight: bold;
+                color: #383838;
+                line-height: 22px;
+              }
+              .desc {
+                margin-top: 10px;
+                font-size: 14px;
+                color: #888;
+                line-height: 24px;
+              }
+            }
+            .tool-right {
+              padding-top: 15px;
+              width: 100px;
+              text-align: center;
+              box-sizing: border-box;
+              .btn {
+                display: block;
+                width: 100%;
+                height: 40px;
+                line-height: 40px;
+                border: 1px solid #F4751D;
+                color: #F4751D;
+                font-size: 14px;
+                border-radius: 2px;
+                box-sizing: border-box;
+                transition: all 250ms ease-in-out;
+                &:hover {
+                  background-color: rgba(244,117,29,0.3);
+                }
+              }
+              .link {
+                display: inline-block;
+                margin-top: 10px;
+                color: #383838;
+                font-size: 12px;
+                line-height: 17px;
+              }
+            }
           }
         }
       }
       .layout-right {
-        flex: 1;
+        padding-top: 50px;
+        width: 220px;
+        box-sizing: border-box;
+        .right-block {
+          width: 220px;
+          height: 150px;
+          background-color: #888;
+          border-radius: 2px;
+        }
+        .right-tips {
+          margin-top: 25px;
+          .title {
+            color: #383838;
+            font-size: 16px;
+            line-height: 22px;
+            font-weight: bold;
+          }
+          .text {
+            margin-top: 25px;
+            font-size: 14px;
+            line-height: 24px;
+            color: #888;
+            span {
+              color: #383838;
+              font-weight: bold;
+            }
+          }
+        }
+        .right-link {
+          margin-top: 20px;
+          color: #F4751D;
+          font-size: 14px;
+          line-height: 20px;
+          cursor: pointer;
+        }
+        .wechat-img {
+          margin-top: 40px;
+          width: 120px;
+          height: 120px;
+          img {
+            width: 100%;
+          }
+        }
       }
     }
     // .tool {

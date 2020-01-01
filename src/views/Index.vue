@@ -1,119 +1,121 @@
 <template>
-  <div>
-    <div class="max-width">
-      <div class="swiper-box">
-        <div class="box-left">
-          <loading v-if="bannerLoading"></loading>
-          <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
-            <template v-for="(item, $index) in bannerLeft">
-            <swiper-slide :key="$index">
-              <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
-                <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
-              </div>
-            </swiper-slide>
-            </template>
-          </swiper>
+  <div class="home">
+    <div class="swiper-layer">
+      <div class="max-width">
+        <div class="swiper-box">
+          <div class="box-left">
+            <loading v-if="bannerLoading"></loading>
+            <swiper v-else :options="leftSwiperOption" ref="leftSwiper">
+              <template v-for="(item, $index) in bannerLeft">
+              <swiper-slide :key="$index">
+                <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+                  <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+                </div>
+              </swiper-slide>
+              </template>
+            </swiper>
+          </div>
+          <div class="box-right">
+            <loading v-if="bannerLoading"></loading>
+            <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
+              <template v-for="(item, $index) in bannerRight">
+              <swiper-slide :key="$index">
+                <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+                  <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+                </div>
+              </swiper-slide>
+              </template>
+            </swiper>
+          </div>
         </div>
-        <div class="box-right">
-          <loading v-if="bannerLoading"></loading>
-          <swiper v-else :options="rightSwiperOption" ref="rightSwiper">
-            <template v-for="(item, $index) in bannerRight">
-            <swiper-slide :key="$index">
-              <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
-                <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
-              </div>
-            </swiper-slide>
-            </template>
-          </swiper>
-        </div>
-      </div>
 
-      <div class="layer">
-        <div class="layer-flex">
-          <div class="layer-title">
-            <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
-            <div class="title">Eagle素材包</div>
-            <div class="more">···</div>
-          </div>
-          <div class="layer-list">
-            <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
-              <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
-              <div class="title">{{item.title}}</div>
-              <div class="item-right">{{item.author}}</div>
+        <div class="layer">
+          <div class="layer-flex">
+            <div class="layer-title">
+              <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
+              <div class="title">Eagle素材包</div>
+              <div class="more">···</div>
             </div>
-          </div>
-        </div>
-        <div class="layer-flex">
-          <div class="layer-title">
-            <div class="icon">
-              <i class="iconfont">&#xe62b;</i>
-            </div>
-            <div class="title">设计师工具</div>
-            <div class="more" @click="$router.push({path: '/tools'})">···</div>
-          </div>
-          <div class="layer-block">
-            <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
-              <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
-              <div class="title">{{item.title}}</div>
-            </div>
-            <div class="block-item more-item">
-              <div class="icon">加入宅设</div>
-              <div class="title">其他</div>
-            </div>
-          </div>
-        </div>
-        <div class="layer-flex">
-          <div class="layer-title">
-            <div class="icon">
-              <i class="iconfont" style="color:#197AFF;">&#xe665;</i>
-            </div>
-            <div class="title">私单墙</div>
-            <div class="handle">
-              <div class="prev">
-                <i class="iconfont">&#xe693;</i>
-              </div>
-              <div class="next">
-                <i class="iconfont">&#xe600;</i>
+            <div class="layer-list">
+              <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
+                <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+                <div class="title">{{item.title}}</div>
+                <div class="item-right">{{item.author}}</div>
               </div>
             </div>
           </div>
-          <div class="layer-list">
-            <div class="list-item" >
+          <div class="layer-flex">
+            <div class="layer-title">
               <div class="icon">
-                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <i class="iconfont">&#xe62b;</i>
               </div>
-              <div class="title">web设计</div>
-              <div class="item-right">2天前发布</div>
+              <div class="title">设计师工具</div>
+              <div class="more" @click="$router.push({path: '/tools'})">···</div>
             </div>
-            <div class="list-item" >
+            <div class="layer-block">
+              <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
+                <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+                <div class="title">{{item.title}}</div>
+              </div>
+              <div class="block-item more-item">
+                <div class="icon">加入宅设</div>
+                <div class="title">其他</div>
+              </div>
+            </div>
+          </div>
+          <div class="layer-flex">
+            <div class="layer-title">
               <div class="icon">
-                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <i class="iconfont" style="color:#197AFF;">&#xe665;</i>
               </div>
-              <div class="title">web设计</div>
-              <div class="item-right">2天前发布</div>
-            </div>
-            <div class="list-item" >
-              <div class="icon">
-                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              <div class="title">私单墙</div>
+              <div class="handle">
+                <div class="prev">
+                  <i class="iconfont">&#xe693;</i>
+                </div>
+                <div class="next">
+                  <i class="iconfont">&#xe600;</i>
+                </div>
               </div>
-              <div class="title">web设计</div>
-              <div class="item-right">2天前发布</div>
             </div>
-            <div class="list-item" >
-              <div class="icon">
-                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+            <div class="layer-list">
+              <div class="list-item" >
+                <div class="icon">
+                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                </div>
+                <div class="title">web设计</div>
+                <div class="item-right">2天前发布</div>
               </div>
-              <div class="title">web设计</div>
-              <div class="item-right">2天前发布</div>
-            </div>
-            <div class="list-item" >
-              <div class="icon">
-                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+              <div class="list-item" >
+                <div class="icon">
+                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                </div>
+                <div class="title">web设计</div>
+                <div class="item-right">2天前发布</div>
               </div>
-              <div class="title">web设计</div>
-              <div class="item-right">2天前发布</div>
+              <div class="list-item" >
+                <div class="icon">
+                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                </div>
+                <div class="title">web设计</div>
+                <div class="item-right">2天前发布</div>
+              </div>
+              <div class="list-item" >
+                <div class="icon">
+                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                </div>
+                <div class="title">web设计</div>
+                <div class="item-right">2天前发布</div>
+              </div>
+              <div class="list-item" >
+                <div class="icon">
+                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                </div>
+                <div class="title">web设计</div>
+                <div class="item-right">2天前发布</div>
+              </div>
+              <div class="pulish">我要发布</div>
             </div>
-            <div class="pulish">我要发布</div>
           </div>
         </div>
       </div>
@@ -513,52 +515,56 @@ export default {
 </script>
 
 <style lang="scss" scope>
-  .swiper-box {
-    display: flex;
-    margin-top: 30px;
-    margin-bottom: 40px;
-    width: 100%;
-    height: 340px;
-    overflow: hidden;
-    .box-left {
-      padding-right: 20px;
-      width: 700px;
-      height: 100%;
-      background-position: 50%;
-      background-size: cover;
-      .swiper-container{
-        width: 100%;
+  .swiper-layer {
+    background-color: #FCFCFC;
+    .swiper-box {
+      display: flex;
+      margin-top: 30px;
+      margin-bottom: 40px;
+      width: 100%;
+      height: 340px;
+      overflow: hidden;
+      .box-left {
+        padding-right: 20px;
+        width: 700px;
         height: 100%;
-        .img {
+        background-position: 50%;
+        background-size: cover;
+        .swiper-container{
           width: 100%;
           height: 100%;
-          background-position: 50%;
-          background-size: cover;
-          .link {
-            display: block;
+          .img {
             width: 100%;
             height: 100%;
+            background-position: 50%;
+            background-size: cover;
+            .link {
+              display: block;
+              width: 100%;
+              height: 100%;
+            }
+          }
+        }
+      }
+      .box-right {
+        width: 400px;
+        .swiper-container{
+          width: 100%;
+          height: 100%;
+          .img {
+            width: 100%;
+            height: 100%;
+            background-position: 50%;
+            background-size: cover;
           }
         }
       }
     }
-    .box-right {
-      width: 400px;
-      .swiper-container{
-        width: 100%;
-        height: 100%;
-        .img {
-          width: 100%;
-          height: 100%;
-          background-position: 50%;
-          background-size: cover;
-        }
-      }
+    .swiper-pagination-bullet-active {
+      background-color: #fff;
     }
   }
-  .swiper-pagination-bullet-active {
-    background-color: #fff;
-  }
+
 
   .layer {
     display: flex;

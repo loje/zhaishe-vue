@@ -90,6 +90,7 @@ export default {
     },
     close() {
       this.form = {};
+      this.showbox = 'login';
       this.$emit('close-login', '关闭登录框');
     },
   },

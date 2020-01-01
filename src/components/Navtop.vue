@@ -16,7 +16,9 @@
         </div>
       </div>
     </div>
-    <Login v-if="showLogin" :status="loginStatus" @close-login="closeLogin"></Login>
+    <transition name = "fade">
+    <Login v-show="showLogin" :status="loginStatus" @close-login="closeLogin"></Login>
+    </transition>
   </div>
 </template>
 
@@ -151,6 +153,19 @@ export default {
           }
         }
       }
+    }
+
+    /* 可以设置不同的进入和离开动画 */
+    /* 设置持续时间和动画函数 */
+    .fade-enter-active, .fade-leave-active {
+      transition: opacity 0.25s, transform 0.25s;
+    }
+    .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+      opacity: 0;
+      transform: translate(0, -15px);
+    }
+    .fade-leave, .fade-enter-to {
+      transform: translate(0, 0);
     }
   }
 </style>
