@@ -41,8 +41,8 @@
               <div class="desc">{{item.desc}}</div>
             </div>
             <div class="tool-right">
-              <router-link class="btn" :to="{push: '/tools/item', query: { id: item.id }}">购买</router-link>
-              <router-link class="link" :to="{push: '/tools/item', query: { id: item.id }}">团购</router-link>
+              <router-link class="btn" :to="{path: '/tools/item', query: { id: item.id }}">购买</router-link>
+              <!-- <router-link class="link" :to="{push: '/tools/item', query: { id: item.id }}">团购</router-link> -->
               <!-- <router-link class="link" :to="{push: '/tools/item', query: { id: item.id }}">返利</router-link> -->
             </div>
           </div>
