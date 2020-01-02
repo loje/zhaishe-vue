@@ -14,12 +14,13 @@
         <div class="pages">
           <div class="prev">上一页</div>
           <div class="page-list">
-            <div class="page">1</div>
+            <!-- <div class="page">1</div>
             <div class="page">2</div>
             <div class="page">3</div>
             <div class="page">4</div>
             <div class="page">5</div>
-            <div class="page">6</div>
+            <div class="page">6</div> -->
+            <div :class="pagePro === item ? 'page active' : 'page'" v-for="item in proPages" :key="item" @click="getProducts(item)">{{item > 3 ? '···' : item}}</div>
           </div>
           <div class="next">下一页</div>
           
@@ -152,6 +153,12 @@ export default {
       },
 
       productList: [],
+      proTotal: 0, // 总条数
+      proPages: 0, // 总页数
+      proLimit: 5, // 每页条数
+      productLoading: false,
+      skipPro: 0, // 跳过数量
+      pagePro: 1, // 当前页数
       // dialogForm: '',
       // tips: '',
 
@@ -160,7 +167,8 @@ export default {
   },
   activated() {
     this.getBanner();
-    this.getProducts();
+    this.getProCount();
+    // this.getProducts();
   },
   methods: {
     getBanner() {
@@ -177,34 +185,67 @@ export default {
         }
       });
     },
-    getProducts() {
+
+    getProCount() {
       var query = this.$Bmob.Query('product');
+      query.equalTo('notDelete', '==', true);
+      query.count().then((total) => {
+        this.proTotal = total;
+        this.proPages = parseInt(total / this.proLimit);
+        if (total % this.proLimit > 0) {
+          this.proPages = this.proPages + 1;
+        }
+        this.getProducts(1);
+      });
+    },
+    getProducts(page) {
+      if (page) {
+        if (page > this.proPages) {
+          this.pagePro = this.proPages;
+        } else if (page < 0) {
+          this.pagePro = 1;
+        } else {
+          this.pagePro = page;
+        }
+      } else {
+        this.pagePro = 1
+      }
+
+      var query = this.$Bmob.Query('product');
+      this.skipPro = this.proLimit * (this.pagePro - 1);
+
       let arr = [];
+      query.order('-endTime');
+      query.equalTo('notDelete', '==', true);
+      query.skip(this.skipPro);
+      query.limit(this.proLimit);
+      this.productLoading = true;
       query.find().then((res) => {
+        this.productLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          let arrb = [];
-          if (res[i].system) {
-            let sysList = res[i].system;
-            var querySys = this.$Bmob.Query('support_sys');
-            for (let x = 0; x < sysList.length; x += 1) {
-              querySys.get(sysList[x]).then((result) => {
-                arrb.push({
-                  id: result.objectId,
-                  icon: result.icon,
-                  title: result.title,
-                });
-              });
-            }
-          }
+          // let arrb = [];
+          // if (res[i].system) {
+          //   let sysList = res[i].system;
+          //   var querySys = this.$Bmob.Query('support_sys');
+          //   for (let x = 0; x < sysList.length; x += 1) {
+          //     querySys.get(sysList[x]).then((result) => {
+          //       arrb.push({
+          //         id: result.objectId,
+          //         icon: result.icon,
+          //         title: result.title,
+          //       });
+          //     });
+          //   }
+          // }
           
           arr.push({
             id: res[i].objectId,
             imgSrc: res[i].imgSrc,
             title: res[i].title,
             desc: res[i].desc,
-            groupPrice: res[i].groupPrice,
-            price: res[i].price,
-            sys: arrb,
+            // groupPrice: res[i].groupPrice,
+            // price: res[i].price,
+            // sys: arrb,
           });
         }
         this.productList = arr;
@@ -230,7 +271,7 @@ export default {
 
 <style lang="scss" scoped>
   .tools-page {
-    padding: 20px 0;
+    padding: 20px 0 100px;
     background-color: #fff;
     .swiper-container {
       width: 100%;
@@ -277,6 +318,7 @@ export default {
             color: #888;
             font-size: 12px;
           }
+          cursor: pointer;
           .page-list {
             display: inline-flex;
             margin: 0 15px;
@@ -291,7 +333,7 @@ export default {
               color: #000;
               text-align: center;
               cursor: pointer;
-              &:hover {
+              &:hover, &.active {
                 color: #fff;
                 background-color: #F4C51D;
               }

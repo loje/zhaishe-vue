@@ -419,7 +419,6 @@ export default {
       } else {
         query.equalTo('sort', '!=', 1);
       }
-      query.equalTo('notDelete', '==', true);
 
       query.skip(this.skipAct);
       query.limit(this.actLimit);
