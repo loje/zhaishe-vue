@@ -275,11 +275,14 @@ export default {
     background-color: #fff;
     .swiper-container {
       width: 100%;
+      overflow: visible;
       .swiper-slide {
         display: flex;
         align-items: center;
         width: 360px;
         height: 187px;
+        transition: opacity 250ms ease-in-out;
+        opacity: 0;
         .img {
           width: 352px;
           height: 170px;
@@ -288,10 +291,14 @@ export default {
           transition: all ease-in-out 0.25s;
         }
         &.swiper-slide-next {
+          opacity: 1;
           .img {
             width: 360px;
             height: 187px;
           }
+        }
+        &.swiper-slide-active {
+          opacity: 1;
         }
       }
     }

@@ -517,12 +517,14 @@ export default {
   .swiper-layer {
     background-color: #FCFCFC;
     .swiper-box {
+      position: relative;
       display: flex;
       margin-top: 30px;
       margin-bottom: 40px;
       width: 100%;
       height: 340px;
-      overflow: hidden;
+      overflow: visible;
+      z-index: 0;
       .box-left {
         padding-right: 20px;
         width: 700px;
@@ -532,15 +534,23 @@ export default {
         .swiper-container{
           width: 100%;
           height: 100%;
-          .img {
-            width: 100%;
-            height: 100%;
-            background-position: 50%;
-            background-size: cover;
-            .link {
-              display: block;
+          overflow: visible;
+          .swiper-slide {
+            opacity: 0;
+            transition: opacity ease-in-out 250ms;
+            .img {
               width: 100%;
               height: 100%;
+              background-position: 50%;
+              background-size: cover;
+              .link {
+                display: block;
+                width: 100%;
+                height: 100%;
+              }
+            }
+            &.swiper-slide-active {
+              opacity: 1;
             }
           }
         }
@@ -550,17 +560,29 @@ export default {
         .swiper-container{
           width: 100%;
           height: 100%;
-          .img {
-            width: 100%;
-            height: 100%;
-            background-position: 50%;
-            background-size: cover;
+          overflow: visible;
+          .swiper-slide {
+            opacity: 0;
+            transition: opacity ease-in-out 250ms;
+            .img {
+              width: 100%;
+              height: 100%;
+              background-position: 50%;
+              background-size: cover;
+            }
+            &.swiper-slide-active, &.swiper-slide-next {
+              opacity: 1;
+            }
           }
         }
       }
     }
     .swiper-pagination-bullet-active {
       background-color: #fff;
+    }
+    .layer {
+      position: relative;
+      z-index: 1;
     }
   }
 
