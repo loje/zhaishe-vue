@@ -11,6 +11,8 @@ export default {};
 </script>
 <style lang="scss" scope>
 .black {
+  width: 100%;
   min-height: calc(100vh - 250px);
+  overflow-x: hidden;
 }
 </style>
