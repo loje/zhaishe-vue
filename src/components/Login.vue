@@ -13,7 +13,7 @@
           <input type="text" v-model="form.password" />
         </div>
         <div class="tips">
-          <span></span>
+          <span>{{error}}</span>
           <a>忘记密码</a>
         </div>
 
@@ -32,7 +32,7 @@
         <div class="title">请输入你的信息</div>
         <div class="input-group">
           <span>手机</span>
-          <input type="text" v-model="form.phone" />
+          <input type="text" v-model="form.phone" maxlength="11" />
         </div>
         <div class="input-group">
           <span>密码</span>
@@ -43,17 +43,17 @@
           <input type="text" v-model="form.passwordAgain" />
         </div>
         <div class="tips">
-          <span></span>
+          <span>{{error}}</span>
         </div>
         <div class="btn-group">
-          <a class="btn" style="width: 100%">确定</a>
+          <a class="btn" style="width: 100%" @click="register">确定</a>
         </div>
       </div>
       <div class="register-status" v-else-if="showbox === 'status'">
         <img src="" />
         <div class="status">注册成功</div>
         <div class="btn-group">
-          <a class="btn" style="width: 100%">返回登录</a>
+          <a class="btn" style="width: 100%" @click="goLogin">返回登录</a>
         </div>
       </div>
     </div>
@@ -72,6 +72,7 @@ export default {
     return {
       form: {},
       showbox: 'login',
+      error: '',
     }
   },
   watch: {
@@ -88,6 +89,10 @@ export default {
       console.log(this.form);
       this.$Bmob.User.login(this.form.name, this.form.password).then(res => {
         console.log(res)
+        if (res.code === 101) {
+          this.error = '账号或密码有误';
+          return false;
+        }
         if (res.sessionToken) {
           this.close();
           const userInfo = localStorage.getItem('bmob');
@@ -97,16 +102,60 @@ export default {
         }
       }).catch(err => {
         console.log(err)
+        this.error = '账号或密码有误';
       });
     },
     goRegister() {
+      this.error = '';
       this.form = {};
       this.showbox = 'register';
     },
+    goLogin() {
+      this.error = '';
+      this.form = {};
+      this.showbox = 'login';
+    },
     close() {
+      this.error = '';
       this.form = {};
       this.showbox = 'login';
       this.$emit('close-login', '关闭登录框');
+    },
+    register() {
+      if (!this.form.phone) {
+        this.error = '请填写手机号';
+        return false;
+      }
+      if (this.form.phone.length !== 11) {
+        this.error = '手机号必须是11位';
+        return false;
+      }
+      if (!this.form.password) {
+        this.error = '请填写密码';
+        return false;
+      }
+      if (!this.form.passwordAgain) {
+        this.error = '请再次填写密码';
+        return false;
+      }
+      if (this.form.password !== this.form.passwordAgain) {
+        this.error = '两次密码不一致';
+        return false;
+      }
+      let params = {
+        username: this.form.phone,
+        password: this.form.passwordAgain,
+        email: `${this.form.phone}@zdesigner.cn`,
+        mobilePhoneNumber: this.form.phone,
+        imgSrc: 'http://files.zdesigner.cn/2020/01/07/833f0a7940b5b202804b20accfb30ab8.png',
+      }
+      this.$Bmob.User.register(params).then((res) => {
+        console.log(res)
+        this.form = {};
+        this.showbox = 'status';
+      }).catch(err => {
+      console.log(err)
+      });
     },
   },
 };

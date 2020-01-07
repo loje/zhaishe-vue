@@ -16,7 +16,7 @@
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
-          <div class="hello">hi，{{$store.state.user.name}}</div>
+          <div class="hello">hi，{{$store.state.user.username}}</div>
           <div class="link" @click="logout">退出</div>
         </div>
       </div>
