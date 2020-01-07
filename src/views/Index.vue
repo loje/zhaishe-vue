@@ -515,7 +515,6 @@ export default {
 
 <style lang="scss" scope>
   .swiper-layer {
-    background-color: #FCFCFC;
     .swiper-box {
       position: relative;
       display: flex;
@@ -585,7 +584,6 @@ export default {
       z-index: 1;
     }
   }
-
 
   .layer {
     display: flex;

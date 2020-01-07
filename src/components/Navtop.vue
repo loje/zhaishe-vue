@@ -16,7 +16,7 @@
         </div>
       </div>
     </div>
-    <transition name = "fade">
+    <transition name="fade">
     <Login v-show="showLogin" :status="loginStatus" @close-login="closeLogin"></Login>
     </transition>
   </div>

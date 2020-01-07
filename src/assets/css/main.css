@@ -17,6 +17,7 @@ body {
   padding: 0;
   padding-top: 50px;
   font-family: PingFang SC Regular;
+  background-color: #FCFCFC;
   overflow-y: scroll;
 }
 

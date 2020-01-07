@@ -48,6 +48,13 @@
       "unicode_decimal": 58999
     },
     {
+      "icon_id": "1956628",
+      "name": "选中",
+      "font_class": "xuanzhong",
+      "unicode": "e607",
+      "unicode_decimal": 58887
+    },
+    {
       "icon_id": "2006805",
       "name": "左",
       "font_class": "you",
