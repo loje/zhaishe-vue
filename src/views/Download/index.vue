@@ -195,6 +195,7 @@
               <img src=""  />
               <div class="title">宅设小编为您服务</div>
               <div class="content">我们运营小组已经收到了您的需求 会及时处理，请耐心等待哦，您也可以加入我们素材收集组</div>
+              <div class="content" style="margin-top: 30px;">V：zhishehui01</div>
             </div>
             <div class="btn" style="width: 160px;" @click="showFeedback = false">确定</div>
           </div>
