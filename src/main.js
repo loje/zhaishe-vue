@@ -33,6 +33,25 @@ Vue.prototype.$moment = moment
 
 Vue.config.productionTip = false
 
+router.beforeEach((to, from, next) => {
+  const userInfo = localStorage.getItem('bmob');
+  if (userInfo) {
+    store.dispatch('getUser', JSON.parse(userInfo));
+    next();
+  } else {
+    // if (!localStorage.getItem('userInfo')) {
+    //   if (to.path === '/login') {
+    //     next();
+    //   } else {
+    //     next('/login');
+    //   }
+    // } else {
+    //   next();
+    // }
+    next();
+  } 
+});
+
 router.afterEach(() => {
   window,scrollTo(0,0);
   // const $body = document.querySelector('body');

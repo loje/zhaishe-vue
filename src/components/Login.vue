@@ -24,7 +24,7 @@
         <i class="iconfont wechat">&#xe644;</i>
 
         <div class="btn-group">
-          <a class="btn">登录</a>
+          <a class="btn" @click="login">登录</a>
           <a class="btn" @click="showbox = 'register'">注册</a>
         </div>
       </div>
@@ -84,6 +84,21 @@ export default {
     },
   },
   methods: {
+    login() {
+      console.log(this.form);
+      this.$Bmob.User.login(this.form.name, this.form.password).then(res => {
+        console.log(res)
+        if (res.sessionToken) {
+          this.close();
+          const userInfo = localStorage.getItem('bmob');
+          if (userInfo) {
+            this.$store.dispatch('getUser', JSON.parse(userInfo));
+          }
+        }
+      }).catch(err => {
+        console.log(err)
+      });
+    },
     goRegister() {
       this.form = {};
       this.showbox = 'register';

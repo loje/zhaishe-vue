@@ -10,9 +10,14 @@
           <router-link :key="$index" :to="items.path" :class="isIndex ? '' : 'hideBorder'" v-if="items.meta && items.meta.menu">{{items.name}}</router-link>
           </template>
         </div>
-        <div class="user-in">
+        <div class="user-in" v-if="!$store.state.user">
           <a @click="showLogin = true"><i class="iconfont">&#xe651;</i>登录</a> |
           <a @click="toRegister">注册</a>
+        </div>
+        <div class="user" v-else>
+          <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
+          <div class="hello">hi，{{$store.state.user.name}}</div>
+          <div class="link" @click="logout">退出</div>
         </div>
       </div>
     </div>
@@ -55,6 +60,14 @@ export default {
     toRegister() {
       this.showLogin = true;
       this.loginStatus = 'register';
+    },
+    logout() {
+      this.$Bmob.User.logout();
+      const userInfo = localStorage.getItem('bmob');
+      if (!userInfo) {
+        this.$store.dispatch('getUser', '');
+      }
+      // localStorage.removeItem('bmob');
     },
   },
 }
@@ -150,6 +163,30 @@ export default {
                 color: #333;
               }
             }
+          }
+        }
+        .user {
+          font-size: 12px;
+          line-height: 50px;
+          .user-head {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-size: cover;
+          }
+          .hello {
+            display: inline-block;
+            margin-right: 15px;
+            vertical-align: middle;
+            color:#F4751D;
+          }
+          .link {
+            display: inline-block;
+            vertical-align: middle;
+            cursor: pointer;
           }
         }
       }
