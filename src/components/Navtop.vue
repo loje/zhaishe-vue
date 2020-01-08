@@ -16,7 +16,7 @@
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
-          <div class="hello">hi，{{$store.state.user.username}}</div>
+          <div class="hello" @click="$router.push(`/user/${$store.state.user.objectId}`)">欢迎，{{$store.state.user.username}}</div>
           <div class="link" @click="logout">退出</div>
         </div>
       </div>
@@ -182,6 +182,7 @@ export default {
             margin-right: 15px;
             vertical-align: middle;
             color:#F4751D;
+            cursor: pointer;
           }
           .link {
             display: inline-block;

@@ -4,7 +4,7 @@
       <div class="bottom-flex intro">
         <div class="title">关于我们</div>
         <div class="desc">宅设会是以设计师为中心的活动社群，每月不定期线下分享、聚会活动等，一直在广深两地组织活动，推进广深两地设计师前行，为了让更多设计师与大咖面对面的交流学习，也为了让更多出色的设计师分享自己的成绩，我们一直以知识共享形式链接着每一位善于学习和分享的人，让参与者和分享者都融入其中，每一次活动都成为你的收获，成为你更同值得努力的目标</div>
-        <div class="cop">Copyright © 2019 zdesginer.cn All rights reserved.</div>
+        <div class="cop">粤ICP备17153005号-1</div>
       </div>
       <div class="bottom-line"></div>
       <div class="bottom-flex friend-link">
