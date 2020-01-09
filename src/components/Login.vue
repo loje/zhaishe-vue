@@ -307,7 +307,7 @@ export default {
         height: 24px;
         font-size: 24px;
         line-height: 24px;
-        color: #1BB723;
+        color: #07c160;
         cursor: pointer;
       }
 
