@@ -1,6 +1,6 @@
 <template>
   <div class="login-page">
-    <div class="box-flex">
+    <div :class="showbox === 'wechat' ? 'box-flex wechat-flex' : 'box-flex'">
       <i class="iconfont close" @click="close">&#xea13;</i>
       <div class="login-box" v-if="showbox === 'login'">
         <div class="title">你还没有登录</div>
@@ -21,8 +21,15 @@
           <legend>选择已有的社交媒体</legend>
         </fieldset>
 
-        <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=zdesigner.cn&response_type=code&scope=snsapi_login#wechat_redirect" target="blank"><i class="iconfont wechat">&#xe644;</i></a>
+        <i class="iconfont wechat" @click="goWechat">&#xe644;</i>
 
+        <!-- 【敲黑板重点来了】这里的redirect_uri可以是你网站下的任何页面（不局限于授权回调域配置的域名），但是一定要在前面加上http://，并且使用urlencode编码。如：http://www.sciparty.com/weixinlogin。例如下面的链接地址：
+        https://open.weixin.qq.com/connect/qrconnect?appid=wxf43a4fc291843e43&redirect_uri=http%3a%2f%2fwww.sciparty.com%2fweixinlogin&response_type=code&scope=snsapi_login#wechat_redirect
+
+        作者：小七君
+        链接：https://www.jianshu.com/p/5b5c2131bff9
+        来源：简书
+        著作权归作者所有。商业转载请联系作者获得授权，非商业转载请注明出处。 -->
         <div class="btn-group">
           <a class="btn" @click="login">登录</a>
           <a class="btn" @click="showbox = 'register'">注册</a>
@@ -56,11 +63,27 @@
           <a class="btn" style="width: 100%" @click="goLogin">返回登录</a>
         </div>
       </div>
+      
+      <div class="wechat-box"  v-else-if="showbox === 'wechat'">
+        <wxlogin appid="wx9a76b368090721eb" scope="snsapi_login" redirect_uri="http%3a%2f%2fzdesigner.cn%2fuser" theme="black"></wxlogin>
+
+        <div class="btn" @click="goLogin">返回账号登录</div>
+      </div>
     </div>
+
+    <!-- <div class="wechat-login" v-if="showWechat === true">
+      <div class="wechat-flex">
+        <div class="wechat-box">
+          <wxlogin appid="wx9a76b368090721eb" scope="snsapi_login" redirect_uri="http%3a%2f%2fzdesigner.cn%2fuser"></wxlogin>
+        </div>
+      </div>
+    </div> -->
   </div>
 </template>
 
 <script>
+import wxlogin from 'vue-wxlogin';
+
 export default {
   props: {
     status: {
@@ -73,7 +96,12 @@ export default {
       form: {},
       showbox: 'login',
       error: '',
+
+      showWechat: false,
     }
+  },
+  components: {
+    wxlogin,
   },
   watch: {
     status: {
@@ -86,7 +114,6 @@ export default {
   },
   methods: {
     login() {
-      console.log(this.form);
       this.$Bmob.User.login(this.form.name, this.form.password).then(res => {
         console.log(res)
         if (res.code === 101) {
@@ -157,6 +184,13 @@ export default {
       console.log(err)
       });
     },
+
+    goWechat() {
+      this.showWechat = true;
+      this.error = '';
+      this.form = {};
+      this.showbox = 'wechat';
+    },
   },
 };
 </script>
@@ -180,6 +214,10 @@ export default {
       background-color: #fff;
       border-radius: 6px;
       box-sizing: border-box;
+      transition: all ease-in-out 250ms;
+      &.wechat-flex {
+        width: 350px;
+      }
       .close {
         position: absolute;
         right: 15px;
@@ -300,6 +338,43 @@ export default {
           color: #262626;
           cursor: pointer;
         }
+      }
+    }
+
+    // .wechat-login {
+    //   position: fixed;
+    //   left: 0;
+    //   top: 0;
+    //   display: flex;
+    //   align-items: center;
+    //   justify-content: center;
+    //   width: 100%;
+    //   height: 100%;
+    //   z-index: 0;
+    //   .wechat-flex {
+    //     flex: 1;
+    //     .wechat-box {
+    //       margin: auto;
+    //       width: 300px;
+    //       height: 400px;
+    //       background-color: #fff;
+    //       border-radius: 2px;
+    //     }
+    //   }
+    // }
+    .wechat-box {
+      .btn {
+        display: block;
+        margin: auto;
+        // width: 100px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        background-color: #F4C51D;
+        border-radius: 2px;
+        font-size: 14px;
+        color: #262626;
+        cursor: pointer;
       }
     }
   }
