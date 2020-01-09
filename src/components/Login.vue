@@ -21,7 +21,7 @@
           <legend>选择已有的社交媒体</legend>
         </fieldset>
 
-        <i class="iconfont wechat">&#xe644;</i>
+        <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=zdesigner.cn&response_type=code&scope=snsapi_login#wechat_redirect" target="blank"><i class="iconfont wechat">&#xe644;</i></a>
 
         <div class="btn-group">
           <a class="btn" @click="login">登录</a>

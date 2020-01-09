@@ -66,3 +66,7 @@ new Vue({
   store,
   render: h => h(App)
 }).$mount('#app')
+
+
+// AppID: wx9a76b368090721eb
+// AppSecret: f17b3a8b2b6f23e998b8af0372fd7774
