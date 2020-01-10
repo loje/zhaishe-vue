@@ -3,8 +3,11 @@
     <div class="max-width">
       <div class="bottom-flex intro">
         <div class="title">关于我们</div>
-        <div class="desc">宅设会是以设计师为中心的活动社群，每月不定期线下分享、聚会活动等，一直在广深两地组织活动，推进广深两地设计师前行，为了让更多设计师与大咖面对面的交流学习，也为了让更多出色的设计师分享自己的成绩，我们一直以知识共享形式链接着每一位善于学习和分享的人，让参与者和分享者都融入其中，每一次活动都成为你的收获，成为你更同值得努力的目标</div>
+        <div class="desc">深圳宅设传媒有限公司是一家以设计师为主题活动的公司，旗下平台宅设会以设计师活动聚集地为中心，分别有线下活动，优惠活动、外包信息公布等，一个让设计师聚集的福利平台</div>
+        <div class="title">联系我们</div>
+        <div class="desc">公司地址：深圳市南山区华侨城创意园北区A1栋602<br/>联系方式：186 6437 3764</div>
         <div class="cop">粤ICP备17153005号-1</div>
+        <div class="about">about me 关于我们</div>
       </div>
       <div class="bottom-line"></div>
       <div class="bottom-flex friend-link">
@@ -12,7 +15,6 @@
         <div class="link-list">
           <div class="the-link" v-for="(item, $index) in linkList" :key="$index" :style="{backgroundImage: `url(${item.src})`}"></div>
         </div>
-        <div class="about">about me 关于我们</div>
       </div>
       <div class="bottom-line"></div>
       <div class="bottom-flex wechat">
@@ -72,7 +74,8 @@ export default {
     .max-width {
       display: flex;
       .bottom-flex {
-        color: #D4D4D4;
+        position: relative;
+        color: #79798A;
         .title {
           font-size: 16px;
           line-height: 22px;
@@ -83,14 +86,22 @@ export default {
           box-sizing: border-box;
           .desc {
             margin-top: 10px;
+            margin-bottom: 20px;
             font-size: 12px;
             line-height: 26px;
-            color: #fff;
           }
           .cop {
-            margin-top: 20px;
             font-size: 14px;
-            line-height: 20px;
+            line-height: 17px;
+          }
+          .about {
+            position: absolute;
+            right: 55px;
+            bottom: 0;
+            font-size: 12px;
+            color: #79798A;
+            line-height: 17px;
+            cursor: pointer;
           }
         }
         &.friend-link {
@@ -115,16 +126,7 @@ export default {
               }
             }
           }
-          .about {
-            position: absolute;
-            left: 65px;
-            bottom: 0;
-            font-size: 14px;
-            font-family: PingFangSC;
-            font-weight: 400;
-            color: rgba(210,210,210,1);
-            line-height: 20px;
-          }
+
         }
         &.wechat {
           padding-left: 65px;
