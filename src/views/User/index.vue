@@ -41,7 +41,9 @@
 <script>
 export default {
   data() {
-    return {}
+    return {
+      userList: [],
+    }
   },
   mounted() {
     if (this.$route.query.code) {
@@ -60,6 +62,26 @@ export default {
         this.$axios.get(`/weixin/sns/userinfo?access_token=${res.data.access_token}&openid=${res.data.openid}`).then((user) => {
           console.log('微信用户信息');
           console.log(user);
+          this.$Bmob.User.users().then(res => {
+            console.log(res);
+            const userlist = res.results;
+            for (let i = 0; i < userlist.length; i += 1) {
+              if (userlist[i].openid === user.data.openid) {
+                localStorage.setItem('bmob', JSON.stringify(userlist[i]));
+                this.$store.dispatch('getUser', userlist[i]);
+              }
+            }
+            // const isWX = userlist.some((item) => item.openid === user.data.openid);
+            // if (isWX) {
+            //   localStorage.setItem('bmob', JSON.stringify(isWX));
+            //   console.log('已有这个用户');
+            //   return false;
+            // }
+
+            console.log('还没有这个用户');
+          }).catch(err => {
+            console.log(err)
+          })
         });
       });
     },

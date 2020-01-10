@@ -11,8 +11,9 @@
           </template>
         </div>
         <div class="user-in" v-if="!$store.state.user">
-          <a @click="showLogin = true"><i class="iconfont">&#xe651;</i>登录</a> |
-          <a @click="toRegister">注册</a>
+          <!-- <a @click="showLogin = true"><i class="iconfont">&#xe603;</i>微信扫码登录</a> -->
+          <!-- | <a @click="toRegister">注册</a> -->
+          <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=http%3a%2f%2fzdesigner.cn%2fuser&response_type=code&scope=snsapi_login#wechat_redirect"><i class="iconfont">&#xe603;</i>微信扫码登录</a>
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
@@ -143,13 +144,15 @@ export default {
           a {
             display: inline-block;
             font-size: 12px;
+            letter-spacing: 0px;
             cursor: pointer;
             transition: color 0.5s;
             i {
+              margin-right: 5px;
               font-size: 12px;
             }
             &:hover {
-              color: #FFCB2B;
+              color: #07c160;
             }
             &.btn {
               margin-left: 30px;

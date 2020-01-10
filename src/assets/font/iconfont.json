@@ -97,6 +97,13 @@
       "unicode_decimal": 58948
     },
     {
+      "icon_id": "8055776",
+      "name": "微信",
+      "font_class": "weixin1",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
       "icon_id": "8328256",
       "name": "登录",
       "font_class": "login",

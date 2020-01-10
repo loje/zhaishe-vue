@@ -62,8 +62,14 @@ export const routes = [
         component: () => import('@/views/About/index'),
         meta: { menu: false, keepAlive: true },
       },
+      // {
+      //   path: '/user/:objectId',
+      //   name: '个人中心',
+      //   component: () => import('@/views/User/index'),
+      //   meta: { menu: false, keepAlive: true },
+      // },
       {
-        path: '/user/:objectId',
+        path: '/user',
         name: '个人中心',
         component: () => import('@/views/User/index'),
         meta: { menu: false, keepAlive: true },
