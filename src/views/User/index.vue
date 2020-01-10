@@ -65,19 +65,43 @@ export default {
           this.$Bmob.User.users().then(res => {
             console.log(res);
             const userlist = res.results;
-            for (let i = 0; i < userlist.length; i += 1) {
-              if (userlist[i].openid === user.data.openid) {
-                localStorage.setItem('bmob', JSON.stringify(userlist[i]));
-                this.$store.dispatch('getUser', userlist[i]);
+            this.userlist = res.results;
+            const isWX = userlist.some((item) => item.openid === user.data.openid);
+            if (isWX) {
+              for (let i = 0; i < userlist.length; i += 1) {
+                if (userlist[i].openid === user.data.openid) {
+                  localStorage.setItem('bmob', JSON.stringify(userlist[i]));
+                  this.$store.dispatch('getUser', userlist[i]);
+                }
               }
+            } else {
+              let params = {
+                username: user.data.nickname,
+                password: '123456',
+                email: 'user@bmob.cn',
+                imgSrc: user.data.headimgurl,
+                openid: user.data.openid,
+                sex: user.data.sex,
+                city: user.data.city,
+                province: user.data.province,
+                country: user.data.country,
+              }
+              this.$Bmob.User.register(params).then(r => {
+                console.log(r)
+                this.$Bmob.User.users().then(u => {
+                  let ul = u.results;
+                  for (let i = 0; i < ul.length; i += 1) {
+                    if (ul[i].objectId === r.objectId) {
+                      localStorage.setItem('bmob', JSON.stringify(ul[i]));
+                      this.$store.dispatch('getUser', ul[i]);
+                      location.href = '/user';
+                    }
+                  }
+                })
+              }).catch(err => {
+              console.log(err)
+              });
             }
-            // const isWX = userlist.some((item) => item.openid === user.data.openid);
-            // if (isWX) {
-            //   localStorage.setItem('bmob', JSON.stringify(isWX));
-            //   console.log('已有这个用户');
-            //   return false;
-            // }
-
             console.log('还没有这个用户');
           }).catch(err => {
             console.log(err)
