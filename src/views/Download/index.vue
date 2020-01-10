@@ -19,7 +19,7 @@
       <div class="layer-right">
         <div class="recommend">
           <div class="img"></div>
-          <div class="author">作者：xxx</div>
+          <!-- <div class="author">作者：xxx</div> -->
         </div>
 
         <div class="download-list">

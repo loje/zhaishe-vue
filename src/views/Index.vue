@@ -154,7 +154,7 @@
                 <div class="title"><span v-if="pageAct === 1 && $index === 0">最新活动</span>{{item.title}}</div>
                 <div class="desc">{{item.desc}}</div>
                 <div class="tag">
-                  <span>宅设分享会</span>
+                  <span>深圳同城</span>
                   <span class="sort">活动标签：线下活动、线上直播</span>
                   <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
                   <span class="num">参与人数：{{item.number}}</span>
@@ -218,11 +218,11 @@
       <div class="max-width">
         <div class="layer-title">
           <div class="title">宅设分享人<span>宅设大咖组</span></div>
-          <div class="more">···</div>
+          <div class="more" @click="$router.push('/designer')">···</div>
         </div>
         <div class="people-box">
           <loading v-if="designerLoading"></loading>
-          <swiper v-else :options="designerSwiperOption" ref="designerSwiper">
+          <swiper v-else :options="designerSwiperOption" ref="designerSwiper" @mouseenter="on_bot_enter" @mouseleave="on_bot_leave">
             <template v-for="(item, $index) in designerList">
             <swiper-slide :key="$index">
             <div class="box">
@@ -412,7 +412,6 @@ export default {
 
       let arr = [];
       query.order('-endTime');
-      // query.equalTo('isTop', '==', true);
       query.equalTo('notDelete', '==', true);
       if (actTab === '宅设主办') {
         query.equalTo('sort', '==', 1);
@@ -426,7 +425,6 @@ export default {
       query.find().then((res) => {
         this.activityLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          // console.log(res[i].startTime.ios);
           for (let key in res[i].startTime) {
             if (key === 'iso') {
               res[i].startTime = res[i].startTime[key];
@@ -509,6 +507,12 @@ export default {
       }
       this.activityList[i].toggleStatus = !this.activityList[i].toggleStatus;
     },
+    on_bot_enter() {
+      this.$refs.designerSwiper.swiper.autoplay.stop();
+    },
+    on_bot_leave() {
+      this.$refs.designerSwiper.swiper.autoplay.start();
+    },
   },
 }
 </script>
@@ -526,17 +530,14 @@ export default {
       z-index: 0;
       .box-left {
         padding-right: 20px;
-        width: 700px;
+        width: 730px;
         height: 100%;
         background-position: 50%;
         background-size: cover;
         .swiper-container{
           width: 100%;
           height: 100%;
-          overflow: visible;
           .swiper-slide {
-            opacity: 0;
-            transition: opacity ease-in-out 250ms;
             .img {
               width: 100%;
               height: 100%;
@@ -548,29 +549,20 @@ export default {
                 height: 100%;
               }
             }
-            &.swiper-slide-active {
-              opacity: 1;
-            }
           }
         }
       }
       .box-right {
-        width: 400px;
+        width: 370px;
         .swiper-container{
           width: 100%;
           height: 100%;
-          overflow: visible;
           .swiper-slide {
-            opacity: 0;
-            transition: opacity ease-in-out 250ms;
             .img {
               width: 100%;
               height: 100%;
               background-position: 50%;
               background-size: cover;
-            }
-            &.swiper-slide-active, &.swiper-slide-next {
-              opacity: 1;
             }
           }
         }
@@ -946,7 +938,7 @@ export default {
               text-align: center;
               cursor: pointer;
               border-radius: 3px;
-              border: 2px solid #F4C51D;
+              border: 1px solid #F4C51D;
               box-sizing: border-box;
               font-size: 14px;
               font-weight: bold;
