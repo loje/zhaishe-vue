@@ -31,6 +31,10 @@ Bmob.debug(false);
 import moment from 'moment'
 Vue.prototype.$moment = moment
 
+import axios from 'axios'
+axios.defaults.baseURL = '/'
+Vue.prototype.$axios = axios
+
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
