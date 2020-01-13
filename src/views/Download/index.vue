@@ -8,12 +8,7 @@
         <div class="btn" @click="showContact = true">联系小编上素材</div>
 
         <div class="tab-list">
-          <div class="tab active">banner</div>
-          <div class="tab">H5</div>
-          <div class="tab">Web</div>
-          <div class="tab">App</div>
-          <div class="tab">Logo</div>
-          <div class="tab">其他</div>
+          <div v-for="(item, $index) in tabList" :key="$index" :class="activeTab === item.value ? 'active tab' : 'tab'" @click="toggle(item.value)">{{item.label}}</div>
         </div>
       </div>
       <div class="layer-right">
@@ -22,89 +17,25 @@
         </div>
 
         <div class="download-list">
-          <div class="the-download">
+          <div class="the-download" v-for="(item, $index) in downloadList" :key="$index">
             <div class="download-left">
-              <div class="img"></div>
+              <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
             </div>
             <div class="download-mid">
-              <div class="title">电台banner设计素材</div>
+              <div class="title">{{item.title}}</div>
               <div class="info">
-                <span>上传人：Answer</span>
-                <span>微信：MuffinMan1874</span>
+                <span>上传人：{{item.author}}</span>
+                <span>微信：{{item.wechat}}</span>
               </div>
             </div>
             <div class="download-right">
-              <div class="btn" @click="showDownload = true">下载</div>
-              <span>102</span>
-            </div>
-          </div>
-          <div class="the-download">
-            <div class="download-left">
-              <div class="img"></div>
-            </div>
-            <div class="download-mid">
-              <div class="title">电台banner设计素材</div>
-              <div class="info">
-                <span>上传人：Answer</span>
-                <span>微信：MuffinMan1874</span>
-              </div>
-            </div>
-            <div class="download-right">
-              <div class="btn" @click="showDownload = true">下载</div>
-              <span>102</span>
-            </div>
-          </div>
-          <div class="the-download">
-            <div class="download-left">
-              <div class="img"></div>
-            </div>
-            <div class="download-mid">
-              <div class="title">电台banner设计素材</div>
-              <div class="info">
-                <span>上传人：Answer</span>
-                <span>微信：MuffinMan1874</span>
-              </div>
-            </div>
-            <div class="download-right">
-              <div class="btn" @click="showDownload = true">下载</div>
-              <span>102</span>
-            </div>
-          </div>
-          <div class="the-download">
-            <div class="download-left">
-              <div class="img"></div>
-            </div>
-            <div class="download-mid">
-              <div class="title">电台banner设计素材</div>
-              <div class="info">
-                <span>上传人：Answer</span>
-                <span>微信：MuffinMan1874</span>
-              </div>
-            </div>
-            <div class="download-right">
-              <div class="btn" @click="downDialog">下载</div>
-              <span>102</span>
-            </div>
-          </div>
-          <div class="the-download">
-            <div class="download-left">
-              <div class="img"></div>
-            </div>
-            <div class="download-mid">
-              <div class="title">电台banner设计素材</div>
-              <div class="info">
-                <span>上传人：Answer</span>
-                <span>微信：MuffinMan1874</span>
-              </div>
-            </div>
-            <div class="download-right">
-              <div class="btn" @click="showDownload = true">下载</div>
-              <span>102</span>
+              <div class="btn" @click="dialogShow(item)">下载</div>
+              <span>{{item.downloads}}</span>
             </div>
           </div>
         </div>
 
-        <div class="pages">
+        <div class="pages" v-if="downloadList.length > 0">
           <div class="prev">上一页</div>
           <div class="page-list">
             <div :class="pageDownload === item ? 'page active' : 'page'" v-for="item in downloadPages" :key="item" @click="getDownloadList(item)">{{item > 3 ? '···' : item}}</div>
@@ -138,7 +69,7 @@
     </div>
     </transition>
 
-    <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false"></downloadDialog>
+    <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
 
     <transition name="fade">
       <div class="dialog-layer" v-if="showFeedback">
@@ -166,10 +97,38 @@ import downloadDialog from './../../components/DownloadDialog';
 export default {
   data() {
     return {
+      tabList: [
+        {
+          label: 'banner',
+          value: 1,
+        },
+        {
+          label: 'H5',
+          value: 2,
+        },
+        {
+          label: 'Web',
+          value: 3,
+        },
+        {
+          label: 'App',
+          value: 4,
+        },
+        {
+          label: 'Logo',
+          value: 5,
+        },
+        {
+          label: '其他',
+          value: 6,
+        },
+      ],
+      activeTab: 1,
+
       downloadList: [],
       downloadTotal: 0, // 总条数
       downloadPages: 2, // 总页数
-      downloadLimit: 5, // 每页条数
+      downloadLimit: 10, // 每页条数
       downloadLoading: false,
       skipDownload: 0, // 跳过数量
       pageDownload: 1, // 当前页数
@@ -186,15 +145,108 @@ export default {
     downloadDialog,
   },
   activated() {
+    this.pageDownload = 1;
+    this.getDownloadCount();
   },
   methods: {
-    getDownloadList() {},
+    toggle(i) {
+      this.activeTab = i;
+      this.getDownloadCount();
+    },
+    getDownloadCount() {
+      var query = this.$Bmob.Query('download');
+      query.equalTo('type', '==', this.activeTab);
+      query.equalTo('notDelete', '==', true);
+      query.count().then((total) => {
+        this.downloadTotal = total;
+        this.downloadPages = parseInt(total / this.downloadLimit);
+        if (total % this.downloadLimit > 0) {
+          this.downloadPages = this.downloadPages + 1;
+        }
+        this.getDownloadList(this.pageDownload);
+      });
+    },
+    getDownloadList(page) {
+      if (page) {
+        if (page > this.downloadPages) {
+          this.pageDownload = this.downloadPages;
+        } else if (page < 0) {
+          this.pageDownload = 1;
+        } else {
+          this.pageDownload = page;
+        }
+      } else {
+        this.pageDownload = 1
+      }
 
-    downDialog() {},
+      var query = this.$Bmob.Query('download');
+      this.skipDownload = this.downloadLimit * (this.pageDownload - 1);
+
+      let arr = [];
+      query.order('-endTime');
+      query.equalTo('type', '==', this.activeTab);
+      query.equalTo('notDelete', '==', true);
+      query.skip(this.skipDownload);
+      query.limit(this.downloadLimit);
+      this.downloadLoading = true;
+      query.find().then((res) => {
+        this.downloadLoading = false;
+        for (let i = 0; i < res.length; i += 1) {
+          // let arrb = [];
+          // if (res[i].system) {
+          //   let sysList = res[i].system;
+          //   var querySys = this.$Bmob.Query('support_sys');
+          //   for (let x = 0; x < sysList.length; x += 1) {
+          //     querySys.get(sysList[x]).then((result) => {
+          //       arrb.push({
+          //         id: result.objectId,
+          //         icon: result.icon,
+          //         title: result.title,
+          //       });
+          //     });
+          //   }
+          // }
+          
+          arr.push({
+            id: res[i].objectId,
+            imgSrc: res[i].imgSrc,
+            title: res[i].title,
+            desc: res[i].desc,
+            author: res[i].author,
+            wechat: res[i].wechat,
+            downloads: res[i].downloads,
+            link: res[i].link,
+            code: res[i].code,
+            // groupPrice: res[i].groupPrice,
+            // price: res[i].price,
+            // sys: arrb,
+          });
+        }
+        this.downloadList = arr;
+      });
+    },
 
     closeContact() {
       this.showContact = false;
       this.showFeedback = true;
+    },
+    dialogShow(item) {
+      console.log(item);
+      this.dialog = item;
+      this.showDownload = true;
+    },
+    openLink() {
+      console.log(this.dialog);
+      const query = this.$Bmob.Query('download');
+      query.get(this.dialog.id).then((res) => {
+        res.set('downloads', Number(res.downloads) + 1);
+        res.save().then(() => {
+          this.getDownloadCount();
+          window.open(this.dialog.link);
+        });
+      }).catch(err => {
+        console.log(err)
+      });
     },
   },
 };
@@ -291,6 +343,8 @@ export default {
               width: 16px;
               height: 16px;
               background-color: #888;
+              background-size: cover;
+              background-position: 50%;
               border-radius: 50%;
             }
           }

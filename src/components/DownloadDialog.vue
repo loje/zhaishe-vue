@@ -11,7 +11,7 @@
             <div class="t">下载地址</div>
             <div class="url">{{dialog.link}}</div>
           </div>
-          <div class="download-code">{{dialog.couponCode}}</div>
+          <div class="download-code">{{dialog.code}}</div>
           <div class="download-cop">
             <span @click="showCop = true">版权声明</span>
           </div>
@@ -67,7 +67,7 @@ export default {
       this.$emit('hide-download');
     },
     openLink() {
-      window.open(this.dialog.link);
+      this.$emit('open-link');
     },
   },
 };
