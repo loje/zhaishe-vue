@@ -165,10 +165,10 @@ export default {
 <style lang="scss" scoped>
   .tools-page {
     .tools-top {
-      padding: 30px 0;
+      padding: 50px 0 30px;
       background-color: #FCFCFC;
       .max-width {
-        padding: 40px 90px;
+        padding: 40px 90px 50px;
         background-color: #fff;
         box-sizing: border-box;
         .media {
@@ -510,8 +510,9 @@ export default {
     }
 
     .tools-detail {
-      margin-top: 15px;
+      // margin-top: 15px;
       margin-bottom: 20px;
+      padding-top: 60px;
       min-height: 800px;
       width: 100%;
       background-color: #fff;

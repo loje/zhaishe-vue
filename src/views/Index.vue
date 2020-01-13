@@ -34,7 +34,7 @@
             <div class="layer-title">
               <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
               <div class="title">Eagle素材包</div>
-              <div class="more">···</div>
+              <div class="more" @click="$router.push('./download')">···</div>
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
