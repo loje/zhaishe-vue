@@ -4,7 +4,7 @@
       <div class="layer-left">
         <div class="img" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');"></div>
         
-        <div class="btn">我还没有Eagle</div>
+        <div class="btn" @click="$router.push('/tools/item?id=b736ede69b')">我还没有Eagle</div>
         <div class="btn" @click="showContact = true">联系小编上素材</div>
 
         <div class="tab-list">
@@ -13,10 +13,21 @@
       </div>
       <div class="layer-right">
         <div class="recommend">
-          <div class="img"></div>
+          <loading v-if="downloadBannerLoading"></loading>
+          <swiper v-else :options="downloadSwiperOption" ref="leftSwiper">
+            <template v-for="(item, $index) in downloadBanner">
+            <swiper-slide :key="$index">
+              <div class="img" :style="{backgroundImage:`url(${item.imgSrc})`}">
+                <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+              </div>
+            </swiper-slide>
+            </template>
+          </swiper>
         </div>
 
         <div class="download-list">
+          <loading v-if="downloadLoading"></loading>
+          <template v-else>
           <div class="the-download" v-for="(item, $index) in downloadList" :key="$index">
             <div class="download-left">
               <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
@@ -33,6 +44,7 @@
               <span>{{item.downloads}}</span>
             </div>
           </div>
+          </template>
         </div>
 
         <div class="pages" v-if="downloadList.length > 0">
@@ -92,11 +104,27 @@
   </div>
 </template>
 <script>
+import loading from './../../components/Loading';
+import './../../assets/css/swiper.css'
+import { swiper, swiperSlide } from 'vue-awesome-swiper'
 import downloadDialog from './../../components/DownloadDialog';
 
 export default {
   data() {
     return {
+      downloadSwiperOption: {
+        // some swiper options/callbacks
+        // 所有的参数同 swiper 官方 api 参数
+        // ...
+        autoplay: true,
+        loop : true,
+        delay: 1000,
+        pagination: {
+          el: '.swiper-pagination',
+        }
+      },
+      downloadBanner: [],
+      downloadBannerLoading: false,
       tabList: [
         {
           label: 'banner',
@@ -143,15 +171,36 @@ export default {
   },
   components: {
     downloadDialog,
+    loading,
+    swiper,
+    swiperSlide,
   },
   activated() {
     this.pageDownload = 1;
     this.getDownloadCount();
+    this.getBanner();
   },
   methods: {
     toggle(i) {
       this.activeTab = i;
       this.getDownloadCount();
+    },
+    getBanner() {
+      var query = this.$Bmob.Query('banner');
+      let downloadBanner = [];
+
+      query.find().then((res) => {
+        for (let i = 0; i < res.length; i += 1) {
+          if (res[i].position && res[i].position === 'download') {
+            downloadBanner.push({
+              id: res[i].objectId,
+              imgSrc: res[i].imgSrc,
+              link: res[i].link
+            });
+          }
+        }
+        this.downloadBanner = downloadBanner;
+      });
     },
     getDownloadCount() {
       var query = this.$Bmob.Query('download');
@@ -308,19 +357,36 @@ export default {
       background-color: #fff;
       .recommend {
         width: 100%;
-        .img {
-          display: block;
+        // .img {
+        //   display: block;
+        //   width: 100%;
+        //   height: 230px;
+        //   background-color: #D8D8D8;
+        // }
+        // .author {
+        //   margin-top: 10px;
+        //   margin-right: 50px;
+        //   text-align: right;
+        //   color: #888;
+        //   font-size: 12px;
+        //   box-sizing: border-box;
+        // }
+        .swiper-container{
           width: 100%;
           height: 230px;
-          background-color: #D8D8D8;
-        }
-        .author {
-          margin-top: 10px;
-          margin-right: 50px;
-          text-align: right;
-          color: #888;
-          font-size: 12px;
-          box-sizing: border-box;
+          .swiper-slide {
+            .img {
+              width: 100%;
+              height: 100%;
+              background-position: 50%;
+              background-size: cover;
+              .link {
+                display: block;
+                width: 100%;
+                height: 100%;
+              }
+            }
+          }
         }
       }
 

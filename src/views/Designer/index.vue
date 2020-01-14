@@ -12,8 +12,7 @@
           <div class="info">{{item.info}}</div> -->
           <div class="name">{{item.name}}</div>
           <div class="title">
-            <span>title1</span>
-            <span>title2</span>
+            {{item.info}}
           </div>
           <div class="btn">个人链接</div>
           <div class="get" @click="orderIt(item)">找他接单</div>

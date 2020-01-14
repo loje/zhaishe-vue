@@ -17,13 +17,17 @@
 
         <template v-if="isBuy === false">
         <div class="price-bar">
-          <div class="btn active">早鸟：{{info.birdPrice}}元</div>
-          <div class="btn">正常票：{{info.price}}元</div>
-          <!-- <div class="btn">会员票通道</div> -->
+          <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.birdPrice" @click="selectPrice(2)">早鸟：{{info.birdPrice}}元</div>
+          <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常票：{{info.price || 0}}元</div>
 
           <div class="bar-right">
-            <span class="t">你选择是早鸟票</span>
-            <span class="price">价格<span>0</span>元</span>
+            <span class="t" v-if="activePrice === 1">你选择是正常票</span>
+            <span class="t" v-if="activePrice === 2">你选择是早鸟票</span>
+
+            <span class="price">价格
+              <span v-if="activePrice === 1">{{info.price}}</span>
+              <span v-if="activePrice === 2">{{info.birdPrice}}</span>
+            元</span>
             <div class="btn active btn-buy" @click="isBuy = true">我要报名</div>
           </div>
         </div>
@@ -55,28 +59,34 @@
           </div>
           <div class="buy-flex" style="padding-left: 48px;">
             <div class="title">
-              <span class="t">您选择的是团购</span>
-              <span class="t">价格<span>140</span>元</span>
+              <template v-if="activePrice === 1">
+              <span class="t">您选择的是正常票</span>
+              <span class="t">价格<span>{{info.price}}</span>元</span>
+              </template>
+              <template v-if="activePrice === 2">
+              <span class="t">您选择的是早鸟票</span>
+              <span class="t">价格<span>{{info.birdPrice}}</span>元</span>
+              </template>
             </div>
 
             <div class="input-group">
               <span>姓名</span>
-              <input type="text" placeholder="请填写姓名" />
+              <input type="text" v-model="dialog.name" placeholder="请填写姓名" />
             </div>
             <div class="input-group">
               <span>可添加微信</span>
-              <input type="text" placeholder="请填写微信" />
+              <input type="text" v-model="dialog.wechat" placeholder="请填写微信" />
             </div>
             <div class="input-group">
               <span>电话</span>
-              <input type="text" placeholder="留下您电话方便联系" />
+              <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" />
             </div>
             <div class="input-group">
               <span>邮箱</span>
-              <input type="text" placeholder="您的收件邮箱" />
+              <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
             </div>
-            <div class="error">1423435</div>
-            <div class="btn">微信支付</div>
+            <div class="error">{{dialogError}}</div>
+            <div class="btn" @click="payit">微信支付</div>
           </div>
         </div>
         <div class="buy-tips">
@@ -177,6 +187,9 @@ export default {
       info: {},
 
       isBuy: false,
+      activePrice: 1,
+      dialog: {},
+      dialogError: '',
       // imgSrc: '',
       // title: '',
       // desc: '',
@@ -234,6 +247,9 @@ export default {
     this.getInfo();
   },
   methods: {
+    selectPrice(i) {
+      this.activePrice = i;
+    },
     getInfo() {
       this.loading = true;
       var query = this.$Bmob.Query('activity');
@@ -255,10 +271,15 @@ export default {
           title: res.title,
           desc: res.desc,
           address: res.address,
-          birdPrice: 0,
+          birdPrice: res.birdPrice || 0,
           price: res.fee || 0,
           content: res.content,
         };
+        if (res.birdPrice && res.birdPrice > 0) {
+          this.activePrice = 2;
+        } else if (res.fee && res.fee > 0) {
+          this.activePrice = 1;
+        }
         // this.imgSrc = res.imgSrc || '';
         // this.title = res.title || '';
         // this.desc = res.desc || '';
@@ -269,6 +290,28 @@ export default {
       //   this.status = res.status;
       //   this.note = res.note;
       });
+    },
+    payit() {
+      if (!localStorage.getItem('bmob')) {
+        this.dialogError = '请先点右上角登录';
+        return false;
+      }
+      if (!this.dialog.name) {
+        this.dialogError = '请填写名字';
+        return false;
+      }
+      if (!this.dialog.wechat) {
+        this.dialogError = '请填写微信';
+        return false;
+      }
+      if (!this.dialog.phone) {
+        this.dialogError = '请填写电话';
+        return false;
+      }
+      if (!this.dialog.email) {
+        this.dialogError = '请填写邮箱';
+        return false;
+      }
     },
     // apply() {
     //   this.dialog.img = this.imgSrc;
