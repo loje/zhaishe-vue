@@ -40,3 +40,24 @@ body {
 article img {
   max-width: 100%;
 }
+
+input::-webkit-input-placeholder {
+  color: #D9D9D9;
+}
+input::-moz-input-placeholder {
+  color: #D9D9D9;
+}
+input::-ms-input-placeholder {
+  color: #D9D9D9;
+}
+/* WebKit浏览器 */
+input:focus::-webkit-input-placeholder { color:transparent; }
+
+/* Firefox 4 至 18 */
+input:focus:-moz-placeholder { color:transparent; }
+
+/* Firefox 19+ */
+input:focus::-moz-placeholder { color:transparent; }
+
+/* IE 10+ */
+input:focus:-ms-input-placeholder { color:transparent; }

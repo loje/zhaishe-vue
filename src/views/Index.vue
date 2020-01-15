@@ -34,7 +34,9 @@
             <div class="layer-title">
               <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
               <div class="title">Eagle素材包</div>
-              <div class="more" @click="$router.push('./download')">···</div>
+              <div class="more" @click="$router.push('./download')">
+                <i class="iconfont">&#xe649;</i>
+              </div>
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
@@ -50,7 +52,9 @@
                 <i class="iconfont">&#xe62b;</i>
               </div>
               <div class="title">设计师工具</div>
-              <div class="more" @click="$router.push({path: '/tools'})">···</div>
+              <div class="more" @click="$router.push({path: '/tools'})">
+                <i class="iconfont">&#xe649;</i>
+              </div>
             </div>
             <div class="layer-block">
               <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
@@ -218,7 +222,9 @@
       <div class="max-width">
         <div class="layer-title">
           <div class="title">宅设分享人<span>宅设大咖组</span></div>
-          <div class="more" @click="$router.push('/designer')">···</div>
+          <div class="more" @click="$router.push('/designer')">
+            <i class="iconfont">&#xe649;</i>
+          </div>
         </div>
         <div class="people-box">
           <loading v-if="designerLoading"></loading>
@@ -626,15 +632,18 @@ export default {
           line-height: 22px;
           text-align: center;
           border: 1px solid #F2F2F2;
-          letter-spacing: 2px;
           color: #F4C51D;
           font-size: 24px;
           border-radius: 2px;
           transition: all ease 0.25s;
           cursor: pointer;
+          i {
+            display: block;
+            font-size: 22px;
+            line-height: 22px;
+          }
           &:hover {
             border-color: #F4C51D;
-            background-color: rgba(244,197,29,0.3);
           }
         }
         .handle {
@@ -890,6 +899,7 @@ export default {
                 height: 18px;
                 line-height: 18px;
                 font-size: 12px;
+                font-weight: normal;
                 border: 1px solid #FF5D01;
                 border-radius: 2px;
                 color: #FF5D01;
@@ -1057,7 +1067,11 @@ export default {
           cursor: pointer;
           &:hover {
             border-color: #F4C51D;
-            background-color: rgba(244,197,29,0.3);
+          }
+          i {
+            display: block;
+            font-size: 22px;
+            line-height: 22px;
           }
         }
       }
