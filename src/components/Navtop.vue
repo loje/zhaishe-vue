@@ -17,7 +17,7 @@
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
-          <div class="hello" @click="$router.push(`/user/${$store.state.user.objectId}`)">欢迎，{{$store.state.user.username}}</div>
+          <div class="hello" @click="$router.push(`/user`)">欢迎，{{$store.state.user.username}}</div>
           <div class="link" @click="logout">退出</div>
         </div>
       </div>

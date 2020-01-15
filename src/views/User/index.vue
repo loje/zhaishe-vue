@@ -52,14 +52,14 @@ export default {
   },
   methods: {
     getToken() {
-      this.$axios.get(`/weixin/sns/oauth2/access_token?appid=wx9a76b368090721eb&secret=f17b3a8b2b6f23e998b8af0372fd7774&code=${this.$route.query.code}&grant_type=authorization_code`).then((res) => {
+      this.$axios.get(`https://api.weixin.qq.com/sns/oauth2/access_token?appid=wx9a76b368090721eb&secret=f17b3a8b2b6f23e998b8af0372fd7774&code=${this.$route.query.code}&grant_type=authorization_code`).then((res) => {
         if (res.data.errcode === 40163) {
           location.href = '/';
           return false;
         }
         console.log('取token');
-        console.log(res);
-        this.$axios.get(`/weixin/sns/userinfo?access_token=${res.data.access_token}&openid=${res.data.openid}`).then((user) => {
+        // console.log(res);
+        this.$axios.get.JSONP(`https://api.weixin.qq.com/sns/userinfo?access_token=${res.data.access_token}&openid=${res.data.openid}`).then((user) => {
           console.log('微信用户信息');
           console.log(user);
           this.$Bmob.User.users().then(res => {
@@ -70,6 +70,9 @@ export default {
             if (isWX) {
               for (let i = 0; i < userlist.length; i += 1) {
                 if (userlist[i].openid === user.data.openid) {
+                  // console.log(user);
+                  // console.log(userlist[i]);
+
                   localStorage.setItem('bmob', JSON.stringify(userlist[i]));
                   this.$store.dispatch('getUser', userlist[i]);
                 }
