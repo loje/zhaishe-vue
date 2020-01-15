@@ -33,7 +33,11 @@ Vue.prototype.$moment = moment
 
 import axios from 'axios'
 axios.defaults.baseURL = '/'
+axios.defaults.withCredentials = true
+axios.defaults.crossDomain = true
+axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$axios = axios
+
 
 Vue.config.productionTip = false
 
