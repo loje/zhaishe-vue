@@ -2,8 +2,8 @@
   <div class="user-page">
     <div class="user-top">
       <div class="user-head">
-        <div class="img"></div>
-        <div class="name"></div>
+        <div class="img" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
+        <div class="name">{{$store.state.user.username}}</div>
       </div>
       <div class="user-bg"></div>
     </div>
@@ -86,10 +86,11 @@ export default {
                   }
                 }
               } else {
+                const email = `user${new Date().getTime()}@bmob.cn`;
                 let params = {
                   username: user.nickname,
                   password: '123456',
-                  email: 'user@bmob.cn',
+                  email,
                   imgSrc: user.headimgurl,
                   openid: user.openid,
                   sex: user.sex,
@@ -136,6 +137,7 @@ export default {
         height: 100px;
         border-radius: 50%;
         background-color: #fff;
+        background-size: cover;
       }
       .name {
         margin-top: 10px;

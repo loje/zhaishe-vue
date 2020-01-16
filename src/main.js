@@ -38,30 +38,6 @@ axios.defaults.crossDomain = true
 axios.defaults.headers.post['Content-Type'] = 'application/x-www-form-urlencoded'
 Vue.prototype.$axios = axios
 
-import md5 from 'js-md5';
-
-
-function randomString(length, chars) {
-  var result = '';
-  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
-}
-const appid = 'wx9a76b368090721eb';
-const mch_id = '1570704211';
-const nonce_str = randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
-const product_id = 1;
-const time_stamp = new Date().getTime();
-const key = 'abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234abcd1234';
-console.log(nonce_str);
-console.log(time_stamp);
-
-const stringA = `appid=${appid}&key=${key}&mch_id=${mch_id}&nonce_str=${nonce_str}&product_id=${product_id}&time_stamp=${time_stamp}`;
-const stringSignTemp = stringA;
-const sign = md5(stringSignTemp).toUpperCase();
-console.log(sign);
-const wxcode = `weixin://wxpay/bizpayurl?appid=${appid}&mch_id=${mch_id}&nonce_str=${nonce_str}&product_id=${product_id}&sign=${sign}&time_stamp=${time_stamp}`;
-console.log(wxcode);
-
 
 Vue.config.productionTip = false
 
@@ -86,11 +62,6 @@ router.beforeEach((to, from, next) => {
 
 router.afterEach(() => {
   window,scrollTo(0,0);
-  // const $body = document.querySelector('body');
-  // if ($body) {
-  //   $body.scrollTop = 0; // 设置滚动条重置到顶部
-  // }
-  // window.addEventListener('scroll', 0);
 });
 
 new Vue({

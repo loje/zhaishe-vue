@@ -103,6 +103,8 @@
         <article v-else v-html="info.content"></article>
       </div>
     </div>
+
+    <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" v-if="payForm.showPay"></wechatPay>
     <!-- <div class="max-width">
       <div class="banner">
         <div class="banner-left">
@@ -177,9 +179,12 @@
 </template>
 <script>
 import loading from '@/components/Loading';
+import wechatPay from '@/components/WechatPay';
+
 export default {
   components: {
     loading,
+    wechatPay,
   },
   data() {
     return {
@@ -190,6 +195,13 @@ export default {
       activePrice: 1,
       dialog: {},
       dialogError: '',
+
+      payForm: {
+        out_trade_no: '',
+        total_fee: '',
+        body: '',
+        showPay: false,
+      },
       // imgSrc: '',
       // title: '',
       // desc: '',
@@ -312,6 +324,13 @@ export default {
         this.dialogError = '请填写邮箱';
         return false;
       }
+
+      this.payForm = {
+        out_trade_no: `test${new Date().getTime()}`,
+        total_fee: this.activePrice === 2 ? this.info.birdPrice : this.info.price,
+        body: this.info.title,
+        showPay: true,
+      };
     },
     // apply() {
     //   this.dialog.img = this.imgSrc;
