@@ -173,6 +173,7 @@
                 console.log(result) //打印出返回的结果
                 // return result;
                 if (result.trade_state !== 'NOTPAY') {
+                  that.$emit('order-success');
                   clearInterval(interval);
                 }
               }

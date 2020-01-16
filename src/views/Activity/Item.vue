@@ -104,7 +104,26 @@
       </div>
     </div>
 
-    <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" v-if="payForm.showPay"></wechatPay>
+    <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" v-if="payForm.showPay" @order-success="getReslut"></wechatPay>
+
+    <transition name="fade">
+      <div class="dialog-layer" v-if="showFeedback">
+        <div class="dialog-flex">
+          <div class="dialog-block">
+            <span class="close" @click="showFeedback = false">
+              <i class="iconfont">&#xea13;</i>
+            </span>
+            <div class="feedback-content">
+              <img src="http://files.zdesigner.cn/2020/01/07/833f0a7940b5b202804b20accfb30ab8.png" />
+              <div class="title">报名成功</div>
+              <div class="content">我们运营小组已经收到了您的需求 会及时处理，请耐心等待哦，您也可以加入我们素材收集组</div>
+              <div class="content" style="margin-top: 30px;">V：zhishehui01</div>
+            </div>
+            <div class="btn" style="width: 160px;" @click="showFeedback = false">确定</div>
+          </div>
+        </div>
+      </div>
+    </transition>
     <!-- <div class="max-width">
       <div class="banner">
         <div class="banner-left">
@@ -202,6 +221,7 @@ export default {
         body: '',
         showPay: false,
       },
+      showFeedback: false,
       // imgSrc: '',
       // title: '',
       // desc: '',
@@ -331,6 +351,11 @@ export default {
         body: this.info.title,
         showPay: true,
       };
+    },
+
+    getReslut() {
+      this.payForm.showPay = false;
+      this.showFeedback = true;
     },
     // apply() {
     //   this.dialog.img = this.imgSrc;
@@ -785,6 +810,137 @@ export default {
         }
       }
     }
+  }
+
+  .dialog-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    .dialog-flex {
+      flex: 1;
+      .dialog-block {
+        position: relative;
+        display: block;
+        margin: auto;
+        padding: 25px 30px 35px 30px;
+        width: 340px;
+        background-color: #fff;
+        border-radius: 2px;
+        box-sizing: border-box;
+        .close {
+          position: absolute;
+          right: 16px;
+          top: 12px;
+          cursor: pointer;
+          z-index: 1;
+        }
+        .title {
+          margin-bottom: 30px;
+          font-size: 16px;
+          line-height: 22px;
+          color: #333;
+          text-align: center;
+          font-weight: bold;
+        }
+        .input-group {
+          display: flex;
+          align-items: center;
+          margin-bottom: 20px;
+          width: 100%;
+          height: 36px;
+          line-height: 36px;
+          border: 1px solid #979797;
+          border-radius: 2px;
+          box-sizing: border-box;
+          span {
+            display: block;
+            padding-left: 10px;
+            width: 36px;
+            font-size: 12px;
+            color: #888;
+          }
+          input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0;
+            font-size: 12px;
+          }
+        }
+
+        .btn {
+          margin: auto;
+          margin-top: 45px;
+          width: 100px;
+          height: 38px;
+          line-height: 38px;
+          text-align: center;
+          background-color: #F4C51D;
+          color: #000;
+          font-size: 14px;
+          border-radius: 2px;
+          cursor: pointer;
+        }
+
+        // 版权
+        .cop-title {
+          padding-top: 15px;
+          color: #333;
+          font-size: 16px;
+          line-height: 22px;
+          font-weight: bold;
+          word-break: break-all;
+        }
+        .cop-content {
+          color: #888;
+          font-size: 12px;
+          line-height: 18px;
+        }
+
+        // 反馈
+        .feedback-content {
+          img {
+            display: block;
+            margin: auto;
+            width: 118px;
+          }
+          .title {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 22px;
+            color: #333;
+          }
+          .content {
+            padding: 0 15%;
+            font-size: 12px;
+            line-height: 17px;
+            color: #333;
+            text-align: center;
+            box-sizing: border-box;
+          }
+        }
+      }
+    }
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+    opacity: 0;
+    transform: translate(0, -15px);
+  }
+  .fade-leave, .fade-enter-to {
+    transform: translate(0, 0);
   }
   // .banner {
   //   display: flex;
