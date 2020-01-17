@@ -15,7 +15,8 @@
           </div>
         </div>
 
-        <template v-if="isBuy === false">
+
+        <template v-if="step === 1">
         <div class="price-bar">
           <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.birdPrice" @click="selectPrice(2)">早鸟：{{info.birdPrice}}元</div>
           <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常票：{{info.price || 0}}元</div>
@@ -28,7 +29,7 @@
               <span v-if="activePrice === 1">{{info.price}}</span>
               <span v-if="activePrice === 2">{{info.birdPrice}}</span>
             元</span>
-            <div class="btn active btn-buy" @click="isBuy = true">我要报名</div>
+            <div class="btn active btn-buy" @click="step = 2">我要报名</div>
           </div>
         </div>
 
@@ -43,7 +44,7 @@
         </div>
         </template>
 
-        <template v-if="isBuy === true">
+        <template v-if="step !== 1">
         <div class="buy-layer">
           <div class="back" @click="isBuy = false">
             <span class="back-icon">
@@ -51,149 +52,99 @@
             </span>
             <span class="t">返回</span>
           </div>
-          <div class="buy-flex" style="padding-right: 48px;text-align: right;">
-            <div class="wechat-qrcode">
-              <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png"/>
-              <div class="text">我还有疑问</div>
-            </div>
-          </div>
-          <div class="buy-flex" style="padding-left: 48px;">
-            <div class="title">
-              <template v-if="activePrice === 1">
-              <span class="t">您选择的是正常票</span>
-              <span class="t">价格<span>{{info.price}}</span>元</span>
-              </template>
-              <template v-if="activePrice === 2">
-              <span class="t">您选择的是早鸟票</span>
-              <span class="t">价格<span>{{info.birdPrice}}</span>元</span>
-              </template>
-            </div>
 
-            <div class="input-group">
-              <span>姓名</span>
-              <input type="text" v-model="dialog.name" placeholder="请填写姓名" />
+          <div class="buy-steps">
+            <div class="step">
+              <div :class="step === 1 ? 'count active' : 'count'">1</div>
+              <div class="step-t">拍下商品</div>
             </div>
-            <div class="input-group">
-              <span>可添加微信</span>
-              <input type="text" v-model="dialog.wechat" placeholder="请填写微信" />
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 2 ? 'count active' : 'count'">2</div>
+              <div class="step-t">支付信息</div>
             </div>
-            <div class="input-group">
-              <span>电话</span>
-              <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" />
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 3 ? 'count active' : 'count'">3</div>
+              <div class="step-t">确认扫码</div>
             </div>
-            <div class="input-group">
-              <span>邮箱</span>
-              <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 4 ? 'count active' : 'count'">4</div>
+              <div class="step-t">支付反馈</div>
             </div>
-            <div class="error">{{dialogError}}</div>
-            <div class="btn" @click="payit">微信支付</div>
           </div>
+
+          <div class="buy-box" v-if="step === 2">
+            <div class="box-form">
+              <div class="input-group">
+                <span>姓名</span>
+                <input type="text" v-model="dialog.name" placeholder="请填写姓名" />
+              </div>
+              <div class="input-group">
+                <span>可添加微信</span>
+                <input type="text" v-model="dialog.wechat" placeholder="请填写微信" />
+              </div>
+              <div class="input-group">
+                <span>电话</span>
+                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" />
+              </div>
+              <div class="input-group" style="margin: 0;">
+                <span>邮箱</span>
+                <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
+              </div>
+              <div class="error">{{dialogError}}</div>
+
+              <div class="text" v-if="activePrice === 1">您选择的是正常票 价格<span>{{info.price}}</span>元</div>
+              <div class="text" v-if="activePrice === 2">您选择的是早鸟票 价格<span>{{info.birdPrice}}</span>元</div>
+
+              <div class="btn" @click="payit">
+                <i class="iconfont">&#xe629;</i>
+                <span>微信支付</span>
+              </div>
+            </div>
+          </div>
+
+          <template v-if="step === 3">
+          <div class="select-price" v-if="activePrice === 1">实付<span>{{info.price}}</span>元</div>
+          <div class="select-price" v-if="activePrice === 2">实付<span>{{info.birdPrice}}</span>元</div>
+          <div class="qrcode-box">
+            <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" @order-success="getReslut" :size="143"></wechatPay>
+          </div>
+          <div class="wechat-text">微信扫码支付</div>
+          </template>
+
+          <template v-if="step === 4">
+          <div :class="payReslut.trade_state !== 'SUCCESS' ? 'pay-result fail' : 'pay-result'">
+            <i class="iconfont" v-if="payReslut.trade_state === 'SUCCESS'">&#xe607;</i>
+            <i class="iconfont" v-else>&#xea13;</i>
+
+            <div class="t">{{payReslut.trade_state_desc}}</div>
+          </div>
+
+          </template>
+
         </div>
         <div class="buy-tips">
-          <div class="title">报名需知</div>
-          <div class="text">活动报名需要添加小编为微信，或者报名后留下您的信息后由小编在24小时内添加您的微信，方便拉群，和您参与的具体信息，由于支付系统还没上线，小编会根据您的选择所报名的选项进行支付宝转账收费，支付成功后报名成功，希望对此流程熟知，感谢对我们的认可</div>
+          <div class="tips-left">
+            <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png" />
+          </div>
+
+          <div class="tips-right">
+            <div class="title">报名需知</div>
+            <div class="text">活动报名需要添加小编为微信，或者报名后留下您的信息后由小编在24小时内添加您的微信，方便拉群，和您参与的具体信息，由于支付系统还没上线，小编会根据您的选择所报名的选项进行支付宝转账收费，支付成功后报名成功，希望对此流程熟知，感谢对我们的认可</div>
+          </div>
         </div>
         </template>
       </div>
     </div>
 
-    <div class="activity-detail" v-if="isBuy === false">
+    <div class="activity-detail" v-if="step === 1">
       <div class="max-width">
         <loading v-if="loading === true"></loading>
         <article v-else v-html="info.content"></article>
       </div>
     </div>
-
-    <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" v-if="payForm.showPay" @order-success="getReslut"></wechatPay>
-
-    <transition name="fade">
-      <div class="dialog-layer" v-if="showFeedback">
-        <div class="dialog-flex">
-          <div class="dialog-block">
-            <span class="close" @click="showFeedback = false">
-              <i class="iconfont">&#xea13;</i>
-            </span>
-            <div class="feedback-content">
-              <img src="http://files.zdesigner.cn/2020/01/07/833f0a7940b5b202804b20accfb30ab8.png" />
-              <div class="title">报名成功</div>
-              <div class="content">我们运营小组已经收到了您的需求 会及时处理，请耐心等待哦，您也可以加入我们素材收集组</div>
-              <div class="content" style="margin-top: 30px;">V：zhishehui01</div>
-            </div>
-            <div class="btn" style="width: 160px;" @click="showFeedback = false">确定</div>
-          </div>
-        </div>
-      </div>
-    </transition>
-    <!-- <div class="max-width">
-      <div class="banner">
-        <div class="banner-left">
-          <loading class="img" v-if="loading === true"></loading>
-          <div v-else class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
-        </div>
-        <loading v-if="loading === true"></loading>
-        <template v-else>
-        <div class="banner-mid">
-          <div class="title">{{title}}</div>
-          <div class="sub-title">{{desc}}</div>
-          <div class="info">
-            <p>活动时间：{{starttime}} ~ {{endtime}}</p>
-            <p>活动人数：{{number > 0 ? number : '不限'}}</p>
-            <p>活动方式：{{mode}}</p>
-            <p>活动费用：{{fee > 0 ? fee : '免费'}}</p>
-          </div>
-        </div>
-        <div class="banner-right">
-          <div class="icon-btn" @click="toRecord">
-            <div class="icon" @click="toRecord">会后笔记</div>
-          </div>
-          <a class="btn disabled" v-if="status === 0">未开放</a>
-          <a class="btn" v-else-if="status === 1" @click="apply">可报名</a>
-          <a class="btn disabled" v-else-if="status === 2">已结束</a>
-        </div>
-        </template>
-      </div>
-      <div class="activity-detail">
-        <loading v-if="!content"></loading>
-        <article v-else v-html="content"></article>
-      </div>
-    </div>
-
-    <div class="dialog" v-if="applyShow">
-      <div class="dialog-box">
-        <span class="close" @click="applyHide">关闭</span>
-        <div class="dialog-flex">
-          <div class="img" :style="{ backgroundImage: `url(${dialog.img})` }"></div>
-          <div class="right">
-            <div class="fee">报名费：{{fee > 0 ? fee : '免费'}}</div>
-            <div class="form-group">
-              <span>姓名</span>
-              <input type="text" v-model="dialog.form.name" />
-            </div>
-            <div class="form-group">
-              <span>电话</span>
-              <input type="text" v-model="dialog.form.mobilePhoneNumber" maxlength="11" />
-            </div>
-            <div class="form-group">
-              <span>微信</span>
-              <input type="text" v-model="dialog.form.wechatId"/>
-            </div>
-            <div class="tips" v-if="tips">{{tips}}</div>
-          </div>
-        </div>
-        <a class="btn" @click="putApply">报名</a>
-      </div>
-      <div class="dialog-bg"></div>
-    </div>
-
-    <div class="dialog" v-if="qrcodeShow">
-      <div class="dialog-box">
-        <div class="qrcode" style="background-image:url(http://lc-vwzM34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png)"></div>
-        <div class="text">
-          报名成功<br/>24小时内小编会联系您进行支付
-        </div>
-        <span class="close" @click="qrcodeHide">关闭</span>
-      </div>
-    </div> -->
   </div>
 </template>
 <script>
@@ -215,64 +166,14 @@ export default {
       dialog: {},
       dialogError: '',
 
+      step: 1,
       payForm: {
         out_trade_no: '',
         total_fee: '',
         body: '',
-        showPay: false,
       },
-      showFeedback: false,
-      // imgSrc: '',
-      // title: '',
-      // desc: '',
-      // starttime: '',
-      // endtime: '',
-      // number: 0,
-      // mode: '',
-      // status: 0,
-      // fee: '',
-      // note: '',
-      // modeList: [
-      //   {
-      //     label: '线下活动',
-      //     value: 1,
-      //   },
-      //   {
-      //     label: '线上直播',
-      //     value: 2,
-      //   },
-      // ],
-      // sortList: [
-      //   {
-      //     label: '宅设主办',
-      //     value: 1,
-      //   },
-      //   {
-      //     label: '推荐活动',
-      //     value: 2,
-      //   },
-      //   {
-      //     label: '合作活动',
-      //     value: 3,
-      //   },
-      //   {
-      //     label: '探讨会',
-      //     value: 4,
-      //   },
-      // ],
-      // content: '',
-      // applyShow: false,
-      // dialog: {
-      //   img: '',
-      //   form: {
-      //     name: '',
-      //     mobilePhoneNumber: '',
-      //     wechatId: '',
-      //   },
-      // },
-      // qrcodeShow: false,
-      // tips: '',
-      // userId: '',
+
+      payReslut: '',
     }
   },
   mounted() {
@@ -312,15 +213,6 @@ export default {
         } else if (res.fee && res.fee > 0) {
           this.activePrice = 1;
         }
-        // this.imgSrc = res.imgSrc || '';
-        // this.title = res.title || '';
-        // this.desc = res.desc || '';
-      //   this.number = res.number || 0;
-      //   this.mode = this.modeList[res.mode - 1].label;
-      //   this.fee = res.fee || '';
-      //   this.content = res.content || '';
-      //   this.status = res.status;
-      //   this.note = res.note;
       });
     },
     payit() {
@@ -349,159 +241,14 @@ export default {
         out_trade_no: `test${new Date().getTime()}`,
         total_fee: this.activePrice === 2 ? this.info.birdPrice : this.info.price,
         body: this.info.title,
-        showPay: true,
       };
+      this.step = 3;
     },
 
-    getReslut() {
-      this.payForm.showPay = false;
-      this.showFeedback = true;
+    getReslut(item) {
+      this.step = 4;
+      this.payReslut = item;
     },
-    // apply() {
-    //   this.dialog.img = this.imgSrc;
-    //   this.applyShow = true;
-    // },
-    // putApply() {
-    //   if (!this.dialog.form.name) {
-    //     this.tips = '请填写名字';
-    //     return false;
-    //   }
-    //   if (!this.dialog.form.mobilePhoneNumber) {
-    //     this.tips = '请填写手机号码';
-    //     return false;
-    //   }
-    //   if (this.dialog.form.mobilePhoneNumber.length !== 11) {
-    //     this.tips = '手机号码格式错误';
-    //     return false;
-    //   }
-    //   if (!this.dialog.form.wechatId) {
-    //     this.tips = '请填写微信';
-    //     return false;
-    //   }
-    //   if (this.dialog.form.mobilePhoneNumber.length === 11) {
-    //     let apQuery = this.$Bmob.Query('activity_person');
-        
-    //     let userQuery = this.$Bmob.Query('_User');
-    //     userQuery.equalTo('mobilePhoneNumber', '==', this.dialog.form.mobilePhoneNumber);
-    //     userQuery.find().then((user) => {
-    //       if (user.length > 0) {
-    //         if (user[0].name !== this.dialog.form.name) {
-    //           this.tips = '名字或手机号有误，请检查或联系管理员';
-    //           return false;
-    //         }
-    //         if (user[0].wechatId !== this.dialog.form.wechatId) {
-    //           this.tips = '微信号或手机号有误，请检查或联系管理员';
-    //           return false;
-    //         }
-
-    //         const userPointer = this.$Bmob.Pointer('_User')
-    //         const userID = userPointer.set(user[0].objectId)
-    //         apQuery.equalTo("user","==", userID);
-    //         apQuery.find().then((ap) => {
-    //           if (ap.length > 0) {
-    //             this.tips = '您已经报名啦，请等候管理员联系您';
-    //           } else {
-    //             let ActivityPerson = this.$Bmob.Query('activity_person');
-    //             const activityPointer = this.$Bmob.Pointer('activity')
-    //             const activityID = activityPointer.set(this.$route.query.id)
-
-    //             ActivityPerson.set('activity', activityID);
-    //             ActivityPerson.set('user', userID);
-    //             ActivityPerson.save().then(() => {
-    //               this.tips = '';
-    //               this.dialog = {
-    //                 form: {
-    //                   name: '',
-    //                   mobilePhoneNumber: '',
-    //                   wechatId: '',
-    //                 },
-    //               };
-    //               this.applyShow = false;
-    //               this.qrcodeShow = true;
-    //             });
-    //           }
-    //         });
-    //       } else {
-    //         console.log('创建新用户');
-    //         this.toApply();
-    //       }
-    //     });
-    //   }
-    // },
-    // toApply() {
-    //   let params = {
-    //     name: this.dialog.form.name,
-    //     mobilePhoneNumber: this.dialog.form.mobilePhoneNumber,
-    //     wechatId: this.dialog.form.wechatId,
-    //     username: this.dialog.form.name,
-    //     password: '123456',
-    //   }
-    //   this.$Bmob.User.register(params).then((newUser) => {
-    //     console.log(newUser);
-    //     this.userId = newUser.objectId;
-    //     let ActivityPerson = this.$Bmob.Query('activity_person');
-
-    //     const activityPointer = this.$Bmob.Pointer('activity')
-    //     const activityID = activityPointer.set(this.$route.query.id)
-
-    //     const userPointer = this.$Bmob.Pointer('_User')
-    //     const userID = userPointer.set(newUser.objectId)
-
-    //     ActivityPerson.set('activity', activityID);
-    //     ActivityPerson.set('user', userID);
-    //     ActivityPerson.save().then(() => {
-    //       this.applyShow = false;
-    //       this.qrcodeShow = true;
-    //     });
-    //   }).catch(err => {
-    //     console.log(err)
-    //   });
-
-
-
-    //   // const userQuery = this.$Bmob.Query('_User');
-    //   // userQuery.set('name', this.dialog.form.name);
-    //   // userQuery.set('mobilePhoneNumber', this.dialog.form.mobilePhoneNumber);
-    //   // userQuery.set('wechatId', this.dialog.form.wechatId);
-    //   // userQuery.set('username', this.dialog.form.name);
-    //   // userQuery.set('password', '123456');
-    //   // userQuery.save().then((newUser) => {
-    //   //   console.log(newUser);
-    //   //   this.userId = newUser.objectId;
-    //   //   let ActivityPerson = this.$Bmob.Query('activity_person');
-
-    //   //   const activityPointer = this.$Bmob.Pointer('activity')
-    //   //   const activityID = activityPointer.set(this.$route.query.id)
-
-    //   //   const userPointer = this.$Bmob.Pointer('_User')
-    //   //   const userID = userPointer.set(newUser.objectId)
-
-    //   //   ActivityPerson.set('activity', activityID);
-    //   //   ActivityPerson.set('user', userID);
-    //   //   ActivityPerson.save().then(() => {
-    //   //     this.applyShow = false;
-    //   //     this.qrcodeShow = true;
-    //   //   });
-    //   // }).catch((err) => {
-    //   //   console.log(err);
-    //   //   this.tips = err.error;
-    //   // });
-    // },
-    // applyHide() {
-    //   this.applyShow = false;
-    // },
-    // qrcodeHide() {
-    //   this.qrcodeShow = false;
-    // },
-    // toRecord() {
-    //   // this.$router.push({
-    //   //   path: '/activity/record',
-    //   //   query: {
-    //   //     id: this.$route.query.id,
-    //   //   },
-    //   // });
-    //   window.open(this.note);
-    // },
   },
 };
 </script>
@@ -665,11 +412,7 @@ export default {
 
       .buy-layer {
         position: relative;
-        display: flex;
-        align-items: center;
-        margin-top: 50px;
-        padding: 0px 80px;
-        padding-top: 25px;
+        padding: 25px 0 63px 0;
         border-top: 1px solid #F2F2F2;
         box-sizing: border-box;
         .back {
@@ -695,91 +438,260 @@ export default {
             color: #262626;
           }
         }
-        .buy-flex {
-          width: 50%;
-          box-sizing: border-box;
-          .wechat-qrcode {
+        .buy-steps {
+          width: 100%;
+          text-align: center;
+          .step {
             display: inline-block;
-            width: 170px;
-            height: 170px;
-            img {
-              display: block;
-              width: 100%;
-            }
-            .text {
+            vertical-align: middle;
+            padding: 0 16px;
+            .count {
+              margin: auto;
+              width: 38px;
+              height: 38px;
+              line-height: 38px;
               text-align: center;
+              border-radius: 50%;
+              border: 1px solid #979797;
+              font-size: 16px;
+              color: #262626;
+              &.active {
+                background-color: #FF5D01;
+                border: 1px solid #FF5D01;
+                color: #fff;
+              }
+            }
+            .step-t {
+              margin-top: 13px;
               font-size: 12px;
-              color: #979797;
+              line-height: 17px;
+              text-align: center;
+              color: #262626;
             }
           }
-          .title {
-            margin-bottom: 30px;
-            font-size: 12px;
-            font-family: PingFangSC;
-            color: #262626;
-            line-height: 17px;
-            .t {
-              margin-right: 10px;
+          .line {
+            display: inline-block;
+            vertical-align: top;
+            margin-top: 19px;
+            width: 52px;
+            height: 1px;
+            background-color: #979797;
+          }
+        }
+
+        .buy-box {
+          padding-top: 50px;
+          .box-form {
+            margin: auto;
+            width: 280px;
+            .input-group {
+              display: flex;
+              margin-bottom: 20px;
+              padding: 0px 10px;
+              width: 280px;
+              height: 36px;
+              line-height: 34px;
+              border: 1px solid #979797;
+              font-size: 12px;
+              box-sizing: border-box;
+              &:last-child {
+                margin-bottom: 0;
+              }
               span {
+                color: #888;
+                width: 70px;
+              }
+              input {
+                padding: 0;
+                height: 34px;
+                border: none;
+                outline: none;
+                box-sizing: border-box;
+              }
+            }
+            .error {
+              margin: 10px 0 30px 0;
+              font-size: 12px;
+              height: 17px;
+              color: #E55D5D;
+            }
+            .text {
+              margin-bottom: 17px;
+              text-align: center;
+              color: #262626;
+              font-size: 14px;
+              line-height: 20px;
+              span {
+                margin: 0 10px;
                 font-size: 24px;
                 color: #FF5D01;
               }
             }
-          }
-          .input-group {
-            display: flex;
-            margin-bottom: 20px;
-            padding: 0px 10px;
-            width: 280px;
-            height: 36px;
-            line-height: 34px;
-            border: 1px solid #979797;
-            font-size: 12px;
-            box-sizing: border-box;
-            span {
-              color: #888;
-              width: 70px;
+            .btn {
+              width: 280px;
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+              border: 1px solid #6BCC03;
+              border-radius: 2px;
+              font-size: 14px;
+              color: #333333;
+              cursor: pointer;
+              i {
+                color: #09BB07;
+                margin-right: 10px;
+              }
             }
-            input {
-              padding: 0;
-              height: 34px;
-              border: none;
-              outline: none;
-              box-sizing: border-box;
-            }
-          }
-          .error {
-            margin-bottom: 30px;
-            font-size: 12px;
-            height: 17px;
-            color: #E55D5D;
-          }
-          .btn {
-            width: 280px;
-            height: 40px;
-            line-height: 40px;
-            text-align: center;
-            background-color: rgba(244,117,29,0.30);
-            border: 1px solid #F4751D;
-            border-radius: 2px;
-            color: #F4751D;
-            cursor: pointer;
           }
         }
+
+        .select-price {
+          margin-top: 50px;
+          margin-bottom: 11px;
+          text-align: center;
+          color: #262626;
+          font-size: 14px;
+          line-height: 20px;
+          span {
+            margin: 0 10px;
+            font-size: 24px;
+            color: #FF5D01;
+          }
+        }
+        .qrcode-box {
+          margin:auto;
+          width:143px;
+          height:143px;
+        }
+        .wechat-text {
+          margin-top: 15px;
+          font-size:16px;
+          line-height: 22px;
+          text-align: center;
+          color: #262626;
+        }
+        .pay-result {
+          padding: 50px 0;
+          text-align: center;
+          i {
+            color: #00c250;
+            font-size:48px;
+          }
+          .t {
+            margin-top: 30px;
+            color: #FF5D01;
+            font-size: 16px;
+            line-height: 22px;
+          }
+          &.fail {
+            i {
+              color: #262626;
+            }
+            .t {
+              color: #262626;
+            }
+          }
+        }
+        // .buy-flex {
+        //   width: 50%;
+        //   box-sizing: border-box;
+        //   .wechat-qrcode {
+        //     display: inline-block;
+        //     width: 170px;
+        //     height: 170px;
+        //     img {
+        //       display: block;
+        //       width: 100%;
+        //     }
+        //     .text {
+        //       text-align: center;
+        //       font-size: 12px;
+        //       color: #979797;
+        //     }
+        //   }
+        //   .title {
+        //     margin-bottom: 30px;
+        //     font-size: 12px;
+        //     font-family: PingFangSC;
+        //     color: #262626;
+        //     line-height: 17px;
+        //     .t {
+        //       margin-right: 10px;
+        //       span {
+        //         font-size: 24px;
+        //         color: #FF5D01;
+        //       }
+        //     }
+        //   }
+        //   .input-group {
+        //     display: flex;
+        //     margin-bottom: 20px;
+        //     padding: 0px 10px;
+        //     width: 280px;
+        //     height: 36px;
+        //     line-height: 34px;
+        //     border: 1px solid #979797;
+        //     font-size: 12px;
+        //     box-sizing: border-box;
+        //     span {
+        //       color: #888;
+        //       width: 70px;
+        //     }
+        //     input {
+        //       padding: 0;
+        //       height: 34px;
+        //       border: none;
+        //       outline: none;
+        //       box-sizing: border-box;
+        //     }
+        //   }
+        //   .error {
+        //     margin-bottom: 30px;
+        //     font-size: 12px;
+        //     height: 17px;
+        //     color: #E55D5D;
+        //   }
+        //   .btn {
+        //     width: 280px;
+        //     height: 40px;
+        //     line-height: 40px;
+        //     text-align: center;
+        //     background-color: rgba(244,117,29,0.30);
+        //     border: 1px solid #F4751D;
+        //     border-radius: 2px;
+        //     color: #F4751D;
+        //     cursor: pointer;
+        //   }
+        // }
       }
 
       .buy-tips {
-        padding: 50px 80px 0px;
-        .title {
-          font-size: 14px;
-          line-height: 32px;
-          color: #262626;
-          font-weight: bold;
+        display: flex;
+        padding: 29px 56px 29px 34px;
+        border: 1px solid #979797;
+        box-sizing: border-box;
+        .tips-left {
+          width: 104px;
+          img {
+            display: block;
+            width: 100%;
+          }
         }
-        .text {
-          font-size: 14px;
-          line-height: 24px;
-          color: #888;
+        .tips-right {
+          flex: 1;
+          padding-left: 22px;
+          box-sizing: border-box;
+          .title {
+            font-size: 14px;
+            line-height: 32px;
+            color: #262626;
+            font-weight: bold;
+          }
+          .text {
+            font-size: 14px;
+            line-height: 24px;
+            color: #888;
+          }
         }
       }
     }
@@ -812,136 +724,136 @@ export default {
     }
   }
 
-  .dialog-layer {
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.5);
-    z-index: 2;
-    .dialog-flex {
-      flex: 1;
-      .dialog-block {
-        position: relative;
-        display: block;
-        margin: auto;
-        padding: 25px 30px 35px 30px;
-        width: 340px;
-        background-color: #fff;
-        border-radius: 2px;
-        box-sizing: border-box;
-        .close {
-          position: absolute;
-          right: 16px;
-          top: 12px;
-          cursor: pointer;
-          z-index: 1;
-        }
-        .title {
-          margin-bottom: 30px;
-          font-size: 16px;
-          line-height: 22px;
-          color: #333;
-          text-align: center;
-          font-weight: bold;
-        }
-        .input-group {
-          display: flex;
-          align-items: center;
-          margin-bottom: 20px;
-          width: 100%;
-          height: 36px;
-          line-height: 36px;
-          border: 1px solid #979797;
-          border-radius: 2px;
-          box-sizing: border-box;
-          span {
-            display: block;
-            padding-left: 10px;
-            width: 36px;
-            font-size: 12px;
-            color: #888;
-          }
-          input {
-            flex: 1;
-            border: none;
-            outline: none;
-            padding: 0;
-            font-size: 12px;
-          }
-        }
+  // .dialog-layer {
+  //   position: fixed;
+  //   left: 0;
+  //   top: 0;
+  //   display: flex;
+  //   align-items: center;
+  //   width: 100%;
+  //   height: 100%;
+  //   background-color: rgba(0,0,0,0.5);
+  //   z-index: 2;
+  //   .dialog-flex {
+  //     flex: 1;
+  //     .dialog-block {
+  //       position: relative;
+  //       display: block;
+  //       margin: auto;
+  //       padding: 25px 30px 35px 30px;
+  //       width: 340px;
+  //       background-color: #fff;
+  //       border-radius: 2px;
+  //       box-sizing: border-box;
+  //       .close {
+  //         position: absolute;
+  //         right: 16px;
+  //         top: 12px;
+  //         cursor: pointer;
+  //         z-index: 1;
+  //       }
+  //       .title {
+  //         margin-bottom: 30px;
+  //         font-size: 16px;
+  //         line-height: 22px;
+  //         color: #333;
+  //         text-align: center;
+  //         font-weight: bold;
+  //       }
+  //       .input-group {
+  //         display: flex;
+  //         align-items: center;
+  //         margin-bottom: 20px;
+  //         width: 100%;
+  //         height: 36px;
+  //         line-height: 36px;
+  //         border: 1px solid #979797;
+  //         border-radius: 2px;
+  //         box-sizing: border-box;
+  //         span {
+  //           display: block;
+  //           padding-left: 10px;
+  //           width: 36px;
+  //           font-size: 12px;
+  //           color: #888;
+  //         }
+  //         input {
+  //           flex: 1;
+  //           border: none;
+  //           outline: none;
+  //           padding: 0;
+  //           font-size: 12px;
+  //         }
+  //       }
 
-        .btn {
-          margin: auto;
-          margin-top: 45px;
-          width: 100px;
-          height: 38px;
-          line-height: 38px;
-          text-align: center;
-          background-color: #F4C51D;
-          color: #000;
-          font-size: 14px;
-          border-radius: 2px;
-          cursor: pointer;
-        }
+  //       .btn {
+  //         margin: auto;
+  //         margin-top: 45px;
+  //         width: 100px;
+  //         height: 38px;
+  //         line-height: 38px;
+  //         text-align: center;
+  //         background-color: #F4C51D;
+  //         color: #000;
+  //         font-size: 14px;
+  //         border-radius: 2px;
+  //         cursor: pointer;
+  //       }
 
-        // 版权
-        .cop-title {
-          padding-top: 15px;
-          color: #333;
-          font-size: 16px;
-          line-height: 22px;
-          font-weight: bold;
-          word-break: break-all;
-        }
-        .cop-content {
-          color: #888;
-          font-size: 12px;
-          line-height: 18px;
-        }
+  //       // 版权
+  //       .cop-title {
+  //         padding-top: 15px;
+  //         color: #333;
+  //         font-size: 16px;
+  //         line-height: 22px;
+  //         font-weight: bold;
+  //         word-break: break-all;
+  //       }
+  //       .cop-content {
+  //         color: #888;
+  //         font-size: 12px;
+  //         line-height: 18px;
+  //       }
 
-        // 反馈
-        .feedback-content {
-          img {
-            display: block;
-            margin: auto;
-            width: 118px;
-          }
-          .title {
-            margin-top: 36px;
-            text-align: center;
-            font-size: 16px;
-            line-height: 22px;
-            color: #333;
-          }
-          .content {
-            padding: 0 15%;
-            font-size: 12px;
-            line-height: 17px;
-            color: #333;
-            text-align: center;
-            box-sizing: border-box;
-          }
-        }
-      }
-    }
-  }
+  //       // 反馈
+  //       .feedback-content {
+  //         img {
+  //           display: block;
+  //           margin: auto;
+  //           width: 118px;
+  //         }
+  //         .title {
+  //           margin-top: 36px;
+  //           text-align: center;
+  //           font-size: 16px;
+  //           line-height: 22px;
+  //           color: #333;
+  //         }
+  //         .content {
+  //           padding: 0 15%;
+  //           font-size: 12px;
+  //           line-height: 17px;
+  //           color: #333;
+  //           text-align: center;
+  //           box-sizing: border-box;
+  //         }
+  //       }
+  //     }
+  //   }
+  // }
 
-  /* 可以设置不同的进入和离开动画 */
-  /* 设置持续时间和动画函数 */
-  .fade-enter-active, .fade-leave-active {
-    transition: opacity 0.25s, transform 0.25s;
-  }
-  .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
-    opacity: 0;
-    transform: translate(0, -15px);
-  }
-  .fade-leave, .fade-enter-to {
-    transform: translate(0, 0);
-  }
+  // /* 可以设置不同的进入和离开动画 */
+  // /* 设置持续时间和动画函数 */
+  // .fade-enter-active, .fade-leave-active {
+  //   transition: opacity 0.25s, transform 0.25s;
+  // }
+  // .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+  //   opacity: 0;
+  //   transform: translate(0, -15px);
+  // }
+  // .fade-leave, .fade-enter-to {
+  //   transform: translate(0, 0);
+  // }
   // .banner {
   //   display: flex;
   //   align-items: top;

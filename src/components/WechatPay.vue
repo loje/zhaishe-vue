@@ -1,9 +1,7 @@
 <template>
   <div class="pay-qrcode">
-    <div class="pay-flex">
-      <!-- <vue-qr :logoSrc="imageUrl" :text="text" :size="200"></vue-qr> -->
-      <vue-qr :text="text" :size="200"></vue-qr>
-    </div>
+    <!-- <vue-qr :logoSrc="imageUrl" :text="text" :size="200"></vue-qr> -->
+      <vue-qr :text="text" :size="size"></vue-qr>
   </div>
 </template>
 
@@ -34,6 +32,12 @@
       body: {
         type: [String],
         default: '商品描述',
+      },
+      size: {
+        type: [Number],
+        default() {
+          return 200;
+        },
       },
     },
     data() {
@@ -173,7 +177,7 @@
                 console.log(result) //打印出返回的结果
                 // return result;
                 if (result.trade_state !== 'NOTPAY') {
-                  that.$emit('order-success');
+                  that.$emit('order-success', result);
                   clearInterval(interval);
                 }
               }
@@ -188,22 +192,9 @@
 
 <style lang="scss" scoped>
   .pay-qrcode {
-    position: fixed;
-    left: 0;
-    top: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0,0,0,0.75);
-    z-index: 0;
-    .pay-flex {
-      flex: 1;
-      img {
-        display: block!important;
-        margin: auto;
-      }
+    img {
+      display: block!important;
+      margin: auto;
     }
   }
 </style>

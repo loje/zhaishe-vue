@@ -118,6 +118,13 @@
       "unicode_decimal": 58961
     },
     {
+      "icon_id": "8761378",
+      "name": "微信 支付",
+      "font_class": "weixinzhifu",
+      "unicode": "e629",
+      "unicode_decimal": 58921
+    },
+    {
       "icon_id": "9512488",
       "name": "苹果",
       "font_class": "apple-fill",
