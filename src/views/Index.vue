@@ -127,7 +127,7 @@
     <div class="activity-layer">
       <div class="max-width">
         <div class="layer-title">
-          <div class="title">宅设分享会</div>
+          <div class="title">深圳同城</div>
           <div class="layer-nav">
             <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActivity('宅设主办', 1)">宅社主办</div>
             <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActivity('其他活动', 1)">其他活动</div>
@@ -158,7 +158,7 @@
                 <div class="title"><span v-if="pageAct === 1 && $index === 0">最新活动</span>{{item.title}}</div>
                 <div class="desc">{{item.desc}}</div>
                 <div class="tag">
-                  <span>深圳同城</span>
+                  <span>宅设分享会</span>
                   <span class="sort">活动标签：线下活动、线上直播</span>
                   <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
                   <span class="num">参与人数：{{item.number}}</span>
