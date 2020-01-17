@@ -29,7 +29,7 @@
               <span v-if="activePrice === 1">{{info.price}}</span>
               <span v-if="activePrice === 2">{{info.birdPrice}}</span>
             元</span>
-            <div class="btn active btn-buy" @click="step = 2">我要报名</div>
+            <div :class="applyBtn !== '您已报名'?'btn active btn-buy':'btn active btn-buyed'" @click="apply">{{applyBtn}}</div>
           </div>
         </div>
 
@@ -46,7 +46,7 @@
 
         <template v-if="step !== 1">
         <div class="buy-layer">
-          <div class="back" @click="isBuy = false">
+          <div class="back" @click="back">
             <span class="back-icon">
               <i class="iconfont">&#xe693;</i>
             </span>
@@ -87,7 +87,7 @@
               </div>
               <div class="input-group">
                 <span>电话</span>
-                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" />
+                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" />
               </div>
               <div class="input-group" style="margin: 0;">
                 <span>邮箱</span>
@@ -158,10 +158,10 @@ export default {
   },
   data() {
     return {
+      applyBtn: '我要报名',
       loading: false,
       info: {},
 
-      isBuy: false,
       activePrice: 1,
       dialog: {},
       dialogError: '',
@@ -178,6 +178,7 @@ export default {
   },
   mounted() {
     this.getInfo();
+    this.checkApply();
   },
   methods: {
     selectPrice(i) {
@@ -215,11 +216,46 @@ export default {
         }
       });
     },
-    payit() {
+
+    checkApply() {
+      if (this.$store.state.user) {
+        const query = this.$Bmob.Query('activity_person');
+        query.equalTo('user', '==', this.$store.state.user.objectId);
+        query.equalTo('activity', '==', this.$route.query.id);
+        query.find().then((res) => {
+          if (res.length > 0) {
+            if (res[0].isApply === false) {
+              this.applyBtn = '重新报名';
+            } else {
+              this.applyBtn = '您已报名';
+            }
+          } else {
+            this.applyBtn = '我要报名';
+          }
+        });
+      }
+    },
+    back() {
+      this.checkApply();
+      this.step = 1;
+    },
+    apply() {
       if (!localStorage.getItem('bmob')) {
-        this.dialogError = '请先点右上角登录';
+        alert('请先点右上角登录');
         return false;
       }
+      if (this.applyBtn !== '您已报名') {
+        this.step = 2;
+        console.log(this.$store.state.user);
+        this.dialog = {
+          name: this.$store.state.user.name,
+          wechat: this.$store.state.user.wechatId,
+          phone: this.$store.state.user.mobilePhoneNumber,
+          email: this.$store.state.user.email,
+        };
+      }
+    },
+    payit() {
       if (!this.dialog.name) {
         this.dialogError = '请填写名字';
         return false;
@@ -242,12 +278,54 @@ export default {
         total_fee: this.activePrice === 2 ? this.info.birdPrice : this.info.price,
         body: this.info.title,
       };
-      this.step = 3;
+
+      const query = this.$Bmob.Query('_User');
+      query.get(this.$store.state.user.objectId).then(user => {
+        user.set('name', this.dialog.name);
+        user.set('mobilePhoneNumber', this.dialog.phone);
+        user.set('email', this.dialog.email);
+        user.set('wechatId', this.dialog.wechat);
+        user.save().then(() => {
+          this.step = 3;
+        }).catch(err => {
+          console.log(err);
+          if (err.code === 209) {
+            this.dialogError = '该手机号码已经存在';
+          }
+          if (err.code === 301) {
+            this.dialogError = '邮箱格式不正确';
+          }
+        });
+      })
     },
 
     getReslut(item) {
-      this.step = 4;
-      this.payReslut = item;
+      const query = this.$Bmob.Query('order_list');
+      query.set("payReslut", item);
+      query.set("sort", 'active');
+      const activityPointer = this.$Bmob.Pointer('activity');
+      const activityID = activityPointer.set(this.$route.query.id);
+      query.set('activity', activityID);
+      const userPointer = this.$Bmob.Pointer('_User');
+      const userID = userPointer.set(this.$store.state.user.objectId);
+      query.set('user', userID);
+      query.save().then(res => {
+        console.log(res);
+        const apquery = this.$Bmob.Query('activity_person');
+        const userPointer = this.$Bmob.Pointer('_User')
+        const userID = userPointer.set(this.$store.state.user.objectId)
+        apquery.set('user', userID);
+        const activityPointer = this.$Bmob.Pointer('activity')
+        const activityID = activityPointer.set(this.$route.query.id)
+        apquery.set('activity', activityID);
+        apquery.set('isApply', true);
+        apquery.save().then(() => {
+          this.step = 4;
+          this.payReslut = item;
+        });
+      }).catch(err => {
+        console.log(err);
+      });
     },
   },
 };
@@ -375,6 +453,9 @@ export default {
               margin-right: 0;
               background-color: #F4751D;
               color: #fff;
+            }
+            &.btn-buyed {
+              margin-right: 0;
             }
           }
           
