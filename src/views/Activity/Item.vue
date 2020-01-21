@@ -121,7 +121,6 @@
 
             <div class="t">{{payReslut.trade_state_desc}}</div>
           </div>
-
           </template>
 
         </div>

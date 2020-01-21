@@ -35,14 +35,22 @@
         </div>
       </div>
     </div>
+
+    <tips :tips="tipsText" tipsBackgroundColor="rgba(255, 0, 24, 0.75)"></tips>
   </div>
 </template>
 
 <script>
+import tips from '@/components/Tips';
+
 export default {
+  components: {
+    tips,
+  },
   data() {
     return {
       userList: [],
+      tipsText: '',
     }
   },
   mounted() {
@@ -73,11 +81,17 @@ export default {
             }
           };
           this.$Bmob.functions(param.funcName, param.data).then((user) => {
-            console.log(user.openid);
+            if (user.sucess === false) {
+              this.tipsText = user.message;
+              let t = setTimeout(() => {
+                this.tipsText = '';
+                clearTimeout(t);
+              }, 1500);
+              return false;
+            }
             this.$Bmob.User.users().then((res) => {
-              // console.log(res);
               const userlist = res.results;
-              const isWX = userlist.some((item) => item.openid === user.openid);
+              const isWX = userlist.some((item) => item.openid === user.openid && user.openid !== '');
               if (isWX) {
                 for (let i = 0; i < userlist.length; i += 1) {
                   if (userlist[i].openid === user.openid) {

@@ -5,14 +5,14 @@
         <div class="media">
           <div class="media-left">
             <loading class="img" v-if="loading === true"></loading>
-            <div v-else class="img" :style="{backgroundImage: `url(${imgSrc})`}"></div>
+            <div v-else class="img" :style="{backgroundImage: `url(${info.imgSrc})`}"></div>
           </div>
           <loading v-if="loading === true"></loading>
           <template v-else>
           <div class="media-right">
             <div class="media-info">
-              <div class="title"><span>热门软件</span>{{title}}</div>
-              <div class="sub-title">{{desc}}</div>
+              <div class="title"><span>热门软件</span>{{info.title}}</div>
+              <div class="sub-title">{{info.desc}}</div>
 
               <div class="info-btm">
                 <span class="sell">已销售1034份</span>
@@ -23,17 +23,21 @@
           </template>
         </div>
 
-        <template v-if="isBuy === false">
+        <template v-if="step === 1">
         <div class="price-bar">
-          <div class="btn active">团购：{{groupPrice}}元</div>
-          <div class="btn">正常购：{{price}}元</div>
+          <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.groupPrice" @click="selectPrice(2)">团购：{{info.groupPrice}}元</div>
+          <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常购：{{info.price}}元</div>
 
           <input type="text" v-model="couponCode" placeholder="请输入推荐码" />
 
           <div class="bar-right">
-            <span class="t">你选择是团购</span>
-            <span class="price">价格<span>0</span>元</span>
-            <div class="btn active btn-buy" @click="isBuy = true">购买</div>
+            <span class="t" v-if="activePrice === 1">你选择是正常购</span>
+            <span class="t" v-if="activePrice === 2">你选择是团购</span>
+            <span class="price">价格
+              <span v-if="activePrice === 1">{{info.price}}</span>
+              <span v-if="activePrice === 2">{{info.groupPrice}}</span>
+            元</span>
+            <div class="btn active btn-buy" @click="buy">购买</div>
           </div>
         </div>
 
@@ -48,15 +52,15 @@
         </div>
         </template>
 
-        <template v-if="isBuy === true">
+        <template v-if="step !== 1">
         <div class="buy-layer">
-          <div class="back" @click="isBuy = false">
+          <div class="back" @click="back">
             <span class="back-icon">
               <i class="iconfont">&#xe693;</i>
             </span>
             <span class="t">返回</span>
           </div>
-          <div class="buy-flex" style="padding-right: 48px;text-align: right;">
+          <!-- <div class="buy-flex" style="padding-right: 48px;text-align: right;">
             <div class="wechat-qrcode">
               <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png"/>
               <div class="text">我还有疑问</div>
@@ -86,7 +90,76 @@
             </div>
             <div class="error">1423435</div>
             <div class="btn">微信支付</div>
+          </div> -->
+          <div class="buy-steps">
+            <div class="step">
+              <div :class="step === 1 ? 'count active' : 'count'">1</div>
+              <div class="step-t">拍下商品</div>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 2 ? 'count active' : 'count'">2</div>
+              <div class="step-t">支付信息</div>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 3 ? 'count active' : 'count'">3</div>
+              <div class="step-t">确认扫码</div>
+            </div>
+            <div class="line"></div>
+            <div class="step">
+              <div :class="step === 4 ? 'count active' : 'count'">4</div>
+              <div class="step-t">支付反馈</div>
+            </div>
           </div>
+
+          <div class="buy-box" v-if="step === 2">
+            <div class="box-form">
+              <div class="input-group">
+                <span>姓名</span>
+                <input type="text" v-model="dialog.name" placeholder="请填写姓名" />
+              </div>
+              <div class="input-group">
+                <span>可添加微信</span>
+                <input type="text" v-model="dialog.wechat" placeholder="请填写微信" />
+              </div>
+              <div class="input-group">
+                <span>电话</span>
+                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" />
+              </div>
+              <div class="input-group" style="margin: 0;">
+                <span>邮箱</span>
+                <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
+              </div>
+              <div class="error">{{dialogError}}</div>
+
+              <div class="text" v-if="activePrice === 1">您选择的是正常购 价格<span>{{info.price}}</span>元</div>
+              <div class="text" v-if="activePrice === 2">您选择的是团购 价格<span>{{info.groupPrice}}</span>元</div>
+
+              <div class="btn" @click="payit">
+                <i class="iconfont">&#xe629;</i>
+                <span>微信支付</span>
+              </div>
+            </div>
+          </div>
+
+          <template v-if="step === 3">
+          <div class="select-price" v-if="activePrice === 1">实付<span>{{info.price}}</span>元</div>
+          <div class="select-price" v-if="activePrice === 2">实付<span>{{info.groupPrice}}</span>元</div>
+          <div class="qrcode-box">
+            <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" @order-success="getReslut" :size="143"></wechatPay>
+          </div>
+          <div class="wechat-text">微信扫码支付</div>
+          </template>
+
+          <template v-if="step === 4">
+          <div :class="payReslut.trade_state !== 'SUCCESS' ? 'pay-result fail' : 'pay-result'">
+            <i class="iconfont" v-if="payReslut.trade_state === 'SUCCESS'">&#xe607;</i>
+            <i class="iconfont" v-else>&#xea13;</i>
+
+            <div class="t">{{payReslut.trade_state_desc}}</div>
+          </div>
+          </template>
         </div>
         <div class="buy-tips">
           <div class="title">购买需知</div>
@@ -96,10 +169,10 @@
       </div>
     </div>
 
-    <div class="tools-detail" v-if="isBuy === false">
+    <div class="tools-detail" v-if="step === 1">
       <div class="max-width">
         <loading v-if="loading === true"></loading>
-        <article v-else v-html="content"></article>
+        <article v-else v-html="info.content"></article>
       </div>
     </div>
   </div>
@@ -107,55 +180,193 @@
 
 <script>
 import loading from '@/components/Loading';
+import wechatPay from '@/components/WechatPay';
+
 export default {
   components: {
     loading,
+    wechatPay,
   },
   data() {
     return {
       loading: false,
-      imgSrc: '',
-      title: '',
-      desc: '',
-      sys: [],
-      content: '',
+      info: {},
+
+      activePrice: 1,
+      dialog: {},
+      dialogError: '',
+
+      step: 1,
+      payForm: {
+        out_trade_no: '',
+        total_fee: '',
+        body: '',
+      },
+
+      payReslut: '',
+
+      // imgSrc: '',
+      // title: '',
+      // desc: '',
+      // sys: [],
+      // content: '',
 
       couponCode: '',
 
-      isBuy: false,
+      // isBuy: false,
     }
   },
   mounted() {
     this.getinfo();
   },
   methods: {
+    selectPrice(i) {
+      this.activePrice = i;
+    },
     getinfo() {
       this.loading = true;
       var query = this.$Bmob.Query('product');
       query.get(this.$route.query.id).then((res) => {
         this.loading = false;
-        this.imgSrc = res.imgSrc || '';
-        this.title = res.title || '';
-        this.desc = res.desc || '';
-        this.content = res.content;
-        this.groupPrice = res.groupPrice;
-        this.price = res.price;
+        this.info = {
+          ...this.info,
+          imgSrc: res.imgSrc,
+          title: res.title,
+          desc: res.desc,
+          address: res.address,
+          groupPrice: res.groupPrice || 0,
+          price: res.price || 0,
+          content: res.content,
+        };
+        // this.imgSrc = res.imgSrc || '';
+        // this.title = res.title || '';
+        // this.desc = res.desc || '';
+        // this.content = res.content;
+        // this.groupPrice = res.groupPrice;
+        // this.price = res.price;
 
-        if (res.system) {
-          let sysList = res.system;
-          let arrb = [];
-          var querySys = this.$Bmob.Query('support_sys');
-          for (let x = 0; x < sysList.length; x += 1) {
-            querySys.get(sysList[x]).then((result) => {
-              arrb.push({
-                id: result.objectId,
-                icon: result.icon,
-                title: result.title,
-              });
-            });
+        // if (res.system) {
+        //   let sysList = res.system;
+        //   let arrb = [];
+        //   var querySys = this.$Bmob.Query('support_sys');
+        //   for (let x = 0; x < sysList.length; x += 1) {
+        //     querySys.get(sysList[x]).then((result) => {
+        //       arrb.push({
+        //         id: result.objectId,
+        //         icon: result.icon,
+        //         title: result.title,
+        //       });
+        //     });
+        //   }
+        //   this.sys = arrb;
+        // }
+      });
+    },
+
+    // checkApply() {
+    //   if (this.$store.state.user) {
+    //     const query = this.$Bmob.Query('activity_person');
+    //     query.equalTo('user', '==', this.$store.state.user.objectId);
+    //     query.equalTo('activity', '==', this.$route.query.id);
+    //     query.find().then((res) => {
+    //       if (res.length > 0) {
+    //         if (res[0].isApply === false) {
+    //           this.applyBtn = '重新报名';
+    //         } else {
+    //           this.applyBtn = '您已报名';
+    //         }
+    //       } else {
+    //         this.applyBtn = '我要报名';
+    //       }
+    //     });
+    //   }
+    // },
+    back() {
+      // this.checkApply();
+      this.step = 1;
+    },
+    buy() {
+      if (!localStorage.getItem('bmob')) {
+        alert('请先点右上角登录');
+        return false;
+      }
+      this.step = 2;
+      this.dialog = {
+        name: this.$store.state.user.name,
+        wechat: this.$store.state.user.wechatId,
+        phone: this.$store.state.user.mobilePhoneNumber,
+        email: this.$store.state.user.email,
+      };
+    },
+    payit() {
+      if (!this.dialog.name) {
+        this.dialogError = '请填写名字';
+        return false;
+      }
+      if (!this.dialog.wechat) {
+        this.dialogError = '请填写微信';
+        return false;
+      }
+      if (!this.dialog.phone) {
+        this.dialogError = '请填写电话';
+        return false;
+      }
+      if (!this.dialog.email) {
+        this.dialogError = '请填写邮箱';
+        return false;
+      }
+
+      this.payForm = {
+        out_trade_no: `test${new Date().getTime()}`,
+        total_fee: this.activePrice === 2 ? this.info.groupPrice : this.info.price,
+        body: this.info.title,
+      };
+
+      const query = this.$Bmob.Query('_User');
+      query.get(this.$store.state.user.objectId).then(user => {
+        user.set('name', this.dialog.name);
+        user.set('mobilePhoneNumber', this.dialog.phone);
+        user.set('email', this.dialog.email);
+        user.set('wechatId', this.dialog.wechat);
+        user.save().then(() => {
+          this.step = 3;
+        }).catch(err => {
+          console.log(err);
+          if (err.code === 209) {
+            this.dialogError = '该手机号码已经存在';
           }
-          this.sys = arrb;
-        }
+          if (err.code === 301) {
+            this.dialogError = '邮箱格式不正确';
+          }
+        });
+      })
+    },
+
+    getReslut(item) {
+      const query = this.$Bmob.Query('order_list');
+      query.set("payReslut", item);
+      query.set("sort", 'product');
+      const productPointer = this.$Bmob.Pointer('product');
+      const productID = productPointer.set(this.$route.query.id);
+      query.set('product', productID);
+      const userPointer = this.$Bmob.Pointer('_User');
+      const userID = userPointer.set(this.$store.state.user.objectId);
+      query.set('user', userID);
+      query.save().then(() => {
+        const proquery = this.$Bmob.Query('product_person');
+        const userPointer = this.$Bmob.Pointer('_User')
+        const userID = userPointer.set(this.$store.state.user.objectId)
+        proquery.set('user', userID);
+        const productPointer = this.$Bmob.Pointer('product')
+        const productID = productPointer.set(this.$route.query.id)
+        proquery.set('product', productID);
+        proquery.set('isBuyed', true);
+        proquery.save().then(() => {
+          this.step = 4;
+          this.payReslut = item;
+        });
+      }).catch(err => {
+        console.log(err);
       });
     },
   },
