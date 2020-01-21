@@ -23,7 +23,7 @@
         </div>
       </div>
       <div class="user-block">
-        <div class="block-title">您参与的过活动</div>
+        <div class="block-title">您参与过的活动</div>
         <div class="block-list">
           <div class="block">宅设第二十期</div>
         </div>
@@ -82,6 +82,7 @@ export default {
           };
           this.$Bmob.functions(param.funcName, param.data).then((user) => {
             if (user.sucess === false) {
+              this.$router.push('/');
               this.tipsText = user.message;
               let t = setTimeout(() => {
                 this.tipsText = '';

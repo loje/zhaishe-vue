@@ -600,11 +600,7 @@ export default {
 
         .buy-layer {
           position: relative;
-          display: flex;
-          align-items: center;
-          margin-top: 50px;
-          padding: 0px 80px;
-          padding-top: 25px;
+          padding: 25px 0 63px 0;
           border-top: 1px solid #F2F2F2;
           box-sizing: border-box;
           .back {
@@ -630,77 +626,233 @@ export default {
               color: #262626;
             }
           }
-          .buy-flex {
-            width: 50%;
-            box-sizing: border-box;
-            .wechat-qrcode {
+
+          .buy-steps {
+            width: 100%;
+            text-align: center;
+            .step {
               display: inline-block;
-              width: 170px;
-              height: 170px;
-              img {
-                display: block;
-                width: 100%;
-              }
-              .text {
+              vertical-align: middle;
+              padding: 0 16px;
+              .count {
+                margin: auto;
+                width: 38px;
+                height: 38px;
+                line-height: 38px;
                 text-align: center;
+                border-radius: 50%;
+                border: 1px solid #979797;
+                font-size: 16px;
+                color: #262626;
+                &.active {
+                  background-color: #FF5D01;
+                  border: 1px solid #FF5D01;
+                  color: #fff;
+                }
+              }
+              .step-t {
+                margin-top: 13px;
                 font-size: 12px;
-                color: #979797;
+                line-height: 17px;
+                text-align: center;
+                color: #262626;
               }
             }
-            .title {
-              margin-bottom: 30px;
-              font-size: 12px;
-              font-family: PingFangSC;
-              color: #262626;
-              line-height: 17px;
-              .t {
-                margin-right: 10px;
+            .line {
+              display: inline-block;
+              vertical-align: top;
+              margin-top: 19px;
+              width: 52px;
+              height: 1px;
+              background-color: #979797;
+            }
+          }
+
+          .buy-box {
+            padding-top: 50px;
+            .box-form {
+              margin: auto;
+              width: 280px;
+              .input-group {
+                display: flex;
+                margin-bottom: 20px;
+                padding: 0px 10px;
+                width: 280px;
+                height: 36px;
+                line-height: 34px;
+                border: 1px solid #979797;
+                font-size: 12px;
+                box-sizing: border-box;
+                &:last-child {
+                  margin-bottom: 0;
+                }
                 span {
+                  color: #888;
+                  width: 70px;
+                }
+                input {
+                  padding: 0;
+                  height: 34px;
+                  border: none;
+                  outline: none;
+                  box-sizing: border-box;
+                }
+              }
+              .error {
+                margin: 10px 0 30px 0;
+                font-size: 12px;
+                height: 17px;
+                color: #E55D5D;
+              }
+              .text {
+                margin-bottom: 17px;
+                text-align: center;
+                color: #262626;
+                font-size: 14px;
+                line-height: 20px;
+                span {
+                  margin: 0 10px;
                   font-size: 24px;
                   color: #FF5D01;
                 }
               }
-            }
-            .input-group {
-              display: flex;
-              margin-bottom: 20px;
-              padding: 0px 10px;
-              width: 280px;
-              height: 36px;
-              line-height: 34px;
-              border: 1px solid #979797;
-              font-size: 12px;
-              box-sizing: border-box;
-              span {
-                color: #888;
-                width: 70px;
+              .btn {
+                width: 280px;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                border: 1px solid #6BCC03;
+                border-radius: 2px;
+                font-size: 14px;
+                color: #333333;
+                cursor: pointer;
+                i {
+                  color: #09BB07;
+                  margin-right: 10px;
+                }
               }
-              input {
-                padding: 0;
-                height: 34px;
-                border: none;
-                outline: none;
-                box-sizing: border-box;
-              }
-            }
-            .error {
-              margin-bottom: 30px;
-              font-size: 12px;
-              height: 17px;
-              color: #E55D5D;
-            }
-            .btn {
-              width: 280px;
-              height: 40px;
-              line-height: 40px;
-              text-align: center;
-              background-color: rgba(244,117,29,0.30);
-              border: 1px solid #F4751D;
-              border-radius: 2px;
-              color: #F4751D;
-              cursor: pointer;
             }
           }
+
+          .select-price {
+            margin-top: 50px;
+            margin-bottom: 11px;
+            text-align: center;
+            color: #262626;
+            font-size: 14px;
+            line-height: 20px;
+            span {
+              margin: 0 10px;
+              font-size: 24px;
+              color: #FF5D01;
+            }
+          }
+          .qrcode-box {
+            margin:auto;
+            width:143px;
+            height:143px;
+          }
+          .wechat-text {
+            margin-top: 15px;
+            font-size:16px;
+            line-height: 22px;
+            text-align: center;
+            color: #262626;
+          }
+          .pay-result {
+            padding: 50px 0;
+            text-align: center;
+            i {
+              color: #00c250;
+              font-size:48px;
+            }
+            .t {
+              margin-top: 30px;
+              color: #FF5D01;
+              font-size: 16px;
+              line-height: 22px;
+            }
+            &.fail {
+              i {
+                color: #262626;
+              }
+              .t {
+                color: #262626;
+              }
+            }
+          }
+
+          // .buy-flex {
+          //   width: 50%;
+          //   box-sizing: border-box;
+          //   .wechat-qrcode {
+          //     display: inline-block;
+          //     width: 170px;
+          //     height: 170px;
+          //     img {
+          //       display: block;
+          //       width: 100%;
+          //     }
+          //     .text {
+          //       text-align: center;
+          //       font-size: 12px;
+          //       color: #979797;
+          //     }
+          //   }
+          //   .title {
+          //     margin-bottom: 30px;
+          //     font-size: 12px;
+          //     font-family: PingFangSC;
+          //     color: #262626;
+          //     line-height: 17px;
+          //     .t {
+          //       margin-right: 10px;
+          //       span {
+          //         font-size: 24px;
+          //         color: #FF5D01;
+          //       }
+          //     }
+          //   }
+          //   .input-group {
+          //     display: flex;
+          //     margin-bottom: 20px;
+          //     padding: 0px 10px;
+          //     width: 280px;
+          //     height: 36px;
+          //     line-height: 34px;
+          //     border: 1px solid #979797;
+          //     font-size: 12px;
+          //     box-sizing: border-box;
+          //     span {
+          //       color: #888;
+          //       width: 70px;
+          //     }
+          //     input {
+          //       padding: 0;
+          //       height: 34px;
+          //       border: none;
+          //       outline: none;
+          //       box-sizing: border-box;
+          //     }
+          //   }
+          //   .error {
+          //     margin-bottom: 30px;
+          //     font-size: 12px;
+          //     height: 17px;
+          //     color: #E55D5D;
+          //   }
+          //   .btn {
+          //     width: 280px;
+          //     height: 40px;
+          //     line-height: 40px;
+          //     text-align: center;
+          //     background-color: rgba(244,117,29,0.30);
+          //     border: 1px solid #F4751D;
+          //     border-radius: 2px;
+          //     color: #F4751D;
+          //     cursor: pointer;
+          //   }
+          // }
         }
 
         .buy-tips {
