@@ -205,15 +205,7 @@ export default {
 
       payReslut: '',
 
-      // imgSrc: '',
-      // title: '',
-      // desc: '',
-      // sys: [],
-      // content: '',
-
       couponCode: '',
-
-      // isBuy: false,
     }
   },
   mounted() {
@@ -238,51 +230,10 @@ export default {
           price: res.price || 0,
           content: res.content,
         };
-        // this.imgSrc = res.imgSrc || '';
-        // this.title = res.title || '';
-        // this.desc = res.desc || '';
-        // this.content = res.content;
-        // this.groupPrice = res.groupPrice;
-        // this.price = res.price;
-
-        // if (res.system) {
-        //   let sysList = res.system;
-        //   let arrb = [];
-        //   var querySys = this.$Bmob.Query('support_sys');
-        //   for (let x = 0; x < sysList.length; x += 1) {
-        //     querySys.get(sysList[x]).then((result) => {
-        //       arrb.push({
-        //         id: result.objectId,
-        //         icon: result.icon,
-        //         title: result.title,
-        //       });
-        //     });
-        //   }
-        //   this.sys = arrb;
-        // }
       });
     },
 
-    // checkApply() {
-    //   if (this.$store.state.user) {
-    //     const query = this.$Bmob.Query('activity_person');
-    //     query.equalTo('user', '==', this.$store.state.user.objectId);
-    //     query.equalTo('activity', '==', this.$route.query.id);
-    //     query.find().then((res) => {
-    //       if (res.length > 0) {
-    //         if (res[0].isApply === false) {
-    //           this.applyBtn = '重新报名';
-    //         } else {
-    //           this.applyBtn = '您已报名';
-    //         }
-    //       } else {
-    //         this.applyBtn = '我要报名';
-    //       }
-    //     });
-    //   }
-    // },
     back() {
-      // this.checkApply();
       this.step = 1;
     },
     buy() {
@@ -457,48 +408,6 @@ export default {
                   margin-left: 10px;
                 }
               }
-              // .support {
-              //   margin-top: 20px;
-              //   .support-t {
-              //     font-size: 16px;
-              //     font-family: PingFang SC Light;
-              //     color: #FFCB2B;
-              //     line-height: 30px;
-              //   }
-              //   .sys-list {
-              //     margin-top: 11px;
-              //     .tools-sys {
-              //       display: inline-block;
-              //       margin-right: 25px;
-              //       line-height: 24px;
-              //     }
-              //   }
-              // }
-
-              // .btn-group {
-              //   position: absolute;
-              //   right: 30px;
-              //   bottom: 30px;
-              //   display: flex;
-              //   width: 100%;
-              //   justify-content: flex-end;
-              //   a {
-              //     margin-right: 30px;
-              //     font-size: 16px;
-              //     font-family: PingFang SC Regular;
-              //     color: rgba(92,157,255,1);
-              //     line-height: 40px;
-              //     cursor: pointer;
-              //     &.btn {
-              //       width: 100px;
-              //       height: 40px;
-              //       background: #FFCB2B;
-              //       color: #333;
-              //       text-align: center;
-              //       border-radius: 10px;
-              //     }
-              //   }
-              // }
             }
           }
         }
