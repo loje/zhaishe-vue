@@ -8,8 +8,6 @@
       <div class="the-designer" v-for="(item, $index) in designerList" :key="$index">
         <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
         <div class="info">
-          <!-- <div class="name">{{item.name}}</div>
-          <div class="info">{{item.info}}</div> -->
           <div class="name">{{item.name}}</div>
           <div class="title">
             {{item.info}}
@@ -21,12 +19,11 @@
     </div>
 
     <div class="pages">
-      <div class="prev">上一页</div>
+      <div class="prev" @click="getDesignerList(pageDesigner - 1)">上一页</div>
       <div class="page-list">
         <div :class="pageDesigner === item ? 'page active' : 'page'" v-for="item in designerPages" :key="item" @click="getDesignerList(item)">{{item > 3 ? '···' : item}}</div>
       </div>
-      <div class="next">下一页</div>
-      <div class="last">尾页</div>
+      <div class="next" @click="getDesignerList(pageDesigner + 1)">下一页</div>
     </div>
 
     <transition name="fade">
@@ -118,8 +115,8 @@ export default {
     return {
       designerList: [],
       designerTotal: 0, // 总条数
-      designerPages: 2, // 总页数
-      designerLimit: 5, // 每页条数
+      designerPages: 0, // 总页数
+      designerLimit: 10, // 每页条数
       designerLoading: false,
       skipDesigner: 0, // 跳过数量
       pageDesigner: 1, // 当前页数
@@ -132,12 +129,39 @@ export default {
     }
   },
   mounted() {
-    this.getDesignerList();
+    this.getDesCount();
   },
   methods: {
-    getDesignerList() {
+    getDesCount() {
       var query = this.$Bmob.Query('designer');
+      query.equalTo('notDelete', '==', true);
+      query.count().then((total) => {
+        this.designerTotal = total;
+        this.designerPages = parseInt(total / this.designerLimit);
+        if (total % this.designerLimit > 0) {
+          this.designerPages = this.designerPages + 1;
+        }
+        this.getDesignerList(1);
+      });
+    },
+    getDesignerList(page) {
+      if (page) {
+        if (page > this.designerPages) {
+          this.pageDesigner = this.designerPages;
+        } else if (page < 0) {
+          this.pageDesigner = 1;
+        } else {
+          this.pageDesigner = page;
+        }
+      } else {
+        this.pageDesigner = 1
+      }
+      var query = this.$Bmob.Query('designer');
+      this.skipDesigner = this.designerLimit * (this.pageDesigner - 1);
+
       query.equalTo('notDelete', '===', true);
+      query.skip(this.skipDesigner);
+      query.limit(this.designerLimit);
       let arr = [];
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
@@ -210,9 +234,9 @@ export default {
         border: 1px solid #D8D8D8;
         box-sizing: border-box;
         overflow: hidden;
-        &:nth-child(2n+5) {
-          margin-right: 0;
-        }
+        // &:nth-child(2n+5) {
+        //   margin-right: 0;
+        // }
         .img {
           position: relative;
           width: 100%;
