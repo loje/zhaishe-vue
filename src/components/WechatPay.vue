@@ -93,7 +93,7 @@
         const mch_id = '1570704211';
         const notify_url = 'http://www.zdesigner.cn/';
         const out_trade_no = this.out_trade_no; // 微信会有自己订单号、我们自己的系统需要设置自己的订单号
-        const total_fee = this.total_fee; // 注意，单位为分
+        const total_fee = this.total_fee * 100; // 注意，单位为分
         const body = this.body;
         const trade_type = 'NATIVE';
         const nonce_str = this.randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
