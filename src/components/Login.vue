@@ -123,9 +123,9 @@ export default {
         }
         if (res.sessionToken) {
           this.close();
-          const userInfo = localStorage.getItem('bmob');
-          if (userInfo) {
-            this.$store.dispatch('getUser', JSON.parse(userInfo));
+          const memberInfo = localStorage.getItem('bmob');
+          if (memberInfo) {
+            this.$store.dispatch('getMember', JSON.parse(memberInfo));
           }
         }
       }).catch(err => {

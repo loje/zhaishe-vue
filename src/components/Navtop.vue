@@ -64,9 +64,9 @@ export default {
     },
     logout() {
       this.$Bmob.User.logout();
-      const userInfo = localStorage.getItem('bmob');
-      if (!userInfo) {
-        this.$store.dispatch('getUser', '');
+      const memberInfo = localStorage.getItem('bmob');
+      if (!memberInfo) {
+        this.$store.dispatch('getMember', '');
       }
       // localStorage.removeItem('bmob');
     },

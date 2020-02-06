@@ -136,10 +136,6 @@
             <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
             <div class="page-list">
               <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
-              <!-- <div class="page">2</div>
-              <div class="page">3</div>
-              <div class="page more">···</div>
-              <div class="page">10</div> -->
             </div>
             <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
           </div>
@@ -158,8 +154,16 @@
                 <div class="title"><span v-if="pageAct === 1 && $index === 0">最新活动</span>{{item.title}}</div>
                 <div class="desc">{{item.desc}}</div>
                 <div class="tag">
-                  <span>宅设分享会</span>
-                  <span class="sort">活动标签：线下活动、线上直播</span>
+                  <span>
+                    <template v-if="item.sort === 1">宅设主办</template>
+                    <template v-else-if="item.sort === 2">推荐活动</template>
+                    <template v-else-if="item.sort === 3">合作活动</template>
+                    <template v-else-if="item.sort === 4">探讨会</template>
+                  </span>
+                  <span class="sort">活动标签：
+                    <template v-if="item.mode === 1">线下活动</template>
+                    <template v-else-if="item.mode === 2">线上直播</template>
+                  </span>
                   <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
                   <span class="num">参与人数：{{item.number}}</span>
                 </div>
@@ -167,7 +171,7 @@
               <div class="activity-right">
                 <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
                 <div class="price">￥{{item.fee}}</div>
-                <div class="toggle" @click="toggle($index)"><i class="iconfont">&#xe667;</i>查看分享人</div>
+                <div class="toggle" @click="toggle($index)"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
               </div>
               <div class="speaker-list" v-show="item.toggleStatus === true">
                 <div class="speaker">
@@ -226,9 +230,9 @@
             <i class="iconfont">&#xe649;</i>
           </div>
         </div>
-        <div class="people-box">
+        <div class="people-box" @mouseenter="on_bot_enter" @mouseleave="on_bot_leave">
           <loading v-if="designerLoading"></loading>
-          <swiper v-else :options="designerSwiperOption" ref="designerSwiper" @mouseenter="on_bot_enter" @mouseleave="on_bot_leave">
+          <swiper v-else :options="designerSwiperOption" ref="designerSwiper">
             <template v-for="(item, $index) in designerList">
             <swiper-slide :key="$index">
             <div class="box">
@@ -446,6 +450,8 @@ export default {
             imgSrc: res[i].imgSrc,
             desc: res[i].desc,
             status: res[i].status,
+            sort: res[i].sort,
+            mode: res[i].mode,
             number: res[i].number,
             fee: res[i].fee,
             startTime: res[i].startTime,
@@ -514,9 +520,11 @@ export default {
       this.activityList[i].toggleStatus = !this.activityList[i].toggleStatus;
     },
     on_bot_enter() {
+      console.log('进来了');
       this.$refs.designerSwiper.swiper.autoplay.stop();
     },
     on_bot_leave() {
+      console.log('出去了');
       this.$refs.designerSwiper.swiper.autoplay.start();
     },
   },
@@ -973,9 +981,16 @@ export default {
               font-size: 12px;
               cursor: pointer;
               i {
+                display: inline-block;
                 margin-right: 5px;
+                height: 12px;
                 font-size: 12px;
                 color: #231916;
+                transform: rotate(0deg);
+                transition: transform 0.5s ease-in-out;
+                &.show {
+                  transform: rotate(-90deg);
+                }
               }
             }
           }
