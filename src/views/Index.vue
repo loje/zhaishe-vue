@@ -171,10 +171,17 @@
               <div class="activity-right">
                 <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
                 <div class="price">￥{{item.fee}}</div>
-                <div class="toggle" @click="toggle($index)"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
+                <div class="toggle" @click="toggle($index)" v-if="item.agendaList"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
               </div>
-              <div class="speaker-list" v-show="item.toggleStatus === true">
-                <div class="speaker">
+              <div class="speaker-list" v-show="item.toggleStatus === true" v-if="item.agendaList">
+                <div class="speaker" v-for="(i, $index) in item.agendaList" :key="$index">
+                  <div class="img" :style="{backgroundImage: `url(${i.imgSrc})`}"></div>
+                  <div class="speaker-right">
+                    <div class="title">{{i.title}}</div>
+                    <div class="theme">《{{i.theme}}》</div>
+                  </div>
+                </div>
+                <!-- <div class="speaker">
                   <div class="img"></div>
                   <div class="speaker-right">
                     <div class="title">宅设分享人：赛狗</div>
@@ -208,14 +215,7 @@
                     <div class="title">宅设分享人：赛狗</div>
                     <div class="theme">《游戏视觉表达式》</div>
                   </div>
-                </div>
-                <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div>
+                </div> -->
               </div>
             </div>
           </template>
@@ -457,6 +457,7 @@ export default {
             startTime: res[i].startTime,
             endTime: res[i].endTime,
             toggleStatus: false,
+            agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
           });
         }
         this.activityList = arr;
@@ -1011,6 +1012,7 @@ export default {
                 border-radius: 50%;
                 background-color: #999;
                 vertical-align: middle;
+                background-size: cover;
               }
               .speaker-right {
                 display: inline-block;
