@@ -11,12 +11,16 @@
           <template v-else>
           <div class="media-right">
             <div class="media-info">
-              <div class="title"><span>热门软件</span>{{info.title}}</div>
+              <div class="title">
+                <span v-if="info.isHot === 1">热门软件</span>
+                {{info.title}}
+              </div>
               <div class="sub-title">{{info.desc}}</div>
 
               <div class="info-btm">
-                <span class="sell">已销售1034份</span>
-                <span class="url">https://cn.eagle.cool <span>跳转官网查看</span></span>
+                <span class="sell">已销售{{info.count}}份</span>
+                <span class="url">{{info.website}}</span>
+                <a :href="info.website" target="blank">跳转官网查看</a>
               </div>
             </div>
           </div>
@@ -28,7 +32,7 @@
           <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.groupPrice" @click="selectPrice(2)">团购：{{info.groupPrice}}元</div>
           <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常购：{{info.price}}元</div>
 
-          <input type="text" v-model="couponCode" placeholder="请输入推荐码" />
+          <!-- <input type="text" v-model="couponCode" placeholder="请输入推荐码" /> -->
 
           <div class="bar-right">
             <span class="t" v-if="activePrice === 1">你选择是正常购</span>
@@ -60,37 +64,7 @@
             </span>
             <span class="t">返回</span>
           </div>
-          <!-- <div class="buy-flex" style="padding-right: 48px;text-align: right;">
-            <div class="wechat-qrcode">
-              <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png"/>
-              <div class="text">我还有疑问</div>
-            </div>
-          </div>
-          <div class="buy-flex" style="padding-left: 48px;">
-            <div class="title">
-              <span class="t">您选择的是团购</span>
-              <span class="t">价格<span>140</span>元</span>
-            </div>
 
-            <div class="input-group">
-              <span>姓名</span>
-              <input type="text" placeholder="请填写姓名" />
-            </div>
-            <div class="input-group">
-              <span>可添加微信</span>
-              <input type="text" placeholder="请填写微信" />
-            </div>
-            <div class="input-group">
-              <span>电话</span>
-              <input type="text" placeholder="留下您电话方便联系" />
-            </div>
-            <div class="input-group">
-              <span>邮箱</span>
-              <input type="text" placeholder="您的收件邮箱" />
-            </div>
-            <div class="error">1423435</div>
-            <div class="btn">微信支付</div>
-          </div> -->
           <div class="buy-steps">
             <div class="step">
               <div :class="step === 1 ? 'count active' : 'count'">1</div>
@@ -223,12 +197,29 @@ export default {
         this.info = {
           ...this.info,
           imgSrc: res.imgSrc,
+          isHot: res.isHot ? res.isHot : 0,
           title: res.title,
           desc: res.desc,
-          address: res.address,
-          groupPrice: res.groupPrice || 0,
+          // address: res.address,
+          website: res.website ? res.website : '',
+
           price: res.price || 0,
+          inventory: res.inventory || 0,
+          groupPrice: res.groupPrice || 0,
+          groupInventory: res.groupInventory || 0,
           content: res.content,
+        };
+      });
+
+      const pointer = this.$Bmob.Pointer('product')
+      const poiID = pointer.set(this.$route.query.id);
+
+      let orderQuery = this.$Bmob.Query('order_list');
+      orderQuery.equalTo("product","==", poiID);
+      orderQuery.count().then((count) => {
+        this.info = {
+          ...this.info,
+          count,
         };
       });
     },
@@ -406,6 +397,10 @@ export default {
                 }
                 .url span {
                   margin-left: 10px;
+                }
+                a {
+                  margin-left: 10px;
+                  color: #888;
                 }
               }
             }

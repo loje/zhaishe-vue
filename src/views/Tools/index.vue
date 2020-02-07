@@ -5,7 +5,9 @@
       <swiper v-else :options="toolsSwiperOption" ref="toolsSwiper">
         <template v-for="(item, $index) in toolsSwiperList">
         <swiper-slide :key="$index">
-          <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+          <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}">
+            <a :href="item.link" v-if="item.link" class="link" target="blank"></a>
+          </div>
         </swiper-slide>
         </template>
       </swiper>
@@ -23,8 +25,8 @@
             
             <div class="search-bar">
               <i class="iconfont">&#xe652;</i>
-              <input type="text" />
-              <span>搜索</span>
+              <input type="text" v-model="keyword" />
+              <span @click="getProCount">搜索</span>
             </div>
           </div>
 
@@ -44,7 +46,9 @@
           </div>
         </div>
         <div class="layout-right">
-          <div class="right-block"></div>
+          <div class="right-block" :style="{backgroundImage: `url(${toolsAd.imgSrc})`}">
+            <a class="block" :href="toolsAd.link" target="blank" v-if="toolsAd.link"></a>
+          </div>
           <div class="right-tips">
             <div class="title">购买需知</div>
             <div class="text">平台可提供优惠购买服务，购买的时请加小编微信：zhaishehui01 </div>
@@ -85,6 +89,8 @@ export default {
         spaceBetween: 30,
       },
 
+      toolsAd: '',
+
       productList: [],
       proTotal: 0, // 总条数
       proPages: 0, // 总页数
@@ -92,6 +98,8 @@ export default {
       productLoading: false,
       skipPro: 0, // 跳过数量
       pagePro: 1, // 当前页数
+
+      keyword: '',
     }
   },
   activated() {
@@ -101,15 +109,23 @@ export default {
   methods: {
     getBanner() {
       let bannerQuery = this.$Bmob.Query('banner');
-      bannerQuery.equalTo('position', '==', 'tool');
+
       this.toolsLoading = true;
       bannerQuery.find().then((res) => {
         this.toolsLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          this.toolsSwiperList.push({
-            imgSrc: res[i].imgSrc,
-            link: res[i].link,
-          });
+          if (res[i].position === 'tool') {
+            this.toolsSwiperList.push({
+              imgSrc: res[i].imgSrc,
+              link: res[i].link,
+            });
+          }
+          if (res[i].position === 'toolAd') {
+            this.toolsAd = {
+              imgSrc: res[i].imgSrc,
+              link: res[i].link,
+            };
+          }
         }
       });
     },
@@ -145,6 +161,9 @@ export default {
       let arr = [];
       query.order('-endTime');
       query.equalTo('notDelete', '==', true);
+      if (this.keyword) {
+        query.equalTo("title","===", this.keyword);
+      }
       query.skip(this.skipPro);
       query.limit(this.proLimit);
       this.productLoading = true;
@@ -180,6 +199,11 @@ export default {
           height: 170px;
           background-position: 50%;
           background-size: cover;
+          .link {
+            display: block;
+            width: 100%;
+            height: 100%;
+          }
         }
         &.swiper-slide-next {
           .img {
@@ -354,7 +378,14 @@ export default {
             width: 220px;
             height: 150px;
             background-color: #888;
+            background-position: 50%;
+            background-size: cover;
             border-radius: 2px;
+            .block {
+              display: block;
+              width: 100%;
+              height: 100%;
+            }
           }
           .right-tips {
             margin-top: 25px;
