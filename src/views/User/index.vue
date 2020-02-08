@@ -132,11 +132,13 @@ export default {
   mounted() {
     if (this.$route.query.code) {
       this.getToken();
+    } else {
+      location.href = '/';
     }
   },
   methods: {
     getToken() {
-      if (!localStorage.getItem('bmob')) {
+      if (!localStorage.getItem('memberInfo')) {
         let params = {
           funcName: 'access_token',
           data: {
@@ -172,7 +174,8 @@ export default {
               if (isWX) {
                 for (let i = 0; i < userlist.length; i += 1) {
                   if (userlist[i].openid === user.openid) {
-                    localStorage.setItem('bmob', JSON.stringify(userlist[i]));
+                    // localStorage.setItem('bmob', JSON.stringify(userlist[i]));
+                    localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
                   }
                 }
@@ -194,7 +197,8 @@ export default {
                     let ul = u.results;
                     for (let i = 0; i < ul.length; i += 1) {
                       if (ul[i].objectId === r.objectId) {
-                        localStorage.setItem('bmob', JSON.stringify(ul[i]));
+                        // localStorage.setItem('bmob', JSON.stringify(ul[i]));
+                        localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                         this.$store.dispatch('getMember', ul[i]);
                         location.href = '/user';
                       }

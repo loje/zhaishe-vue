@@ -42,7 +42,7 @@ Vue.prototype.$axios = axios
 Vue.config.productionTip = false
 
 router.beforeEach((to, from, next) => {
-  const memberInfo = localStorage.getItem('bmob');
+  const memberInfo = localStorage.getItem('memberInfo');
   if (memberInfo) {
     store.dispatch('getMember', JSON.parse(memberInfo));
   }

@@ -239,7 +239,7 @@ export default {
       this.step = 1;
     },
     apply() {
-      if (!localStorage.getItem('bmob')) {
+      if (!localStorage.getItem('memberInfo')) {
         alert('请先点右上角登录');
         return false;
       }

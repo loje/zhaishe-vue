@@ -17,7 +17,7 @@
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
-          <div class="hello" @click="$router.push(`/user`)">欢迎，{{$store.state.user.username}}</div>
+          <div class="hello" @click="toUser">欢迎，{{$store.state.user.username}}</div>
           <div class="link" @click="logout">退出</div>
         </div>
       </div>
@@ -62,11 +62,25 @@ export default {
       this.showLogin = true;
       this.loginStatus = 'register';
     },
+    toUser() {
+      // console.log(localStorage.getItem('memberInfo'));
+      // console.log(localStorage.getItem('memberInfo').objectId);
+      const memberInfo = localStorage.getItem('memberInfo');
+      this.$router.push({
+        path: '/user',
+        query: {
+          code: JSON.parse(memberInfo).objectId,
+        },
+      });
+    },
     logout() {
       this.$Bmob.User.logout();
-      const memberInfo = localStorage.getItem('bmob');
+      const memberInfo = localStorage.getItem('memberInfo');
       if (!memberInfo) {
         this.$store.dispatch('getMember', '');
+      }
+      if (this.$route.path === '/user') {
+        location.href = '/';
       }
       // localStorage.removeItem('bmob');
     },

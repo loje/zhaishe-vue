@@ -123,7 +123,7 @@ export default {
         }
         if (res.sessionToken) {
           this.close();
-          const memberInfo = localStorage.getItem('bmob');
+          const memberInfo = localStorage.getItem('memberInfo');
           if (memberInfo) {
             this.$store.dispatch('getMember', JSON.parse(memberInfo));
           }
