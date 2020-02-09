@@ -2,7 +2,7 @@
   <div class="designer-page max-width">
     <div class="page-title">宅设分享人</div>
     <div class="page-desc">什么是宅设分享人？宅设分享人是一群从事设计的高阶领导者，奖自己的经验分享给大家，助力迷茫的设计师 找到自己的目标，也同时为打造大咖个人IP积累丰富经验</div>
-    <div class="page-btn" @click="showContact = true">加入我们</div>
+    <div class="page-btn" @click="showSharer = true">加入我们</div>
 
     <div class="designer-list">
       <div class="the-designer" v-for="(item, $index) in designerList" :key="$index">
@@ -12,7 +12,7 @@
           <div class="title">
             {{item.info}}
           </div>
-          <div class="btn">个人链接</div>
+          <a class="btn" :href="item.link" target="blank" v-if="item.link">个人链接</a>
           <div class="get" @click="orderIt(item)">找他接单</div>
         </div>
       </div>
@@ -27,33 +27,33 @@
     </div>
 
     <transition name="fade">
-    <div class="dialog-layer" v-if="showContact">
+    <div class="dialog-layer" v-if="showSharer">
       <div class="dialog-flex">
         <div class="dialog-block">
-          <span class="close" @click="showContact = false">
+          <span class="close" @click="closeSharer">
             <i class="iconfont">&#xea13;</i>
           </span>
           <div class="title">加入宅设分享人</div>
           <div class="input-group">
             <span>称呼：</span>
-            <input type="text" placeholder="您的称呼" />
+            <input type="text" v-model="sharer.name" placeholder="您的称呼" />
           </div>
           <div class="input-group">
             <span>您的联系方式：</span>
-            <input type="text" placeholder="留下您电话方便联系" />
+            <input type="text" v-model="sharer.phone" maxlength="11" placeholder="留下您电话方便联系" />
           </div>
           <div class="input-group">
             <span>个人链接：</span>
-            <input type="text" placeholder="http://或https://开头" />
+            <input type="text" v-model="sharer.link" placeholder="http://或https://开头" />
           </div>
           <div class="input-group">
             <span>分享主题：</span>
-            <input type="text" placeholder="填写您的分享主题" />
+            <input type="text" v-model="sharer.theme" placeholder="填写您的分享主题" />
           </div>
 
-          <div class="error">1423435</div>
+          <div class="error" v-if="sharer.error">{{sharer.error}}</div>
 
-          <div class="btn" @click="closeContact">确定</div>
+          <div class="btn" @click="comfilmSharer">确定</div>
         </div>
       </div>
     </div>
@@ -120,6 +120,15 @@ export default {
       designerLoading: false,
       skipDesigner: 0, // 跳过数量
       pageDesigner: 1, // 当前页数
+      
+      showSharer: false,
+      sharer: {
+        name: '',
+        phone: '',
+        link: '',
+        theme: '',
+        error: '',
+      },
 
       showContact: false,
       showFeedback: false,
@@ -170,9 +179,67 @@ export default {
             src: res[i].img,
             name: res[i].name,
             info: res[i].info,
+            link: res[i].link ? res[i].link : undefined
           });
         }
         this.designerList = arr;
+      });
+    },
+
+    closeSharer() {
+      this.sharer = {};
+      this.showSharer = false;
+    },
+    comfilmSharer() {
+      if (!this.sharer.name) {
+        this.sharer.error = '请输入称呼';
+        return false;
+      }
+      if (!this.sharer.phone) {
+        this.sharer.error = '请输入手机号码';
+        return false;
+      }
+
+      if (this.sharer.phone.length !== 11) {
+        this.sharer.error = '请输入11位的手机号码';
+        return false;
+      }
+
+      if (!this.sharer.link) {
+        this.sharer.error = '请输入个人链接';
+        return false;
+      }
+
+      if (!this.sharer.theme) {
+        this.sharer.error = '请输入分享主题';
+        return false;
+      }
+
+      this.sharer.error = '';
+
+      const query = this.$Bmob.Query('sharer');
+      if(this.sharer.name) {
+        query.set('name', this.sharer.name);
+      }
+      if(this.sharer.phone) {
+        query.set('phone', this.sharer.phone);
+      }
+      if(this.sharer.link) {
+        query.set('link', this.sharer.link);
+      }
+      if(this.sharer.theme) {
+        query.set('theme', this.sharer.theme);
+      }
+      query.save().then(() => {
+        this.showSharer = false;
+        this.showFeedback = true;
+        this.sharer = {
+          name: '',
+          phone: '',
+          link: '',
+          theme: '',
+          error: '',
+        };
       });
     },
 

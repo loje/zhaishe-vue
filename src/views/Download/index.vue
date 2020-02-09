@@ -62,20 +62,21 @@
     <div class="dialog-layer" v-if="showContact">
       <div class="dialog-flex">
         <div class="dialog-block">
-          <span class="close" @click="showContact = false">
+          <span class="close" @click="closeContact">
             <i class="iconfont">&#xea13;</i>
           </span>
           <div class="title">加入灵感分享计划</div>
           <div class="input-group">
             <span>称呼：</span>
-            <input type="text" placeholder="您的称呼" />
+            <input type="text" v-model="inspiration.name" placeholder="您的称呼" />
           </div>
           <div class="input-group">
-            <span>电话：</span>
-            <input type="text" placeholder="留下您电话方便联系" />
+            <span>手机：</span>
+            <input type="text" v-model="inspiration.phone" maxlength="11" placeholder="留下您的手机方便联系" />
           </div>
+          <div class="error" v-if="inspiration.error">{{inspiration.error}}</div>
 
-          <div class="btn" @click="closeContact">确定</div>
+          <div class="btn" @click="comfilmContact">确定</div>
         </div>
       </div>
     </div>
@@ -167,6 +168,12 @@ export default {
       showDownload: false,
 
       showFeedback: false,
+
+      inspiration: {
+        name: '',
+        phone: '',
+        error: '',
+      },
     }
   },
   components: {
@@ -274,10 +281,51 @@ export default {
         this.downloadList = arr;
       });
     },
-
     closeContact() {
       this.showContact = false;
-      this.showFeedback = true;
+      this.inspiration = {
+        name: '',
+        phone: '',
+        error: '',
+      };
+    },
+    comfilmContact() {
+      if (!this.inspiration.name) {
+        this.inspiration.error = '请输入称呼';
+        return false;
+      }
+      if (!this.inspiration.phone) {
+        this.inspiration.error = '请输入手机号码';
+        return false;
+      }
+
+      if (this.inspiration.phone.length !== 11) {
+        this.inspiration.error = '请输入11位的手机号码';
+        return false;
+      }
+
+      this.inspiration.error = '';
+
+      const query = this.$Bmob.Query('inspiration');
+      if(this.inspiration.name) {
+        query.set('name', this.inspiration.name);
+      }
+      if(this.inspiration.phone) {
+        query.set('phone', this.inspiration.phone);
+      }
+      query.save().then(() => {
+        this.loading = false;
+        this.showContact = false;
+        this.showFeedback = true;
+        this.inspiration = {
+          name: '',
+          phone: '',
+          error: '',
+        };
+      }),(error) => {
+        console.log(error);
+        this.loading = false;
+      };
     },
     dialogShow(item) {
       console.log(item);
@@ -557,6 +605,12 @@ export default {
             padding: 0;
             font-size: 12px;
           }
+        }
+        .error {
+          margin-bottom: 30px;
+          font-size: 12px;
+          height: 17px;
+          color: #E55D5D;
         }
 
         .btn {
