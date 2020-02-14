@@ -1,7 +1,7 @@
 <template>
   <div class="designer-page max-width">
     <div class="page-title">宅设分享人</div>
-    <div class="page-desc">什么是宅设分享人？宅设分享人是一群从事设计的高阶领导者，奖自己的经验分享给大家，助力迷茫的设计师 找到自己的目标，也同时为打造大咖个人IP积累丰富经验</div>
+    <div class="page-desc">什么是宅设分享人？宅设分享人是一群从事设计的高阶领导者，讲述自己的经验分享给大家，助力迷茫的设计师 找到自己的目标，也同时为打造大咖个人IP积累丰富经验</div>
     <div class="page-btn" @click="showSharer = true">加入我们</div>
 
     <div class="designer-list">

@@ -13,7 +13,7 @@
       <div class="bottom-flex friend-link">
         <div class="title">友情链接</div>
         <div class="link-list">
-          <div class="the-link" v-for="(item, $index) in linkList" :key="$index" :style="{backgroundImage: `url(${item.src})`}"></div>
+          <a class="the-link" v-for="(item, $index) in linkList" :key="$index" :style="{backgroundImage: `url(${item.src})`}" :href="item.link" target="blank"></a>
         </div>
       </div>
       <div class="bottom-line"></div>
@@ -114,6 +114,7 @@ export default {
             width: 248px;
             flex-wrap: wrap;
             .the-link {
+              display: block;
               margin-right: 40px;
               margin-top: 20px;
               width: 32px;
