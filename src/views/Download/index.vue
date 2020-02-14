@@ -128,6 +128,10 @@ export default {
       downloadBannerLoading: false,
       tabList: [
         {
+          label: '全部',
+          value: '',
+        },
+        {
           label: 'banner',
           value: 1,
         },
@@ -152,7 +156,7 @@ export default {
           value: 6,
         },
       ],
-      activeTab: 1,
+      activeTab: '',
 
       downloadList: [],
       downloadTotal: 0, // 总条数
@@ -211,7 +215,9 @@ export default {
     },
     getDownloadCount() {
       var query = this.$Bmob.Query('download');
-      query.equalTo('type', '==', this.activeTab);
+      if (this.activeTab !== '') {
+        query.equalTo('type', '==', this.activeTab);
+      }
       query.equalTo('notDelete', '==', true);
       query.count().then((total) => {
         this.downloadTotal = total;
@@ -240,7 +246,9 @@ export default {
 
       let arr = [];
       query.order('-endTime');
-      query.equalTo('type', '==', this.activeTab);
+      if (this.activeTab !== '') {
+        query.equalTo('type', '==', this.activeTab);
+      }
       query.equalTo('notDelete', '==', true);
       query.skip(this.skipDownload);
       query.limit(this.downloadLimit);
