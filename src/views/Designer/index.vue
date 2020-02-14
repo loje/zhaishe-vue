@@ -87,20 +87,21 @@
             </span>
             <div class="order-designer">
               <img :src="order.src" />
-              <div class="name">{{order.name}}</div>
+              <div class="name">{{order.sharerName}}</div>
             </div>
               
             <div class="input-group">
               <span>称呼：</span>
-              <input type="text" placeholder="您的称呼" />
+              <input type="text" v-model="order.name" placeholder="您的称呼" />
             </div>
             <div class="input-group">
               <span>您的联系方式：</span>
-              <input type="text" placeholder="留下您电话方便联系" />
+              <input type="text" v-model="order.phone" placeholder="留下您电话方便联系" />
             </div>
             <div class="input-group" style="height:auto;">
-              <textarea placeholder="填写您的需求" rows="8"></textarea>
+              <textarea v-model="order.content" placeholder="填写您的需求" rows="8"></textarea>
             </div>
+            <div class="error" v-if="order.error">{{order.error}}</div>
             <div class="btn" @click="closeContact">确定</div>
           </div>
         </div>
@@ -123,6 +124,7 @@ export default {
       
       showSharer: false,
       sharer: {
+        id: '',
         name: '',
         phone: '',
         link: '',
@@ -130,11 +132,16 @@ export default {
         error: '',
       },
 
-      showContact: false,
+      // showContact: false,
       showFeedback: false,
       showOrder: false,
 
-      order: {},
+      order: {
+        sharerId: '',
+        name: '',
+        phone: '',
+        content: '',
+      },
     }
   },
   mounted() {
@@ -234,6 +241,7 @@ export default {
         this.showSharer = false;
         this.showFeedback = true;
         this.sharer = {
+          id: '',
           name: '',
           phone: '',
           link: '',
@@ -244,14 +252,60 @@ export default {
     },
 
     closeContact() {
-      this.showOrder = false;
-      this.showContact = false;
-      this.showFeedback = true;
+      if (!this.order.name) {
+        this.order.error = '请输入您的称呼';
+        return false;
+      }
+
+      if (!this.order.phone) {
+        this.order.error = '请输入您的联系方式';
+        return false;
+      }
+
+      if (!this.order.content) {
+        this.order.error = '请输入您的需求';
+        return false;
+      }
+
+      this.order.error = '';
+
+      const query = this.$Bmob.Query('sharer_order');
+
+      const sharerPointer = this.$Bmob.Pointer('sharer');
+      const sharerID = sharerPointer.set(this.order.sharerId)
+
+      query.set('sharerId', sharerID);
+      if(this.order.name) {
+        query.set('name', this.order.name);
+      }
+      if(this.order.phone) {
+        query.set('phone', this.order.phone);
+      }
+      if(this.order.content) {
+        query.set('content', this.order.content);
+      }
+
+      query.save().then(() => {
+        this.showOrder = false;
+        this.showFeedback = true;
+        this.order = {
+          sharerId: '',
+          src: '',
+          name: '',
+          phone: '',
+          content: '',
+        };
+      });
     },
 
     orderIt(item) {
       this.showOrder = true;
-      this.order = item;
+      this.order = {
+        ...this.order,
+        sharerName: item.name,
+        src: item.src,
+        sharerId: item.id,
+      };
     },
   },
 };
