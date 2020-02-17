@@ -135,28 +135,29 @@ export default {
       query.equalTo('notDelete', '==', true);
       query.count().then((total) => {
         this.proTotal = total;
-        this.proPages = parseInt(total / this.proLimit);
-        if (total % this.proLimit > 0) {
-          this.proPages = this.proPages + 1;
-        }
+        // this.proPages = parseInt(total / this.proLimit);
+        // if (total % this.proLimit > 0) {
+        //   this.proPages = this.proPages + 1;
+        // }
         this.getProducts(1);
       });
     },
     getProducts(page) {
-      if (page) {
-        if (page > this.proPages) {
-          this.pagePro = this.proPages;
-        } else if (page < 0) {
-          this.pagePro = 1;
-        } else {
-          this.pagePro = page;
-        }
-      } else {
-        this.pagePro = 1
-      }
+      console.log(page);
+      // if (page) {
+      //   if (page > this.proPages) {
+      //     this.pagePro = this.proPages;
+      //   } else if (page < 0) {
+      //     this.pagePro = 1;
+      //   } else {
+      //     this.pagePro = page;
+      //   }
+      // } else {
+      //   this.pagePro = 1
+      // }
 
       var query = this.$Bmob.Query('product');
-      this.skipPro = this.proLimit * (this.pagePro - 1);
+      // this.skipPro = this.proLimit * (this.pagePro - 1);
 
       let arr = [];
       query.order('-endTime');
@@ -164,8 +165,8 @@ export default {
       if (this.keyword) {
         query.equalTo("title","===", this.keyword);
       }
-      query.skip(this.skipPro);
-      query.limit(this.proLimit);
+      // query.skip(this.skipPro);
+      // query.limit(this.proLimit);
       this.productLoading = true;
       query.find().then((res) => {
         this.productLoading = false;

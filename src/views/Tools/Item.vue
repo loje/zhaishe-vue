@@ -504,6 +504,7 @@ export default {
 
         .buy-layer {
           position: relative;
+          margin-top: 50px;
           padding: 25px 0 63px 0;
           border-top: 1px solid #F2F2F2;
           box-sizing: border-box;

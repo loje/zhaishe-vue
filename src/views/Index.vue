@@ -74,51 +74,25 @@
               </div>
               <div class="title">私单墙</div>
               <div class="handle">
-                <div class="prev">
+                <div class="prev" @click="getPrivateList(pagePri - 1)">
                   <i class="iconfont">&#xe693;</i>
                 </div>
-                <div class="next">
+                <div class="next" @click="getPrivateList(pagePri + 1)">
                   <i class="iconfont">&#xe600;</i>
                 </div>
               </div>
             </div>
             <div class="layer-list">
-              <div class="list-item" >
+              <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title">
                 <div class="icon">
                   <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
                 </div>
-                <div class="title">web设计</div>
-                <div class="item-right">2天前发布</div>
+                <div class="title">{{item.title}}</div>
+                <div class="item-right">{{item.createdTime}}</div>
               </div>
-              <div class="list-item" >
-                <div class="icon">
-                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
-                </div>
-                <div class="title">web设计</div>
-                <div class="item-right">2天前发布</div>
-              </div>
-              <div class="list-item" >
-                <div class="icon">
-                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
-                </div>
-                <div class="title">web设计</div>
-                <div class="item-right">2天前发布</div>
-              </div>
-              <div class="list-item" >
-                <div class="icon">
-                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
-                </div>
-                <div class="title">web设计</div>
-                <div class="item-right">2天前发布</div>
-              </div>
-              <div class="list-item" >
-                <div class="icon">
-                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
-                </div>
-                <div class="title">web设计</div>
-                <div class="item-right">2天前发布</div>
-              </div>
-              <div class="pulish">我要发布</div>
+            </div>
+            <div class="pulish">
+              <span>我要发布</span>
             </div>
           </div>
         </div>
@@ -132,13 +106,13 @@
             <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActivity('宅设主办', 1)">宅社主办</div>
             <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActivity('其他活动', 1)">其他活动</div>
           </div>
-          <div class="pages">
+          <!-- <div class="pages">
             <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
             <div class="page-list">
               <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
             </div>
             <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
-          </div>
+          </div> -->
         </div>
 
         <div class="activity-list">
@@ -181,41 +155,6 @@
                     <div class="theme">《{{i.theme}}》</div>
                   </div>
                 </div>
-                <!-- <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div>
-                <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div>
-                <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div>
-                <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div>
-                <div class="speaker">
-                  <div class="img"></div>
-                  <div class="speaker-right">
-                    <div class="title">宅设分享人：赛狗</div>
-                    <div class="theme">《游戏视觉表达式》</div>
-                  </div>
-                </div> -->
               </div>
             </div>
           </template>
@@ -293,12 +232,6 @@ export default {
           el: '.swiper-pagination',
         }
       },
-      // toolOption: {
-      //   loop : true,
-      //   delay: 1000,
-      //   slidesPerView: 3,
-      //   spaceBetween: 8,
-      // },
       bannerLeft: [],
       bannerRight: [],
       bannerLoading: false,
@@ -328,6 +261,13 @@ export default {
         slidesPerView: 5,
         spaceBetween: 40,
       },
+
+      privateList: [],
+      priTotal: 0,
+      priPages: 0,
+      priLimit: 5,
+      skipPri: 0, // 跳过数量
+      pagePri: 1, // 当前页数
     }
   },
   computed: {
@@ -340,6 +280,7 @@ export default {
     this.getActCount();
     this.getBanner();
     this.getRecommend();
+    this.getPrivateList();
     this.getDownload();
   },
   methods: {
@@ -389,35 +330,73 @@ export default {
         this.recommendList = arr;
       });
     },
+    getPrivateCount() {
+      let privateQuery = this.$Bmob.Query('private_orders');
+      privateQuery.equalTo('notDelete', '==', true);
+      privateQuery.count().then((total) => {
+        this.priTotal = total;
+        this.priPages = parseInt(total / this.priLimit);
+        if (total % this.priLimit > 0) {
+          this.priPages = this.priPages + 1;
+        }
+        this.getPrivateList(1);
+      });
+    },
+    getPrivateList(page) {
+      if (page) {
+        if (page > this.priPages) {
+          this.pagePri = this.priPages;
+        } else if (page < 0) {
+          this.pagePri = 1;
+        } else {
+          this.pagePri = page;
+        }
+      } else {
+        this.pagePri = 1
+      }
+
+      let privateQuery = this.$Bmob.Query('private_orders');
+      this.skipPri = this.priLimit * (this.pagePri - 1);
+      privateQuery.equalTo('notDelete', '==', true);
+      privateQuery.skip(this.skipPri);
+      privateQuery.limit(this.priLimit);
+      privateQuery.find().then((res) => {
+        for (let i = 0; i < res.length; i += 1) {
+          res[i].createdTime = `${this.$moment(res[i].createdAt).format('MM-DD')}`;
+        }
+        this.privateList = res;
+      });
+    },
     getActCount() {
       var query = this.$Bmob.Query('activity');
       query.equalTo('notDelete', '==', true);
       query.count().then((total) => {
         this.actTotal = total;
-        this.actPages = parseInt(total / this.actLimit);
-        if (total % this.actLimit > 0) {
-          this.actPages = this.actPages + 1;
-        }
+        // this.actPages = parseInt(total / this.actLimit);
+        // if (total % this.actLimit > 0) {
+        //   this.actPages = this.actPages + 1;
+        // }
         this.getActivity(this.actTab, 1);
       });
     },
     getActivity(actTab, page) {
+      console.log(page);
       this.actTab = actTab;
 
-      if (page) {
-        if (page > this.actPages) {
-          this.pageAct = this.actPages;
-        } else if (page < 0) {
-          this.pageAct = 1;
-        } else {
-          this.pageAct = page;
-        }
-      } else {
-        this.pageAct = 1
-      }
+      // if (page) {
+      //   if (page > this.actPages) {
+      //     this.pageAct = this.actPages;
+      //   } else if (page < 0) {
+      //     this.pageAct = 1;
+      //   } else {
+      //     this.pageAct = page;
+      //   }
+      // } else {
+      //   this.pageAct = 1
+      // }
       
       var query = this.$Bmob.Query('activity');
-      this.skipAct = this.actLimit * (this.pageAct - 1);
+      // this.skipAct = this.actLimit * (this.pageAct - 1);
 
       let arr = [];
       query.order('-endTime');
@@ -428,8 +407,8 @@ export default {
         query.equalTo('sort', '!=', 1);
       }
 
-      query.skip(this.skipAct);
-      query.limit(this.actLimit);
+      // query.skip(this.skipAct);
+      // query.limit(this.actLimit);
       this.activityLoading = true;
       query.find().then((res) => {
         this.activityLoading = false;
@@ -598,6 +577,7 @@ export default {
     margin-bottom: 40px;
     justify-content: space-between;
     .layer-flex {
+      position: relative;
       padding: 20px;
       height: 260px;
       width: 350px;
@@ -709,6 +689,9 @@ export default {
             padding-left: 5px;
             height: 20px;
             color: #888;
+            overflow: hidden;
+            text-overflow:ellipsis;
+            white-space: nowrap;
           }
           .item-right {
             width: 80px;
@@ -727,15 +710,20 @@ export default {
             }
           }
         }
-        .pulish {
-          display: block;
-          margin: auto;
-          text-align: center;
-          font-size: 12px;
-          font-family: PingFangSC;
-          font-weight: 400;
-          color: rgba(244,117,29,1);
-          line-height: 17px;
+      }
+      .pulish {
+        position: absolute;
+        left: 0;
+        bottom: 15px;
+        display: block;
+        margin: auto;
+        width: 100%;
+        text-align: center;
+        font-size: 12px;
+        font-weight: 400;
+        color: rgba(244,117,29,1);
+        line-height: 17px;
+        span {
           cursor: pointer;
         }
       }
@@ -946,7 +934,7 @@ export default {
           }
           .activity-right {
             position: relative;
-            width: 120px;
+            width: 100px;
             height: 160px;
             text-align: right;
             .btn {
@@ -968,11 +956,12 @@ export default {
             }
             .price {
               margin-top: 10px;
+              width: 100px;
               font-size: 16px;
-              font-family: PingFangSC;
               font-weight: 600;
               color: rgba(244,117,29,1);
               line-height: 22px;
+              text-align: center;
             }
             .toggle {
               position: absolute;

@@ -224,7 +224,7 @@ export default {
         query.find().then((res) => {
           if (res.length > 0) {
             if (res[0].isApply === false) {
-              this.applyBtn = '重新报名';
+              this.applyBtn = '再次报名';
             } else {
               this.applyBtn = '您已报名';
             }

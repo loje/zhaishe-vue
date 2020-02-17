@@ -48,6 +48,7 @@ export default {
       let that = this;
       var query = this.$Bmob.Query('link');
       const arr = [];
+      query.equalTo('notDelete', '===', true);
       query.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
           arr.push({
