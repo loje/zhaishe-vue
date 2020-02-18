@@ -778,10 +778,9 @@ export default {
     }
 
     .tools-detail {
-      // margin-top: 15px;
       margin-bottom: 20px;
       padding-top: 60px;
-      min-height: 800px;
+      min-height: calc(100vh - 50px - 574px - 311px - 20px);
       width: 100%;
       background-color: #fff;
       border-radius: 10px;

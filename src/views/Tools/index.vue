@@ -187,7 +187,7 @@ export default {
 
 <style lang="scss" scoped>
   .tools-page {
-    padding: 20px 0 100px;
+    padding-top: 20px;
     .swiper-container {
       width: 100%;
       .swiper-slide {
@@ -217,6 +217,7 @@ export default {
 
     .the-layout {
       margin-top: 20px;
+      padding-bottom: 60px;
       width: 100%;
       background-color: #fff;
       .max-width {

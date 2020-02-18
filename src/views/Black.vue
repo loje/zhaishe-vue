@@ -12,7 +12,7 @@ export default {};
 <style lang="scss" scope>
 .black {
   width: 100%;
-  min-height: calc(100vh - 250px);
+  min-height: calc(100vh - 361px);
   overflow-x: hidden;
 }
 </style>

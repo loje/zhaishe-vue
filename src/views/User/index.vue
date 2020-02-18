@@ -2,13 +2,14 @@
   <div class="user-page">
     <div class="user-top">
       <div class="user-head">
-        <div class="img" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
+        <div class="img" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}" @click="toUserInfo"></div>
         <div class="name">{{$store.state.user.username}}</div>
       </div>
       <div class="user-bg"></div>
     </div>
 
     <div class="max-width">
+      <template v-if="!showInfo">
       <div class="user-block">
         <div class="block-title">正在举办的活动</div>
         <div class="block-list">
@@ -16,16 +17,16 @@
           <div class="block end">宅设第二十期</div>
         </div>
       </div>
-      <div class="user-block">
+      <div class="user-block" v-if="activityList.length > 0">
         <div class="block-title">您参与过的活动</div>
         <div class="block-list">
-          <div class="block">宅设第二十期</div>
+          <div class="block" v-for="(item, $index) in activityList" :key="$index" @click="toActivityDetail(item.activity.objectId)">{{item.activity.title}}</div>
         </div>
       </div>
-      <div class="user-block">
+      <div class="user-block" v-if="productList.length > 0">
         <div class="block-title">购买的工具</div>
         <div class="block-list">
-          <div class="block">宅设第二十期</div>
+          <div class="block" v-for="(item, $index) in productList" :key="$index" @click="toProductDetail(item.product.objectId)">{{item.product.title}}</div>
         </div>
       </div>
 
@@ -110,6 +111,78 @@
           </div>
         </div>
       </div>
+      </template>
+
+      <template v-else>
+      <div class="user-info">
+        <div class="func-btn">
+          <div class="back" @click="back">
+            <i class="iconfont">&#xe693;</i>
+            <span>返回</span>
+          </div>
+          <div class="btn" @click="confilm">保存</div>
+        </div>
+        <div class="info-title">基本信息</div>
+        <div class="info-form">
+          <div class="form-t">用户名</div>
+          <div class="form-i">
+            <input type="text" v-model="form.username" disabled />
+            <span class="tips">* 用户名从微信获取，暂不支持修改</span>
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">名字</div>
+          <div class="form-i">
+            <input type="text" v-model="form.name" />
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">性别</div>
+          <div class="form-i">
+            <select v-model="form.sex">
+              <option value="0">未知</option>
+              <option value="1">男</option>
+              <option value="2">女</option>
+            </select>
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">手机号</div>
+          <div class="form-i">
+            <input type="text" v-model="form.mobilePhoneNumber" />
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">邮箱</div>
+          <div class="form-i">
+            <input type="text" v-model="form.email" />
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">所在地</div>
+          <div class="form-i">{{form.province}} - {{form.city}}</div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">职业</div>
+          <div class="form-i">
+            <input type="text" v-model="form.profession" />
+          </div>
+        </div>
+        <div class="info-title">联系方式</div>
+        <div class="info-form">
+          <div class="form-t">QQ</div>
+          <div class="form-i">
+            <input type="text" v-model="form.qq" />
+          </div>
+        </div>
+        <div class="info-form">
+          <div class="form-t">微信</div>
+          <div class="form-i">
+            <input type="text" v-model="form.wechatId" />
+          </div>
+        </div>
+      </div>
+      </template>
     </div>
 
     <tips :tips="tipsText" tipsBackgroundColor="rgba(255, 0, 24, 0.75)"></tips>
@@ -126,12 +199,22 @@ export default {
   data() {
     return {
       userList: [],
+
+      productList: [],
+      activityList: [],
+
       tipsText: '',
+
+      showInfo: false,
+
+      form: '',
     }
   },
   mounted() {
     if (this.$route.query.code) {
       this.getToken();
+      this.getProduct();
+      this.getActivity();
     } else {
       location.href = '/';
     }
@@ -174,7 +257,6 @@ export default {
               if (isWX) {
                 for (let i = 0; i < userlist.length; i += 1) {
                   if (userlist[i].openid === user.openid) {
-                    // localStorage.setItem('bmob', JSON.stringify(userlist[i]));
                     localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
                   }
@@ -213,6 +295,129 @@ export default {
         });
       }
     },
+    getProduct() {
+      const query = this.$Bmob.Query('product_person');
+      query.equalTo('user', '==', this.$store.state.user.objectId);
+      query.include('product','product');
+      query.find().then((res) => {
+        console.log(res);
+        this.productList = res;
+      });
+    },
+    toActivityDetail(id) {
+      console.log(id);
+      // this.$router.push({path: '/activity/item', query: {id}});
+      location.href = `/activity/item?id=${id}`;
+    },
+    getActivity() {
+      const query = this.$Bmob.Query('activity_person');
+      query.equalTo('user', '==', this.$store.state.user.objectId);
+      //下面参数为Pointer字段名称， 可以一次查询多个表
+      query.include('activity','activity');
+      query.find().then(res => {
+        this.activityList = res;
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+    toProductDetail(id) {
+      console.log(id);
+      // this.$router.push({path: '/tools/item', query: {id}});
+      location.href = `/tools/item?id=${id}`;
+    },
+
+    back() {
+      this.showInfo = false;
+    },
+    toUserInfo() {
+      this.showInfo = true;
+      this.getUserInfo();
+    },
+    getUserInfo() {
+      const openid = JSON.parse(localStorage.getItem('memberInfo')).openid;
+      this.$Bmob.User.users().then((res) => {
+        const userlist = res.results;
+        const isWX = userlist.some((item) => item.openid === openid && openid !== '');
+        if (isWX) {
+          for (let i = 0; i < userlist.length; i += 1) {
+            if (userlist[i].openid === openid) {
+              this.form = userlist[i];
+            }
+          }
+        }
+      });
+    },
+    confilm() {
+      if (!this.form.mobilePhoneNumber) {
+        this.tipsText = '手机号码不能为空';
+        let t = setTimeout(() => {
+          this.tipsText = '';
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
+      if (!this.form.email) {
+        this.tipsText = '邮箱不能为空';
+        let t = setTimeout(() => {
+          this.tipsText = '';
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
+      const query = this.$Bmob.Query('_User');
+      query.get(this.$store.state.user.objectId).then(user => {
+        if (this.form.name) {
+          user.set('name', this.form.name);
+        } else {
+          user.set('name', '');
+        }
+        if (this.form.sex) {
+          user.set('sex', this.form.sex);
+        } else {
+          user.set('sex', '');
+        }
+        if (this.form.mobilePhoneNumber) {
+          user.set('mobilePhoneNumber', this.form.mobilePhoneNumber);
+        } else {
+          user.set('mobilePhoneNumber', '');
+        }
+        if (this.form.email) {
+          user.set('email', this.form.email);
+        } else {
+          user.set('email', '');
+        }
+        if (this.form.profession) {
+          user.set('profession', this.form.profession);
+        } else {
+          user.set('profession', '');
+        }
+        if (this.form.qq) {
+          user.set('qq', this.form.qq);
+        } else {
+          user.set('qq', '');
+        }
+        if (this.form.wechatId) {
+          user.set('wechatId', this.form.wechatId);
+        } else {
+          user.set('wechatId', '');
+        }
+        user.save().then(() => {
+          this.tipsText = '保存成功';
+          let t = setTimeout(() => {
+            this.tipsText = '';
+            clearTimeout(t);
+          }, 1500);
+        }).catch(err => {
+          console.log(err);
+          if (err.code === 209) {
+            this.dialogError = '该手机号码已经存在';
+          }
+          if (err.code === 301) {
+            this.dialogError = '邮箱格式不正确';
+          }
+        });
+      });
+    },
   },
 }
 </script>
@@ -233,6 +438,7 @@ export default {
         border-radius: 50%;
         background-color: #fff;
         background-size: cover;
+        cursor: pointer;
       }
       .name {
         margin-top: 10px;
@@ -453,6 +659,100 @@ export default {
           font-size: 12px;
           line-height: 17px;
           word-break: break-all;
+        }
+      }
+    }
+  }
+
+  .user-info {
+    padding: 60px 0;
+    .func-btn {
+      position: relative;
+      padding-bottom: 10px;
+      height: 50px;
+      box-sizing: border-box;
+      border-bottom: 1px solid #ddd;
+      .back {
+        display: inline-block;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 2px;
+        color: #333;
+        cursor: pointer;
+        i {
+          display: inline-block;
+          vertical-align: middle;
+          color: #F4C51D;
+        }
+        span {
+          margin-left: 5px;
+          display: inline-block;
+          vertical-align: middle;
+          line-height: 28px;
+          font-size: 14px;
+        }
+      }
+      .btn {
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 100px;
+        height: 38px;
+        line-height: 38px;
+        background-color: #F4C51D;
+        border: 1px solid #F4C51D;
+        color: #262626;
+        text-align: center;
+        border-radius: 2px;
+        font-size: 14px;
+        transition: background-color 0.2s ease;
+        cursor: pointer;
+        &:hover {
+          background-color: rgba(244, 197, 29, 0.3);
+        }
+      }
+    }
+    // .line {
+    //   width: 100%;
+    //   height: 1px;
+    //   background-color: #ddd;
+    // }
+    .info-title {
+      margin-top: 40px;
+      font-size: 16px;
+      font-weight: bold;
+      color: #000;
+      line-height: 22px;
+    }
+    .info-form {
+      display: flex;
+      margin-top: 25px;
+      font-size: 14px;
+
+      .form-t {
+        width: 64px;
+        text-align: right;
+        color: #888;
+        line-height: 32px;
+      }
+      .form-i {
+        flex: 1;
+        padding-left: 60px;
+        line-height: 32px;
+        input, select {
+          padding: 0 10px;
+          width: 240px;
+          height: 32px;
+          border: 1px solid #979797;
+          border-radius: 4px;
+          box-sizing: border-box;
+          outline: none;
+        }
+        .tips {
+          margin-left: 15px;
+          color: #FF5D01;
+          font-size: 12px;
         }
       }
     }
