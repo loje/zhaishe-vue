@@ -3,7 +3,7 @@
     <div class="max-width">
       <div class="nav-top">
         <div class="logo" @click="$router.push('/')">
-          <div class="img" style="background-image: url(http://lc-vwzM34py.cn-n1.lcfile.com/19531447caa4df280314/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20191208223730.png);"></div>
+          <div class="img" style="background-image: url(http://files.zdesigner.cn/2020/02/21/726f1d504092234a80c547a94b9d50ea.png);"></div>
         </div>
         <div id="nav" class="nav">
           <template v-for="(items, $index) in routes">
@@ -120,7 +120,7 @@ export default {
           .img {
             display: inline-block;
             margin-right: 16px;
-            width: 110px;
+            width: 147px;
             height: 40px;
             background-position: 50%;
             background-size: contain;

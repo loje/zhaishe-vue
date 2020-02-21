@@ -33,7 +33,7 @@
           <div class="tools-list">
             <div class="the-tool" v-for="(item, $index) in productList" :key="$index">
               <div class="tool-left">
-                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+                <div class="img" :style="{backgroundImage: `url(${item.imgListSrc})`}"></div>
               </div>
               <div class="tool-middle">
                 <div class="title">{{item.title}}</div>
@@ -173,7 +173,7 @@ export default {
         for (let i = 0; i < res.length; i += 1) {          
           arr.push({
             id: res[i].objectId,
-            imgSrc: res[i].imgSrc,
+            imgListSrc: res[i].imgListSrc,
             title: res[i].title,
             desc: res[i].desc,
           });

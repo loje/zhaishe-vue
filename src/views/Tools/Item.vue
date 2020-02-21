@@ -265,23 +265,59 @@ export default {
       };
 
       const query = this.$Bmob.Query('_User');
+      console.log(this.$store.state.user.objectId);
       query.get(this.$store.state.user.objectId).then(user => {
-        user.set('name', this.dialog.name);
-        user.set('mobilePhoneNumber', this.dialog.phone);
-        user.set('email', this.dialog.email);
-        user.set('wechatId', this.dialog.wechat);
+        if (this.dialog.name) {
+          user.set('name', this.dialog.name);
+        }
+        if (this.dialog.phone) {
+          user.set('mobilePhoneNumber', this.dialog.phone);
+        }
+        if (this.dialog.email) {
+          user.set('email', this.dialog.email);
+        }
+        if (this.dialog.wechat) {
+          user.set('wechatId', this.dialog.wechat);
+        }
         user.save().then(() => {
           this.step = 3;
         }).catch(err => {
           console.log(err);
           if (err.code === 209) {
             this.dialogError = '该手机号码已经存在';
-          }
-          if (err.code === 301) {
+          } else if (err.code === 301) {
             this.dialogError = '邮箱格式不正确';
+          } else {
+            this.step = 3;
           }
         });
-      })
+      });
+      // query.set('id', this.$store.state.user.objectId); //需要修改的objectId
+      // if (this.dialog.name) {
+      //   query.set('name', this.dialog.name);
+      // }
+      // if (this.dialog.phone) {
+      //   query.set('mobilePhoneNumber', this.dialog.phone);
+      // }
+      // if (this.dialog.email) {
+      //   query.set('email', this.dialog.email);
+      // }
+      // if (this.dialog.wechat) {
+      //   query.set('wechatId', this.dialog.wechat);
+      // }
+      // query.save().then(res => {
+      //   console.log(res);
+      //   this.step = 3;
+      // }).catch(err => {
+      //   console.log(err);
+      //   if (err.code === 209) {
+      //     this.dialogError = '该手机号码已经存在';
+      //   } else if (err.code === 301) {
+      //     this.dialogError = '邮箱格式不正确';
+      //   } else {
+      //     this.step = 3;
+      //   }
+      // });
     },
 
     getReslut(item) {
@@ -789,6 +825,7 @@ export default {
         max-width: 900px;
         article {
           width: 100%;
+          line-height: 28px;
           box-sizing: border-box;
           img {
             max-width: 100%;
