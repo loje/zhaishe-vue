@@ -21,7 +21,7 @@ export const routes = [
         component: () => import('@/views/Tools/index'),
       },
       {
-        path: '/tools/item',
+        path: '/tools/item/:id',
         name: '设计师工具详情',
         component: () => import('@/views/Tools/Item'),
         meta: { menu: false },
@@ -33,13 +33,13 @@ export const routes = [
         meta: { menu: false, keepAlive: true },
       },
       {
-        path: '/activity/item',
+        path: '/activity/item/:id',
         name: '活动详情',
         component: () => import('@/views/Activity/Item'),
         meta: { menu: false },
       },
       {
-        path: '/activity/record',
+        path: '/activity/record/:id',
         name: '活动笔记',
         component: () => import('@/views/Activity/Record'),
         meta: { menu: false },

@@ -4,7 +4,7 @@
       <div class="layer-left">
         <div class="img" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');"></div>
         
-        <div class="btn" @click="$router.push('/tools/item?id=b736ede69b')">我还没有Eagle</div>
+        <div class="btn" @click="$router.push('/tools/item/b736ede69b')">我还没有Eagle</div>
         <div class="btn" @click="showContact = true">联系小编上素材</div>
 
         <div class="tab-list">

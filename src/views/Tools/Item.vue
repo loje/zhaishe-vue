@@ -32,7 +32,7 @@
           <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.groupPrice" @click="selectPrice(2)">团购：{{info.groupPrice}}元</div>
           <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常购：{{info.price}}元</div>
 
-          <!-- <input type="text" v-model="couponCode" placeholder="请输入推荐码" /> -->
+          <input type="text" v-model="couponCode" placeholder="请输入推荐码" />
 
           <div class="bar-right">
             <span class="t" v-if="activePrice === 1">你选择是正常购</span>
@@ -121,7 +121,7 @@
           <div class="select-price" v-if="activePrice === 1">实付<span>{{info.price}}</span>元</div>
           <div class="select-price" v-if="activePrice === 2">实付<span>{{info.groupPrice}}</span>元</div>
           <div class="qrcode-box">
-            <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" @order-success="getReslut" :size="143"></wechatPay>
+            <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" @order-success="getReslut" :size="280"></wechatPay>
           </div>
           <div class="wechat-text">微信扫码支付</div>
           </template>
@@ -192,7 +192,7 @@ export default {
     getinfo() {
       this.loading = true;
       var query = this.$Bmob.Query('product');
-      query.get(this.$route.query.id).then((res) => {
+      query.get(this.$route.params.id).then((res) => {
         this.loading = false;
         this.info = {
           ...this.info,
@@ -200,7 +200,6 @@ export default {
           isHot: res.isHot ? res.isHot : 0,
           title: res.title,
           desc: res.desc,
-          // address: res.address,
           website: res.website ? res.website : '',
 
           price: res.price || 0,
@@ -212,7 +211,7 @@ export default {
       });
 
       const pointer = this.$Bmob.Pointer('product')
-      const poiID = pointer.set(this.$route.query.id);
+      const poiID = pointer.set(this.$route.params.id);
 
       let orderQuery = this.$Bmob.Query('order_list');
       orderQuery.equalTo("product","==", poiID);
@@ -237,7 +236,7 @@ export default {
         name: this.$store.state.user.name,
         wechat: this.$store.state.user.wechatId,
         phone: this.$store.state.user.mobilePhoneNumber,
-        email: this.$store.state.user.email,
+        email: this.$store.state.user.email.indexOf('@bmob.cn') !== -1 ? undefined : this.$store.state.user.email,
       };
     },
     payit() {
@@ -265,7 +264,6 @@ export default {
       };
 
       const query = this.$Bmob.Query('_User');
-      console.log(this.$store.state.user.objectId);
       query.get(this.$store.state.user.objectId).then(user => {
         if (this.dialog.name) {
           user.set('name', this.dialog.name);
@@ -292,32 +290,6 @@ export default {
           }
         });
       });
-      // query.set('id', this.$store.state.user.objectId); //需要修改的objectId
-      // if (this.dialog.name) {
-      //   query.set('name', this.dialog.name);
-      // }
-      // if (this.dialog.phone) {
-      //   query.set('mobilePhoneNumber', this.dialog.phone);
-      // }
-      // if (this.dialog.email) {
-      //   query.set('email', this.dialog.email);
-      // }
-      // if (this.dialog.wechat) {
-      //   query.set('wechatId', this.dialog.wechat);
-      // }
-      // query.save().then(res => {
-      //   console.log(res);
-      //   this.step = 3;
-      // }).catch(err => {
-      //   console.log(err);
-      //   if (err.code === 209) {
-      //     this.dialogError = '该手机号码已经存在';
-      //   } else if (err.code === 301) {
-      //     this.dialogError = '邮箱格式不正确';
-      //   } else {
-      //     this.step = 3;
-      //   }
-      // });
     },
 
     getReslut(item) {
@@ -325,19 +297,21 @@ export default {
       query.set("payReslut", item);
       query.set("sort", 'product');
       const productPointer = this.$Bmob.Pointer('product');
-      const productID = productPointer.set(this.$route.query.id);
+      const productID = productPointer.set(this.$route.params.id);
       query.set('product', productID);
       const userPointer = this.$Bmob.Pointer('_User');
       const userID = userPointer.set(this.$store.state.user.objectId);
       query.set('user', userID);
+      query.set('couponCode', this.couponCode);
       query.save().then(() => {
         const proquery = this.$Bmob.Query('product_person');
         const userPointer = this.$Bmob.Pointer('_User')
         const userID = userPointer.set(this.$store.state.user.objectId)
         proquery.set('user', userID);
         const productPointer = this.$Bmob.Pointer('product')
-        const productID = productPointer.set(this.$route.query.id)
+        const productID = productPointer.set(this.$route.params.id)
         proquery.set('product', productID);
+        proquery.set('couponCode', this.couponCode);
         proquery.set('isBuyed', true);
         proquery.save().then(() => {
           this.step = 4;
@@ -367,7 +341,7 @@ export default {
           height: 160px;
           overflow: hidden;
           .media-left {
-            width: 260px;
+            width: 160px;
             height: 100%;
             background-color: #fff;
             border-radius: 10px;
@@ -690,8 +664,8 @@ export default {
           }
           .qrcode-box {
             margin:auto;
-            width:143px;
-            height:143px;
+            // width:300px;
+            // height:300px;
           }
           .wechat-text {
             margin-top: 15px;
@@ -722,78 +696,6 @@ export default {
               }
             }
           }
-
-          // .buy-flex {
-          //   width: 50%;
-          //   box-sizing: border-box;
-          //   .wechat-qrcode {
-          //     display: inline-block;
-          //     width: 170px;
-          //     height: 170px;
-          //     img {
-          //       display: block;
-          //       width: 100%;
-          //     }
-          //     .text {
-          //       text-align: center;
-          //       font-size: 12px;
-          //       color: #979797;
-          //     }
-          //   }
-          //   .title {
-          //     margin-bottom: 30px;
-          //     font-size: 12px;
-          //     font-family: PingFangSC;
-          //     color: #262626;
-          //     line-height: 17px;
-          //     .t {
-          //       margin-right: 10px;
-          //       span {
-          //         font-size: 24px;
-          //         color: #FF5D01;
-          //       }
-          //     }
-          //   }
-          //   .input-group {
-          //     display: flex;
-          //     margin-bottom: 20px;
-          //     padding: 0px 10px;
-          //     width: 280px;
-          //     height: 36px;
-          //     line-height: 34px;
-          //     border: 1px solid #979797;
-          //     font-size: 12px;
-          //     box-sizing: border-box;
-          //     span {
-          //       color: #888;
-          //       width: 70px;
-          //     }
-          //     input {
-          //       padding: 0;
-          //       height: 34px;
-          //       border: none;
-          //       outline: none;
-          //       box-sizing: border-box;
-          //     }
-          //   }
-          //   .error {
-          //     margin-bottom: 30px;
-          //     font-size: 12px;
-          //     height: 17px;
-          //     color: #E55D5D;
-          //   }
-          //   .btn {
-          //     width: 280px;
-          //     height: 40px;
-          //     line-height: 40px;
-          //     text-align: center;
-          //     background-color: rgba(244,117,29,0.30);
-          //     border: 1px solid #F4751D;
-          //     border-radius: 2px;
-          //     color: #F4751D;
-          //     cursor: pointer;
-          //   }
-          // }
         }
 
         .buy-tips {

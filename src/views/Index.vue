@@ -39,7 +39,7 @@
               </div>
             </div>
             <div class="layer-list">
-              <div class="list-item" v-for="(item, $index) in downloadList" :key="$index">
+              <div class="list-item" v-for="(item, $index) in downloadList" :key="$index" @click="dialogShow(item)">
                 <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
                 <div class="title">{{item.title}}</div>
                 <div class="item-right">{{item.author}}</div>
@@ -57,11 +57,11 @@
               </div>
             </div>
             <div class="layer-block">
-              <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push({path: '/tools/item', query: { id: item.id }})">
+              <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push(`/tools/item/${item.id}`)">
                 <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
                 <div class="title">{{item.title}}</div>
               </div>
-              <div class="block-item more-item">
+              <div class="block-item more-item" @click="showSharer = true">
                 <div class="icon">加入宅设</div>
                 <div class="title">其他</div>
               </div>
@@ -143,7 +143,7 @@
                 </div>
               </div>
               <div class="activity-right">
-                <div class="btn" @click="$router.push({path: '/activity/item', query: {id: item.id}})">查看活动</div>
+                <div class="btn" @click="$router.push(`/activity/item/${item.id}`)">查看活动</div>
                 <div class="price">￥{{item.fee}}</div>
                 <div class="toggle" @click="toggle($index)" v-if="item.agendaList"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
               </div>
@@ -194,6 +194,60 @@
     <div class="btm-bannner">
       <img src="../assets/img/btm_tips.png" />
     </div>
+
+    <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
+
+    <transition name="fade">
+    <div class="dialog-layer" v-if="showSharer">
+      <div class="dialog-flex">
+        <div class="dialog-block">
+          <span class="close" @click="closeSharer">
+            <i class="iconfont">&#xea13;</i>
+          </span>
+          <div class="title">加入宅设分享人</div>
+          <div class="input-group">
+            <span>称呼：</span>
+            <input type="text" v-model="sharer.name" placeholder="您的称呼" />
+          </div>
+          <div class="input-group">
+            <span>您的联系方式：</span>
+            <input type="text" v-model="sharer.phone" maxlength="11" placeholder="留下您电话方便联系" />
+          </div>
+          <div class="input-group">
+            <span>个人链接：</span>
+            <input type="text" v-model="sharer.link" placeholder="http://或https://开头" />
+          </div>
+          <div class="input-group">
+            <span>分享主题：</span>
+            <input type="text" v-model="sharer.theme" placeholder="填写您的分享主题" />
+          </div>
+
+          <div class="error" v-if="sharer.error">{{sharer.error}}</div>
+
+          <div class="btn" @click="comfilmSharer">确定</div>
+        </div>
+      </div>
+    </div>
+    </transition>
+
+    <transition name="fade">
+      <div class="dialog-layer" v-if="showFeedback">
+        <div class="dialog-flex">
+          <div class="dialog-block">
+            <span class="close" @click="showFeedback = false">
+              <i class="iconfont">&#xea13;</i>
+            </span>
+            <div class="feedback-content">
+              <img src="http://files.zdesigner.cn/2020/01/07/833f0a7940b5b202804b20accfb30ab8.png" />
+              <div class="title">宅设小编为您服务</div>
+              <div class="content">我们运营小组已经收到了您的需求 会及时处理，请耐心等待哦，您也可以加入我们素材收集组</div>
+              <div class="content" style="margin-top: 30px;">V：zhishehui01</div>
+            </div>
+            <div class="btn" @click="showFeedback = false">确定</div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -201,12 +255,14 @@
 import loading from './../components/Loading';
 import './../assets/css/swiper.css'
 import { swiper, swiperSlide } from 'vue-awesome-swiper'
+import downloadDialog from './../components/DownloadDialog';
 
 export default {
   components: {
     loading,
     swiper,
     swiperSlide,
+    downloadDialog,
   },
   data() {
     return {
@@ -268,6 +324,20 @@ export default {
       priLimit: 5,
       skipPri: 0, // 跳过数量
       pagePri: 1, // 当前页数
+
+      showDownload: false,
+      dialog: {},
+
+      showSharer: false,
+      sharer: {
+        id: '',
+        name: '',
+        phone: '',
+        link: '',
+        theme: '',
+        error: '',
+      },
+      showFeedback: false,
     }
   },
   computed: {
@@ -460,6 +530,11 @@ export default {
                 sort: s.name,
                 imgSrc: res[i].imgSrc,
                 author: res[i].author,
+                desc: res[i].desc,
+                wechat: res[i].wechat,
+                downloads: res[i].downloads,
+                link: res[i].link,
+                code: res[i].code,
               });
             }
           });
@@ -506,6 +581,83 @@ export default {
     on_bot_leave() {
       console.log('出去了');
       this.$refs.designerSwiper.swiper.autoplay.start();
+    },
+
+
+    dialogShow(item) {
+      console.log(item);
+      this.dialog = item;
+      this.showDownload = true;
+    },
+    openLink() {
+      console.log(this.dialog);
+      const query = this.$Bmob.Query('download');
+      query.get(this.dialog.id).then((res) => {
+        res.set('downloads', Number(res.downloads) + 1);
+        res.save().then(() => {
+          window.open(this.dialog.link);
+        });
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+
+    closeSharer() {
+      this.sharer = {};
+      this.showSharer = false;
+    },
+    comfilmSharer() {
+      if (!this.sharer.name) {
+        this.sharer.error = '请输入称呼';
+        return false;
+      }
+      if (!this.sharer.phone) {
+        this.sharer.error = '请输入手机号码';
+        return false;
+      }
+
+      if (this.sharer.phone.length !== 11) {
+        this.sharer.error = '请输入11位的手机号码';
+        return false;
+      }
+
+      if (!this.sharer.link) {
+        this.sharer.error = '请输入个人链接';
+        return false;
+      }
+
+      if (!this.sharer.theme) {
+        this.sharer.error = '请输入分享主题';
+        return false;
+      }
+
+      this.sharer.error = '';
+
+      const query = this.$Bmob.Query('sharer');
+      if(this.sharer.name) {
+        query.set('name', this.sharer.name);
+      }
+      if(this.sharer.phone) {
+        query.set('phone', this.sharer.phone);
+      }
+      if(this.sharer.link) {
+        query.set('link', this.sharer.link);
+      }
+      if(this.sharer.theme) {
+        query.set('theme', this.sharer.theme);
+      }
+      query.save().then(() => {
+        this.showSharer = false;
+        this.showFeedback = true;
+        this.sharer = {
+          id: '',
+          name: '',
+          phone: '',
+          link: '',
+          theme: '',
+          error: '',
+        };
+      });
     },
   },
 }
@@ -1170,5 +1322,156 @@ export default {
       margin: auto;
       max-width: 100%;
     }
+  }
+
+  .dialog-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    .dialog-flex {
+      flex: 1;
+      .dialog-block {
+        position: relative;
+        display: block;
+        margin: auto;
+        padding: 25px 30px 35px 30px;
+        width: 340px;
+        background-color: #fff;
+        border-radius: 2px;
+        box-sizing: border-box;
+        .close {
+          position: absolute;
+          right: 16px;
+          top: 12px;
+          cursor: pointer;
+          z-index: 1;
+        }
+        .title {
+          margin-bottom: 30px;
+          font-size: 16px;
+          line-height: 22px;
+          color: #333;
+          text-align: center;
+          font-weight: bold;
+        }
+        .input-group {
+          display: flex;
+          align-items: center;
+          margin-bottom: 20px;
+          width: 100%;
+          height: 36px;
+          line-height: 36px;
+          border: 1px solid #979797;
+          border-radius: 2px;
+          box-sizing: border-box;
+          span {
+            display: block;
+            padding-left: 10px;
+            width: 90px;
+            font-size: 12px;
+            color: #888;
+          }
+          input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0;
+            font-size: 12px;
+          }
+          textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 12px;
+            resize: none;
+          }
+        }
+
+        .error {
+          margin-bottom: 30px;
+          font-size: 12px;
+          height: 17px;
+          color: #E55D5D;
+        }
+
+        .btn {
+          margin: auto;
+          margin-top: 45px;
+          width: 100px;
+          height: 38px;
+          line-height: 38px;
+          text-align: center;
+          background-color: #F4C51D;
+          color: #000;
+          font-size: 14px;
+          border-radius: 2px;
+          cursor: pointer;
+        }
+
+
+        // 反馈
+        .feedback-content {
+          img {
+            display: block;
+            margin: auto;
+            width: 118px;
+          }
+          .title {
+            margin-top: 36px;
+            text-align: center;
+            font-size: 16px;
+            line-height: 22px;
+            color: #333;
+          }
+          .content {
+            padding: 0 15%;
+            font-size: 12px;
+            line-height: 17px;
+            color: #333;
+            text-align: center;
+            box-sizing: border-box;
+          }
+        }
+
+        // 找他接单
+        .order-designer {
+          padding-bottom: 40px;
+          img {
+            display: block;
+            margin: auto;
+            width: 90px;
+            height: 90px;
+            border-radius: 50%;
+          }
+          .name {
+            margin-top: 10px;
+            font-size: 16px;
+            line-height: 22px;
+            text-align: center;
+            color: #333;
+          }
+        }
+      }
+    }
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+    opacity: 0;
+    transform: translate(0, -15px);
+  }
+  .fade-leave, .fade-enter-to {
+    transform: translate(0, 0);
   }
 </style>

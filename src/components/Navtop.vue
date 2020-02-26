@@ -11,9 +11,8 @@
           </template>
         </div>
         <div class="user-in" v-if="!$store.state.user">
-          <!-- <a @click="showLogin = true"><i class="iconfont">&#xe603;</i>微信扫码登录</a> -->
-          <!-- | <a @click="toRegister">注册</a> -->
-          <a href="https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=http%3a%2f%2fzdesigner.cn%2fuser&response_type=code&scope=snsapi_login#wechat_redirect"><i class="iconfont">&#xe603;</i>微信扫码登录</a>
+          <a @click="goWxLogin"><i class="iconfont">&#xe603;</i>微信扫码登录</a> | 
+          <a style="color: #999;" @click="clear">清除登录缓存</a>
         </div>
         <div class="user" v-else>
           <div class="user-head" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
@@ -51,6 +50,16 @@ export default {
       } else {
         this.isIndex = false;
       }
+      if (this.$route.query.code) {
+        this.getToken();
+      }
+    }
+  },
+  mounted() {
+    console.log(location.host);
+
+    if (this.$route.query.code) {
+      this.getToken();
     }
   },
   methods: {
@@ -63,8 +72,6 @@ export default {
       this.loginStatus = 'register';
     },
     toUser() {
-      // console.log(localStorage.getItem('memberInfo'));
-      // console.log(localStorage.getItem('memberInfo').objectId);
       const memberInfo = localStorage.getItem('memberInfo');
       this.$router.push({
         path: '/user',
@@ -73,16 +80,109 @@ export default {
         },
       });
     },
+    goWxLogin() {
+      // encodeURIComponent(location.protocol)
+      const url = `${location.protocol}//${location.host.indexOf('www') === -1 ? 'www.' : ''}${location.host}${location.pathname}`;
+      console.log(url);
+      const fullUrl = encodeURIComponent(url);
+      location.href=`https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=${fullUrl}&response_type=code&scope=snsapi_login#wechat_redirect`
+    },
     logout() {
       this.$Bmob.User.logout();
       const memberInfo = localStorage.getItem('memberInfo');
       if (!memberInfo) {
         this.$store.dispatch('getMember', '');
+        location.href = this.$route.path;
       }
       if (this.$route.path === '/user') {
         location.href = '/';
       }
-      // localStorage.removeItem('bmob');
+    },
+    clear() {
+      localStorage.clear();
+      alert('登录缓存已清除');
+      location.reload();
+    },
+    getToken() {
+      if (!localStorage.getItem('memberInfo')) {
+        let params = {
+          funcName: 'access_token',
+          data: {
+            code : this.$route.query.code,
+          }
+        };
+        this.$Bmob.functions(params.funcName, params.data).then((respon) => {
+          if (respon.errcode === 40163) {
+            location.href = '/';
+            return false;
+          }
+
+          let param = {
+            funcName: 'wechatUser',
+            data: {
+              access_token: respon.access_token,
+              openid: respon.openid,
+            }
+          };
+          this.$Bmob.functions(param.funcName, param.data).then((user) => {
+            if (user.sucess === false) {
+              this.$router.push('/');
+              this.tipsText = user.message;
+              let t = setTimeout(() => {
+                this.tipsText = '';
+                clearTimeout(t);
+              }, 1500);
+              return false;
+            }
+            this.$Bmob.User.users().then((res) => {
+              const userlist = res.results;
+              const isWX = userlist.some((item) => item.openid === user.openid && user.openid !== '');
+              if (isWX) {
+                for (let i = 0; i < userlist.length; i += 1) {
+                  if (userlist[i].openid === user.openid) {
+                    if (!userlist[i].isCustomer) {
+                      alert('账号已被禁用，请联系管理员');
+                      this.logout();
+                      return false;
+                    }
+                    console.log(userlist[i]);
+                    localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
+                    this.$store.dispatch('getMember', userlist[i]);
+                  }
+                }
+              } else {
+                const email = `user${new Date().getTime()}@bmob.cn`;
+                let params = {
+                  username: user.nickname,
+                  password: '123456',
+                  email,
+                  imgSrc: user.headimgurl,
+                  openid: user.openid,
+                  sex: user.sex,
+                  city: user.city,
+                  province: user.province,
+                  country: user.country,
+                  isCustomer: true,
+                }
+                this.$Bmob.User.register(params).then(r => {
+                  this.$Bmob.User.users().then(u => {
+                    let ul = u.results;
+                    for (let i = 0; i < ul.length; i += 1) {
+                      if (ul[i].objectId === r.objectId) {
+                        localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
+                        this.$store.dispatch('getMember', ul[i]);
+                        location.href = '/';
+                      }
+                    }
+                  })
+                }).catch(err => {
+                  console.log(err)
+                });
+              }
+            });
+          });
+        });
+      }
     },
   },
 }

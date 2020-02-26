@@ -32,7 +32,7 @@
       size: {
         type: [Number],
         default() {
-          return 200;
+          return 280;
         },
       },
     },

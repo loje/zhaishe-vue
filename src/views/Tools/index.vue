@@ -33,14 +33,14 @@
           <div class="tools-list">
             <div class="the-tool" v-for="(item, $index) in productList" :key="$index">
               <div class="tool-left">
-                <div class="img" :style="{backgroundImage: `url(${item.imgListSrc})`}"></div>
+                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
               </div>
               <div class="tool-middle">
                 <div class="title">{{item.title}}</div>
                 <div class="desc">{{item.desc}}</div>
               </div>
               <div class="tool-right">
-                <router-link class="btn" :to="{path: '/tools/item', query: { id: item.id }}">购买</router-link>
+                <router-link class="btn" :to="`/tools/item/${item.id}`">购买</router-link>
               </div>
             </div>
           </div>
@@ -173,7 +173,7 @@ export default {
         for (let i = 0; i < res.length; i += 1) {          
           arr.push({
             id: res[i].objectId,
-            imgListSrc: res[i].imgListSrc,
+            imgSrc: res[i].imgSrc,
             title: res[i].title,
             desc: res[i].desc,
           });
@@ -310,7 +310,7 @@ export default {
                 margin-bottom: 0;
               }
               .tool-left {
-                width: 190px;
+                width: 110px;
                 height: 100%;
                 .img {
                   width: 100%;

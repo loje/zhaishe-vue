@@ -186,7 +186,7 @@ export default {
     getInfo() {
       this.loading = true;
       var query = this.$Bmob.Query('activity');
-      query.get(this.$route.query.id).then((res) => {
+      query.get(this.$route.params.id).then((res) => {
         this.loading = false;
         for (let key in res.startTime) {
           if (key === 'iso') {
@@ -220,7 +220,7 @@ export default {
       if (this.$store.state.user) {
         const query = this.$Bmob.Query('activity_person');
         query.equalTo('user', '==', this.$store.state.user.objectId);
-        query.equalTo('activity', '==', this.$route.query.id);
+        query.equalTo('activity', '==', this.$route.params.id);
         query.find().then((res) => {
           if (res.length > 0) {
             if (res[0].isApply === false) {
@@ -250,7 +250,7 @@ export default {
           name: this.$store.state.user.name,
           wechat: this.$store.state.user.wechatId,
           phone: this.$store.state.user.mobilePhoneNumber,
-          email: this.$store.state.user.email,
+          email: this.$store.state.user.email.indexOf('@bmob.cn') !== -1 ? undefined : this.$store.state.user.email,
         };
       }
     },
@@ -303,7 +303,7 @@ export default {
       query.set("payReslut", item);
       query.set("sort", 'active');
       const activityPointer = this.$Bmob.Pointer('activity');
-      const activityID = activityPointer.set(this.$route.query.id);
+      const activityID = activityPointer.set(this.$route.params.id);
       query.set('activity', activityID);
       const userPointer = this.$Bmob.Pointer('_User');
       const userID = userPointer.set(this.$store.state.user.objectId);
@@ -315,7 +315,7 @@ export default {
         const userID = userPointer.set(this.$store.state.user.objectId)
         apquery.set('user', userID);
         const activityPointer = this.$Bmob.Pointer('activity')
-        const activityID = activityPointer.set(this.$route.query.id)
+        const activityID = activityPointer.set(this.$route.params.id)
         apquery.set('activity', activityID);
         apquery.set('isApply', true);
         apquery.save().then(() => {
@@ -492,6 +492,7 @@ export default {
 
       .buy-layer {
         position: relative;
+        margin-top: 50px;
         padding: 25px 0 63px 0;
         border-top: 1px solid #F2F2F2;
         box-sizing: border-box;
@@ -640,8 +641,8 @@ export default {
         }
         .qrcode-box {
           margin:auto;
-          width:143px;
-          height:143px;
+          // width:143px;
+          // height:143px;
         }
         .wechat-text {
           margin-top: 15px;

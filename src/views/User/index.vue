@@ -306,8 +306,7 @@ export default {
     },
     toActivityDetail(id) {
       console.log(id);
-      // this.$router.push({path: '/activity/item', query: {id}});
-      location.href = `/activity/item?id=${id}`;
+      location.href = `/activity/item/${id}`;
     },
     getActivity() {
       const query = this.$Bmob.Query('activity_person');
@@ -322,8 +321,7 @@ export default {
     },
     toProductDetail(id) {
       console.log(id);
-      // this.$router.push({path: '/tools/item', query: {id}});
-      location.href = `/tools/item?id=${id}`;
+      location.href = `/tools/item/${id}`;
     },
 
     back() {
