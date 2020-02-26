@@ -40,7 +40,7 @@
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in downloadList" :key="$index" @click="dialogShow(item)">
-                <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
                 <div class="title">{{item.title}}</div>
                 <div class="item-right">{{item.author}}</div>
               </div>
@@ -516,6 +516,7 @@ export default {
       var query = this.$Bmob.Query('download');
       let arr = [];
       this.designerLoading = true;
+      query.order('-updatedAt');
       query.equalTo('notDelete', '===', true);
       query.equalTo('isTop', '===', true);
       query.find().then((res) => {

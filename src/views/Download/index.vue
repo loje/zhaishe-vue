@@ -30,7 +30,7 @@
           <template v-else>
           <div class="the-download" v-for="(item, $index) in downloadList" :key="$index">
             <div class="download-left">
-              <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+              <div class="img" :style="{backgroundImage: `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
             </div>
             <div class="download-mid">
               <div class="title">{{item.title}}</div>
@@ -245,7 +245,7 @@ export default {
       this.skipDownload = this.downloadLimit * (this.pageDownload - 1);
 
       let arr = [];
-      query.order('-endTime');
+      query.order('-updatedAt');
       if (this.activeTab !== '') {
         query.equalTo('type', '==', this.activeTab);
       }
