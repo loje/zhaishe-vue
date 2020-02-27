@@ -263,33 +263,35 @@ export default {
         body: this.info.title,
       };
 
-      const query = this.$Bmob.Query('_User');
-      query.get(this.$store.state.user.objectId).then(user => {
-        if (this.dialog.name) {
-          user.set('name', this.dialog.name);
-        }
-        if (this.dialog.phone) {
-          user.set('mobilePhoneNumber', this.dialog.phone);
-        }
-        if (this.dialog.email) {
-          user.set('email', this.dialog.email);
-        }
-        if (this.dialog.wechat) {
-          user.set('wechatId', this.dialog.wechat);
-        }
-        user.save().then(() => {
-          this.step = 3;
-        }).catch(err => {
-          console.log(err);
-          if (err.code === 209) {
-            this.dialogError = '该手机号码已经存在';
-          } else if (err.code === 301) {
-            this.dialogError = '邮箱格式不正确';
-          } else {
-            this.step = 3;
-          }
-        });
-      });
+      this.step = 3;
+
+      // const query = this.$Bmob.Query('_User');
+      // query.get(this.$store.state.user.objectId).then(user => {
+      //   if (this.dialog.name) {
+      //     user.set('name', this.dialog.name);
+      //   }
+      //   if (this.dialog.phone) {
+      //     user.set('mobilePhoneNumber', this.dialog.phone);
+      //   }
+      //   if (this.dialog.email) {
+      //     user.set('email', this.dialog.email);
+      //   }
+      //   if (this.dialog.wechat) {
+      //     user.set('wechatId', this.dialog.wechat);
+      //   }
+      //   user.save().then(() => {
+      //     this.step = 3;
+      //   }).catch(err => {
+      //     console.log(err);
+      //     if (err.code === 209) {
+      //       this.dialogError = '该手机号码已经存在';
+      //     } else if (err.code === 301) {
+      //       this.dialogError = '邮箱格式不正确';
+      //     } else {
+      //       this.step = 3;
+      //     }
+      //   });
+      // });
     },
 
     getReslut(item) {
@@ -303,21 +305,30 @@ export default {
       const userID = userPointer.set(this.$store.state.user.objectId);
       query.set('user', userID);
       query.set('couponCode', this.couponCode);
-      query.save().then(() => {
+      query.set('trade_state', item.trade_state);
+
+      query.set('name', this.dialog.name);
+      query.set('phone', this.dialog.phone);
+      query.set('email', this.dialog.email);
+      query.set('wechatId', this.dialog.wechat);
+      query.save().then((res) => {
         const proquery = this.$Bmob.Query('product_person');
         const userPointer = this.$Bmob.Pointer('_User')
         const userID = userPointer.set(this.$store.state.user.objectId)
         proquery.set('user', userID);
         const productPointer = this.$Bmob.Pointer('product')
-        const productID = productPointer.set(this.$route.params.id)
+        const productID = productPointer.set(this.$route.params.id);
         proquery.set('product', productID);
+        const orderPointer = this.$Bmob.Pointer('order_list')
+        const orderID = orderPointer.set(res.objectId);
+        proquery.set('order', orderID);
         proquery.set('couponCode', this.couponCode);
         // proquery.set('isBuyed', true);
-        proquery.set('trade_state', item.trade_state);
-        proquery.set('name', this.dialog.name);
-        proquery.set('phone', this.dialog.phone);
-        proquery.set('email', this.dialog.email);
-        proquery.set('wechatId', this.dialog.wechat);
+        // proquery.set('trade_state', item.trade_state);
+        // proquery.set('name', this.dialog.name);
+        // proquery.set('phone', this.dialog.phone);
+        // proquery.set('email', this.dialog.email);
+        // proquery.set('wechatId', this.dialog.wechat);
 
         proquery.save().then(() => {
           this.step = 4;
