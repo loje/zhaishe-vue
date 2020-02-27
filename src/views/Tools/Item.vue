@@ -312,7 +312,13 @@ export default {
         const productID = productPointer.set(this.$route.params.id)
         proquery.set('product', productID);
         proquery.set('couponCode', this.couponCode);
-        proquery.set('isBuyed', true);
+        // proquery.set('isBuyed', true);
+        proquery.set('trade_state', item.trade_state);
+        proquery.set('name', this.dialog.name);
+        proquery.set('phone', this.dialog.phone);
+        proquery.set('email', this.dialog.email);
+        proquery.set('wechatId', this.dialog.wechat);
+
         proquery.save().then(() => {
           this.step = 4;
           this.payReslut = item;
