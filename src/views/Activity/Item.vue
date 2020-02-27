@@ -342,7 +342,7 @@ export default {
         .media-left {
           .img {
             width: 280px;
-            height: 170px;
+            height: 160px;
             background-position: 50%;
             background-size: cover;
           }
