@@ -36,7 +36,7 @@
               <div class="title">{{item.title}}</div>
               <div class="info">
                 <span>上传人：{{item.author}}</span>
-                <span>微信：{{item.wechat}}</span>
+                <!-- <span>微信：{{item.wechat}}</span> -->
               </div>
             </div>
             <div class="download-right">
