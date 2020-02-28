@@ -74,7 +74,7 @@ export default {
     toUser() {
       const memberInfo = localStorage.getItem('memberInfo');
       this.$router.push({
-        path: '/user',
+        path: '/user/index',
         query: {
           code: JSON.parse(memberInfo).objectId,
         },

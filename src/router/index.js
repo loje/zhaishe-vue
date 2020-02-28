@@ -69,7 +69,7 @@ export const routes = [
       //   meta: { menu: false, keepAlive: true },
       // },
       {
-        path: '/user',
+        path: '/user/:tag',
         name: '个人中心',
         component: () => import('@/views/User/index'),
         meta: { menu: false, keepAlive: true },
