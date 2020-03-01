@@ -121,6 +121,7 @@
           }
         };
         this.$Bmob.functions(param.funcName, param.data).then((resultData) => {
+          console.log(resultData);
           // xml转json格式
           xml2js.parseString(resultData, function (err, json) {
             if (err) {
@@ -179,8 +180,7 @@
               }
             })
           });
-        }, 5000);
- 
+        }, 3000);
       },
     },
   };

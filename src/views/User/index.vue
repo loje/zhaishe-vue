@@ -202,14 +202,73 @@
         </div>
       </div>
       <div class="user-right">
+        <template v-if="$route.params.tag === 'download'">
+          <div class="right-top">
+            <div class="btn">发布灵感</div>
+          </div>
+          <div class="new-release">
+            <div class="title">最新发布</div>
+            <div class="release-list">
+              <!-- <div class="activity" v-for="(item, $index) in activityList" :key="$index" @click="toActivityDetail(item.activity.objectId)">
+                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
+                <div class="desc">{{item.desc}}</div>
+              </div> -->
+              <template v-for="(item, $index) in downloadList">
+              <div class="list-item" :key="$index" @click="dialogShow(item)" v-if="$index < 18">
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
+                <div class="item-title">{{item.title}}</div>
+                <div class="item-right">{{item.author}}</div>
+              </div>
+              </template>
+            </div>
+          </div>
+          <div class="attended">
+            <div class="title">您发布的灵感</div>
+            <div class="release-list">
+              <!-- <span v-for="(item, $index) in userActList" :key="$index">{{item.activity.title}}</span> -->
+              <div class="list-item">
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
+                <div class="item-title">电台banner设计素材</div>
+                <div class="item-right">
+                  <span>下线</span>
+                  <span>修改</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
+                <div class="item-title">电台banner设计素材</div>
+                <div class="item-right">
+                  <span>下线</span>
+                  <span>修改</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
+                <div class="item-title">电台banner设计素材</div>
+                <div class="item-right">
+                  <span>下线</span>
+                  <span>修改</span>
+                </div>
+              </div>
+              <div class="list-item">
+                <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
+                <div class="item-title">电台banner设计素材</div>
+                <div class="item-right">
+                  <span>下线</span>
+                  <span>修改</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </template>
         <template v-if="$route.params.tag === 'activity'">
           <div class="right-top">
             <div class="btn">发布活动</div>
           </div>
-          <div class="new-activity">
+          <div class="new-release">
             <div class="title">最新发布</div>
-            <div class="activity-list">
-              <div class="activity" v-for="(item, $index) in activityList" :key="$index" @click="toActivityDetail(item.activity.objectId)">
+            <div class="release-list" style="padding-right: 50px;">
+              <div class="activity" v-for="(item, $index) in activityList" :key="$index" @click="toActivityDetail(item.objectId)">
                 <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
                 <div class="desc">{{item.desc}}</div>
               </div>
@@ -226,15 +285,19 @@
     </div>
 
     <tips :tips="tipsText" tipsBackgroundColor="rgba(255, 0, 24, 0.75)"></tips>
+
+    <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
   </div>
 </template>
 
 <script>
 import tips from '@/components/Tips';
+import downloadDialog from '@/components/DownloadDialog';
 
 export default {
   components: {
     tips,
+    downloadDialog,
   },
   data() {
     return {
@@ -260,6 +323,11 @@ export default {
       userActList: [],
 
       tipsText: '',
+      
+      downloadList: [],
+
+      showDownload: false,
+      dialog: {},
 
       // showInfo: false,
 
@@ -268,7 +336,13 @@ export default {
   },
   mounted() {
     console.log(this.$route.params.tag);
-    this.getActList();
+    if (this.$route.params.tag === 'activity') {
+      this.getActList();
+    }
+    if (this.$route.params.tag === 'download') {
+      this.getDownload();
+    }
+    
     if (this.$route.query.code) {
       this.getUserAct();
       this.getToken();
@@ -276,6 +350,16 @@ export default {
     //   this.getActivity();
     } else {
       location.href = '/';
+    }
+  },
+  watch: {
+    $route() {
+      if (this.$route.params.tag === 'activity') {
+        this.getActList();
+      }
+      if (this.$route.params.tag === 'download') {
+        this.getDownload();
+      }
     }
   },
   methods: {
@@ -291,6 +375,7 @@ export default {
       const query = this.$Bmob.Query('activity');
       query.order('-updatedAt');
       query.limit(2);
+      query.equalTo('notDelete', '==', true);
       query.find().then(res => {
         this.activityList = (res);
       }).catch(err => {
@@ -392,6 +477,53 @@ export default {
       query.include('activity','activity');
       query.find().then(res => {
         this.userActList = res;
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+    getDownload() {
+      var query = this.$Bmob.Query('download');
+      let arr = [];
+      this.designerLoading = true;
+      query.order('-updatedAt');
+      query.equalTo('notDelete', '===', true);
+      // query.equalTo('isTop', '===', true);
+      query.find().then((res) => {
+        this.designerLoading = false;
+        for (let i = 0; i < res.length; i += 1) {
+          let sort = this.$Bmob.Query('download_sort');
+          sort.get(res[i].sort).then((s) => {
+            arr.push({
+              id: res[i].objectId,
+              title: res[i].title,
+              sort: s.name,
+              imgSrc: res[i].imgSrc,
+              author: res[i].author,
+              desc: res[i].desc,
+              wechat: res[i].wechat,
+              downloads: res[i].downloads,
+              link: res[i].link,
+              code: res[i].code,
+            });
+          });
+        }
+        this.downloadList = arr;
+      });
+    },
+    
+    dialogShow(item) {
+      console.log(item);
+      this.dialog = item;
+      this.showDownload = true;
+    },
+    openLink() {
+      console.log(this.dialog);
+      const query = this.$Bmob.Query('download');
+      query.get(this.dialog.id).then((res) => {
+        res.set('downloads', Number(res.downloads) + 1);
+        res.save().then(() => {
+          window.open(this.dialog.link);
+        });
       }).catch(err => {
         console.log(err)
       });
@@ -510,7 +642,8 @@ export default {
         .user-side {
           padding-top: 50px;
           height: 740px;
-          border: 1px solid #979797;
+          // border: 1px solid #979797;
+          background-color: #fff;
           box-sizing: border-box;
           .user-head {
             margin: auto;
@@ -562,7 +695,8 @@ export default {
           height: 128px;
           line-height: 128px;
           text-align: center;
-          border: 1px solid #979797;
+          // border: 1px solid #979797;
+          background-color: #fff;
           .btn {
             display: inline-block;
             width: 137px;
@@ -575,11 +709,12 @@ export default {
             cursor: pointer;
           }
         }
-        .new-activity {
+        .new-release {
           margin-bottom: 30px;
-          padding: 30px 50px;
+          padding: 30px 0 30px 50px;
           height: 379px;
-          border: 1px solid #979797;
+          // border: 1px solid #979797;
+          background-color: #fff;
           box-sizing: border-box;
           .title {
             margin-bottom: 20px;
@@ -589,7 +724,7 @@ export default {
             color: #000000;
             line-height: 20px;
           }
-          .activity-list {
+          .release-list {
             display: flex;
             flex-wrap: wrap;
             justify-content: space-between;
@@ -615,13 +750,61 @@ export default {
                 -webkit-box-orient: vertical;
               }
             }
-          }
 
+            .list-item {
+              position: relative;
+              margin-bottom: 13px;
+              padding-right: 50px;
+              display: flex;
+              align-items: center;
+              width: 50%;
+              font-size: 12px;
+              line-height: 20px;
+              box-sizing: border-box;
+              cursor: pointer;
+              .icon {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-position: 50%;
+                background-size: cover;
+                i {
+                  display: block;
+                }
+              }
+              .item-title {
+                flex: 1;
+                padding-left: 5px;
+                height: 20px;
+                color: #888;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+              }
+              .item-right {
+                width: 80px;
+                text-align: right;
+                color: #888;
+              }
+              // &:last-child {
+              //   margin-bottom: 0;
+              // }
+              &:hover {
+                .item-title {
+                  color: #F4C51D;
+                }
+                .item-right {
+                  color: #F4C51D;
+                }
+              }
+            }
+          }
         }
         .attended {
           padding: 30px 50px;
           height: 171px;
-          border: 1px solid #979797;
+          // border: 1px solid #979797;
+          background-color: #fff;
           box-sizing: border-box;
           .title {
             margin-bottom: 20px;
@@ -641,6 +824,57 @@ export default {
               line-height: 17px;
             }
           }
+
+          .release-list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            .list-item {
+              position: relative;
+              margin-bottom: 13px;
+              padding-right: 50px;
+              display: flex;
+              align-items: center;
+              width: 50%;
+              font-size: 12px;
+              line-height: 20px;
+              box-sizing: border-box;
+              .icon {
+                width: 16px;
+                height: 16px;
+                border-radius: 50%;
+                background-position: 50%;
+                background-size: cover;
+                i {
+                  display: block;
+                }
+              }
+              .item-title {
+                flex: 1;
+                padding-left: 5px;
+                height: 20px;
+                color: #888;
+                overflow: hidden;
+                text-overflow:ellipsis;
+                white-space: nowrap;
+              }
+              .item-right {
+                width: 80px;
+                text-align: right;
+                span {
+                  color: #000;
+                  cursor: pointer;
+                }
+                span:hover {
+                  color: #F4C51D;
+                }
+                span:last-child {
+                  margin-left: 20px;
+                }
+              }
+            }
+          }
+          
         }
       }
     }

@@ -103,16 +103,16 @@
         <div class="layer-title">
           <div class="title">深圳同城</div>
           <div class="layer-nav">
-            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActivity('宅设主办', 1)">宅社主办</div>
-            <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActivity('其他活动', 1)">其他活动</div>
+            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActCount('宅设主办')">宅社主办</div>
+            <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActCount('其他活动')">其他活动</div>
           </div>
-          <!-- <div class="pages">
+          <div class="pages">
             <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
             <div class="page-list">
               <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
             </div>
             <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
-          </div> -->
+          </div>
         </div>
 
         <div class="activity-list">
@@ -298,7 +298,7 @@ export default {
       actTab: '宅设主办',
       actTotal: 0, // 总条数
       actPages: 0, // 总页数
-      actLimit: 5, // 每页条数
+      actLimit: 3, // 每页条数
       activityList: [],
       activityLoading: false,
       skipAct: 0, // 跳过数量
@@ -347,7 +347,7 @@ export default {
   },
   mounted() {
     this.getDesigner();
-    this.getActCount();
+    this.getActCount('宅设主办');
     this.getBanner();
     this.getRecommend();
     this.getPrivateList();
@@ -437,36 +437,42 @@ export default {
         this.privateList = res;
       });
     },
-    getActCount() {
+    getActCount(actTab) {
+      console.log(actTab);
       var query = this.$Bmob.Query('activity');
       query.equalTo('notDelete', '==', true);
+      if (actTab === '宅设主办') {
+        query.equalTo('sort', '==', 1);
+      } else {
+        query.equalTo('sort', '!=', 1);
+      }
       query.count().then((total) => {
         this.actTotal = total;
-        // this.actPages = parseInt(total / this.actLimit);
-        // if (total % this.actLimit > 0) {
-        //   this.actPages = this.actPages + 1;
-        // }
-        this.getActivity(this.actTab, 1);
+        this.actPages = parseInt(total / this.actLimit);
+        if (total % this.actLimit > 0) {
+          this.actPages = this.actPages + 1;
+        }
+        this.getActivity(actTab, 1);
       });
     },
     getActivity(actTab, page) {
       console.log(page);
       this.actTab = actTab;
 
-      // if (page) {
-      //   if (page > this.actPages) {
-      //     this.pageAct = this.actPages;
-      //   } else if (page < 0) {
-      //     this.pageAct = 1;
-      //   } else {
-      //     this.pageAct = page;
-      //   }
-      // } else {
-      //   this.pageAct = 1
-      // }
+      if (page) {
+        if (page > this.actPages) {
+          this.pageAct = this.actPages;
+        } else if (page < 0) {
+          this.pageAct = 1;
+        } else {
+          this.pageAct = page;
+        }
+      } else {
+        this.pageAct = 1
+      }
       
       var query = this.$Bmob.Query('activity');
-      // this.skipAct = this.actLimit * (this.pageAct - 1);
+      this.skipAct = this.actLimit * (this.pageAct - 1);
 
       let arr = [];
       query.order('-endTime');
@@ -477,8 +483,8 @@ export default {
         query.equalTo('sort', '!=', 1);
       }
 
-      // query.skip(this.skipAct);
-      // query.limit(this.actLimit);
+      query.skip(this.skipAct);
+      query.limit(this.actLimit);
       this.activityLoading = true;
       query.find().then((res) => {
         this.activityLoading = false;

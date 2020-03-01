@@ -316,7 +316,9 @@ export default {
       query.set('phone', this.dialog.phone);
       query.set('email', this.dialog.email);
       query.set('wechatId', this.dialog.wechat);
-      query.set('remark', this.dialog.remark);
+      if (this.dialog.remark) {
+        query.set('remark', this.dialog.remark);
+      }
       query.save().then((res) => {
         const proquery = this.$Bmob.Query('product_person');
         const userPointer = this.$Bmob.Pointer('_User')
