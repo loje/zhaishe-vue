@@ -336,6 +336,10 @@ export default {
       };
     },
     dialogShow(item) {
+      if (!localStorage.getItem('memberInfo')) {
+        alert('请先点右上角登录');
+        return false;
+      }
       console.log(item);
       this.dialog = item;
       this.showDownload = true;

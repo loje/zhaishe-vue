@@ -103,7 +103,7 @@
         <div class="layer-title">
           <div class="title">深圳同城</div>
           <div class="layer-nav">
-            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActCount('宅设主办')">宅社主办</div>
+            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActCount('宅设主办')">宅设主办</div>
             <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActCount('其他活动')">其他活动</div>
           </div>
           <div class="pages">
@@ -278,7 +278,7 @@ export default {
         }
       },
       rightSwiperOption: {
-        autoplay: true,
+        autoplay: false,
         loop : true,
         delay: 1000,
         direction : 'vertical',
@@ -1136,9 +1136,9 @@ export default {
                 font-size: 12px;
                 color: #231916;
                 transform: rotate(0deg);
-                transition: transform 0.5s ease-in-out;
+                transition: transform 0.25s linear;
                 &.show {
-                  transform: rotate(-90deg);
+                  transform: rotate(-180deg);
                 }
               }
             }

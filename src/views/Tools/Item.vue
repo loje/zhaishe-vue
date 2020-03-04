@@ -32,7 +32,7 @@
           <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.groupPrice" @click="selectPrice(2)">团购：{{info.groupPrice}}元</div>
           <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常购：{{info.price}}元</div>
 
-          <input type="text" v-model="couponCode" placeholder="请输入推荐码" />
+          <input type="text" v-model="couponCode" placeholder="请输入推荐微信号" />
 
           <div class="bar-right">
             <span class="t" v-if="activePrice === 1">你选择是正常购</span>
@@ -48,7 +48,7 @@
         <div class="tips">
           <div class="tips-left">
             <div class="title">购买需知</div>
-            <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便 小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
+            <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
           </div>
           <div class="tips-right">
             <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png" />
@@ -142,7 +142,7 @@
         </div>
         <div class="buy-tips">
           <div class="title">购买需知</div>
-          <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便 小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
+          <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
         </div>
         </template>
       </div>
@@ -612,12 +612,12 @@ export default {
             padding-top: 50px;
             .box-form {
               margin: auto;
-              width: 280px;
+              width: 320px;
               .input-group {
                 display: flex;
                 margin-bottom: 20px;
                 padding: 0px 10px;
-                width: 280px;
+                width: 320px;
                 height: 36px;
                 line-height: 34px;
                 border: 1px solid #979797;
@@ -657,7 +657,7 @@ export default {
                 }
               }
               .btn {
-                width: 280px;
+                width: 320px;
                 height: 40px;
                 line-height: 40px;
                 text-align: center;

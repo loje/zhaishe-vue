@@ -729,10 +729,10 @@ export default {
             flex-wrap: wrap;
             justify-content: space-between;
             .activity {
-              width: 260px;
+              width: 280px;
               cursor: pointer;
               .img {
-                width: 260px;
+                width: 280px;
                 height: 160px;
                 background-size:cover;
                 background-position: 50%;

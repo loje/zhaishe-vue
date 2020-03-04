@@ -57,7 +57,14 @@ export default {
   },
   mounted() {
     console.log(location.host);
-
+    // let now = new Date();
+    // let year = now.getFullYear();
+    // let month = this.checkTime(now.getMonth() + 1);
+    // let date = this.checkTime(now.getDate());
+    // let hour = this.checkTime(now.getHours());
+    // let minute = this.checkTime(now.getMinutes());
+    // let second = this.checkTime(now.getSeconds());
+    // console.log(`${year}-${month}-${date} ${hour}:${minute}:${second}`);
     if (this.$route.query.code) {
       this.getToken();
     }
@@ -103,6 +110,10 @@ export default {
       alert('登录缓存已清除');
       location.reload();
     },
+    checkTime(i) {
+      if (i < 10) { i="0" + i }
+      return i;
+    },
     getToken() {
       if (!localStorage.getItem('memberInfo')) {
         let params = {
@@ -125,7 +136,8 @@ export default {
             }
           };
           this.$Bmob.functions(param.funcName, param.data).then((user) => {
-            if (user.sucess === false) {
+            if (user.sucess === false) { 
+
               this.$router.push('/');
               this.tipsText = user.message;
               let t = setTimeout(() => {
@@ -145,9 +157,30 @@ export default {
                       this.logout();
                       return false;
                     }
-                    console.log(userlist[i]);
+                    // console.log(userlist[i]);
                     localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
+                    let now = new Date();
+                    let year = now.getFullYear();
+                    let month = this.checkTime(now.getMonth() + 1);
+                    let date = this.checkTime(now.getDate());
+                    let hour = this.checkTime(now.getHours());
+                    let minute = this.checkTime(now.getMinutes());
+                    let second = this.checkTime(now.getSeconds());
+                    let data = {
+                        "__type": "Date",
+                        "iso": `${year}-${month}-${date} ${hour}:${minute}:${second}`
+                    };
+
+                    const userquery = this.$Bmob.Query('_User');
+                    userquery.get(userlist[i].objectId).then(user => {
+                      user.set('loginTime', data);
+                      user.save().then(() => {
+                        console.log('---已记录登录时间---');
+                      }).catch(err => {
+                        console.log(err)
+                      });
+                    });
                   }
                 }
               } else {

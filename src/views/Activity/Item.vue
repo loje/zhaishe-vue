@@ -564,12 +564,12 @@ export default {
           padding-top: 50px;
           .box-form {
             margin: auto;
-            width: 280px;
+            width: 320px;
             .input-group {
               display: flex;
               margin-bottom: 20px;
               padding: 0px 10px;
-              width: 280px;
+              width: 320px;
               height: 36px;
               line-height: 34px;
               border: 1px solid #979797;
@@ -609,7 +609,7 @@ export default {
               }
             }
             .btn {
-              width: 280px;
+              width: 320px;
               height: 40px;
               line-height: 40px;
               text-align: center;
