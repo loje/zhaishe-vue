@@ -19,7 +19,7 @@
 
               <div class="info-btm">
                 <span class="sell">已销售{{info.count}}份</span>
-                <span class="url">{{info.website}}</span>
+                <span class="url" :title="info.website">{{info.website}}</span>
                 <a :href="info.website" target="blank">跳转官网查看</a>
               </div>
             </div>
@@ -428,12 +428,21 @@ export default {
                 line-height: 17px;
                 color: #888;
                 .sell {
+                  display: inline-block;
+                  vertical-align: middle;
                   margin-right: 70px;
                 }
-                .url span {
-                  margin-left: 10px;
+                .url {
+                  display: inline-block;
+                  vertical-align: middle;
+                  max-width: 490px;
+                  overflow: hidden;
+                  text-overflow: ellipsis;
+                  white-space: nowrap;
                 }
                 a {
+                  display: inline-block;
+                  vertical-align: middle;
                   margin-left: 10px;
                   color: #888;
                 }

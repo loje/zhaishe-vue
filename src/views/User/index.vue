@@ -202,6 +202,54 @@
         </div>
       </div>
       <div class="user-right">
+        <template v-if="$route.params.tag === 'private'">
+          <div class="right-top">
+            <div class="btn" @click="showPrivate">发布需求</div>
+          </div>
+          <div class="new-release">
+            <div class="title">私单发布</div>
+            <div class="release-list">
+              <template v-for="(item, $index) in privateList">
+              <div class="list-item" :key="$index">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <div class="item-title">{{item.remark}}</div>
+                <div class="item-right">
+                  <template v-if="item.isNewst">
+                    <div style="width: 56px;height: 20px;background-color: #f4751d;color:#fff;text-align: center;">新任务</div>
+                  </template>
+                  <template v-else>{{item.createdAt}}</template>
+                </div>
+              </div>
+              </template>
+            </div>
+            <div class="pages" v-if="privateList.length > 0">
+              <div class="prev" @click="getPrivateList(pagePrivate - 1)">上一页</div>
+              <div class="page-list">
+                <div :class="pagePrivate === item ? 'page active' : 'page'" v-for="item in privatePages" :key="item" @click="getPrivateList(item)">{{item > 3 ? '···' : item}}</div>
+              </div>
+              <div class="next" @click="getPrivateList(pagePrivate + 1)">下一页</div>
+              <div class="last" @click="getPrivateList(privatePages)">尾页</div>
+            </div>
+          </div>
+          <div class="attended">
+            <div class="title">您发布的私单</div>
+            <div class="release-list">
+              <template v-for="(item, $index) in userPrivateList">
+              <div class="list-item" :key="$index">
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <div class="item-title">{{item.remark}}</div>
+                <div class="item-right">
+                  <span @click="online(item)">
+                    <template v-if="item.online === true">下线</template>
+                    <template v-else>上线</template>
+                  </span>
+                  <span @click="editPrivate(item)">修改</span>
+                </div>
+              </div>
+              </template>
+            </div>
+          </div>
+        </template>
         <template v-if="$route.params.tag === 'download'">
           <div class="right-top">
             <div class="btn">发布灵感</div>
@@ -209,10 +257,6 @@
           <div class="new-release">
             <div class="title">最新发布</div>
             <div class="release-list">
-              <!-- <div class="activity" v-for="(item, $index) in activityList" :key="$index" @click="toActivityDetail(item.activity.objectId)">
-                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
-                <div class="desc">{{item.desc}}</div>
-              </div> -->
               <template v-for="(item, $index) in downloadList">
               <div class="list-item" :key="$index" @click="dialogShow(item)" v-if="$index < 18">
                 <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
@@ -225,7 +269,6 @@
           <div class="attended">
             <div class="title">您发布的灵感</div>
             <div class="release-list">
-              <!-- <span v-for="(item, $index) in userActList" :key="$index">{{item.activity.title}}</span> -->
               <div class="list-item">
                 <div class="icon" :style="{'background-image': `url(http://files.zdesigner.cn/2020/02/27/8ab5a6ee40d57e448012b8083b68f496.png)`}"></div>
                 <div class="item-title">电台banner设计素材</div>
@@ -284,6 +327,52 @@
       </div>
     </div>
 
+    <transition name="fade">
+    <div class="dialog-layer" v-if="dialogPrivateShow">
+      <div class="dialog-flex">
+        <div class="dialog-block" style="width:370px">
+          <span class="close" @click="dialogPrivateShow = false">
+            <i class="iconfont">&#xea13;</i>
+          </span>
+          <div class="dialog-title">填写您的需求</div>
+          <div class="dialog-content">
+            <div class="input-group">
+              <span>称呼</span>
+              <input type="text" v-model="privateDialog.name" placeholder="您的姓名" />
+            </div>
+            <div class="input-group">
+              <span>电话</span>
+              <input type="text" v-model="privateDialog.phone" placeholder="您的联系电话" />
+            </div>
+            <div class="input-group">
+              <span>微信</span>
+              <input type="text" v-model="privateDialog.wechatId" />
+            </div>
+            <div class="input-group" style="z-index: 1;" @mouseenter="selectHover" @mouseleave="privateDialog.selectShow = false">
+              <span>类别</span>
+              <div class="select-value">{{privateDialog.sort}}</div>
+
+              <transition name="fade">
+              <div class="select-layer" v-if="privateDialog.selectShow">
+                <div class="option-list">
+                  <div class="option" v-for="(item, $index) in privateSortList" :key="$index" @click="selectSort(item)">{{item.name}}</div>
+                </div>
+              </div>
+              </transition>
+            </div>
+            <div class="input-group">
+              <span>需求</span>
+              <textarea v-model="privateDialog.remark" rows="2" maxlength="50" placeholder="50字内的需求描述"></textarea>
+            </div>
+            <div class="error" v-if="privateDialog.error">{{privateDialog.error}}</div>
+          </div>
+          <div class="btn" @click="comfilmPrivate">提交</div>
+        </div>
+      </div>
+    </div>
+    </transition>
+
+
     <tips :tips="tipsText" tipsBackgroundColor="rgba(255, 0, 24, 0.75)"></tips>
 
     <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
@@ -332,10 +421,65 @@ export default {
       // showInfo: false,
 
       // form: '',
+      dialogPrivateShow: false,
+      privateList: [],
+      userPrivateList: [],
+
+      privateTotal: 0, // 总条数
+      privatePages: 0, // 总页数
+      privateLimit: 14, // 每页条数
+      privateLoading: false,
+      skipPrivate: 0, // 跳过数量
+      pagePrivate: 1, // 当前页数
+
+      privateSortList: [
+        {
+          id: 1,
+          name: 'UI界面设计'
+        },{
+          id: 2,
+          name: '交互设计'
+        },{
+          id: 3,
+          name: '平面设计'
+        },{
+          id: 4,
+          name: 'VI/Logo设计'
+        },{
+          id: 5,
+          name: '网页设计'
+        },{
+          id: 6,
+          name: '包装设计'
+        },{
+          id: 7,
+          name: '插画'
+        },{
+          id: 8,
+          name: 'H5页面设计'
+        },{
+          id: 9,
+          name: '产品设计'
+        },{
+          id: 10,
+          name: '动画'
+        },{
+          id: 11,
+          name: '输入'
+        },
+      ],
+      privateDialog: {
+        sort: '',
+        selectShow: false,
+        error: ''
+      },
     }
   },
   mounted() {
-    console.log(this.$route.params.tag);
+    if (this.$route.params.tag === 'private') {
+      this.pagePrivate = 1;
+      this.getPrivateCount();
+    }
     if (this.$route.params.tag === 'activity') {
       this.getActList();
     }
@@ -348,6 +492,7 @@ export default {
       this.getToken();
     //   this.getProduct();
     //   this.getActivity();
+      this.getUserPrivate();
     } else {
       location.href = '/';
     }
@@ -363,25 +508,6 @@ export default {
     }
   },
   methods: {
-    toTag(item) {
-      this.$router.push({
-        path: `/user/${item}`,
-        query: {
-          code: this.$route.query.code,
-        },
-      });
-    },
-    getActList() {
-      const query = this.$Bmob.Query('activity');
-      query.order('-updatedAt');
-      query.limit(2);
-      query.equalTo('notDelete', '==', true);
-      query.find().then(res => {
-        this.activityList = (res);
-      }).catch(err => {
-        console.log(err)
-      });
-    },
     getToken() {
       if (!localStorage.getItem('memberInfo')) {
         let params = {
@@ -457,18 +583,26 @@ export default {
         });
       }
     },
-    // getProduct() {
-    //   const query = this.$Bmob.Query('product_person');
-    //   query.equalTo('user', '==', this.$store.state.user.objectId);
-    //   query.include('product','product');
-    //   query.find().then((res) => {
-    //     console.log(res);
-    //     this.productList = res;
-    //   });
-    // },
-    toActivityDetail(id) {
-      console.log(id);
-      location.href = `/activity/item/${id}`;
+
+    toTag(item) {
+      this.$router.push({
+        path: `/user/${item}`,
+        query: {
+          code: this.$route.query.code,
+        },
+      });
+    },
+
+    getActList() {
+      const query = this.$Bmob.Query('activity');
+      query.order('-updatedAt');
+      query.limit(2);
+      query.equalTo('notDelete', '==', true);
+      query.find().then(res => {
+        this.activityList = (res);
+      }).catch(err => {
+        console.log(err)
+      });
     },
     getUserAct() {
       const query = this.$Bmob.Query('activity_person');
@@ -481,6 +615,19 @@ export default {
         console.log(err)
       });
     },
+    toActivityDetail(id) {
+      location.href = `/activity/item/${id}`;
+    },
+    // getProduct() {
+    //   const query = this.$Bmob.Query('product_person');
+    //   query.equalTo('user', '==', this.$store.state.user.objectId);
+    //   query.include('product','product');
+    //   query.find().then((res) => {
+    //     console.log(res);
+    //     this.productList = res;
+    //   });
+    // },
+
     getDownload() {
       var query = this.$Bmob.Query('download');
       let arr = [];
@@ -510,6 +657,186 @@ export default {
         this.downloadList = arr;
       });
     },
+
+    getPrivateCount() {
+      var query = this.$Bmob.Query('private_orders');
+      query.equalTo('notDelete', '==', true);
+      query.count().then((total) => {
+        this.privateTotal = total;
+        this.privatePages = parseInt(total / this.privateLimit);
+        if (total % this.privateLimit > 0) {
+          this.privatePages = this.privatePages + 1;
+        }
+        this.getPrivateList(this.pagePrivate);
+      });
+    },
+    getPrivateList(page) {
+      if (page) {
+        if (page > this.privatePages) {
+          this.pagePrivate = this.PrivatePages;
+        } else if (page < 0) {
+          this.pagePrivate = 1;
+        } else {
+          this.pagePrivate = page;
+        }
+      } else {
+        this.pagePrivate = 1
+      }
+
+      const query = this.$Bmob.Query('private_orders');
+      this.skipPrivate = this.privateLimit * (this.pagePrivate - 1);
+
+      query.order('-updatedAt');
+      query.skip(this.skipPrivate);
+      query.limit(14);
+      query.equalTo('notDelete', '==', true);
+      query.equalTo('online', '==', true);
+
+      query.find().then(res => {
+        for (let i = 0; i < res.length; i += 1) {
+          let day = parseInt((new Date().getTime() - new Date(res[i].createdAt).getTime()) / 86400000);
+          if (day > 1) {
+            res[i].createdAt = `${day}天前发布`;
+          } else {
+            res[i].createdAt = `新任务`;
+            res[i].isNewst = true;
+          }
+        }
+        this.privateList = res;
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+    getUserPrivate() {
+      const query = this.$Bmob.Query('private_orders');
+      query.equalTo('user', '==', this.$store.state.user.objectId);
+      query.order('-updatedAt');
+      query.equalTo('notDelete', '==', true);
+      query.find().then(res => {
+        this.userPrivateList = res;
+      }).catch(err => {
+        console.log(err)
+      });
+    },
+
+    selectHover() {
+      this.privateDialog.selectShow = true;
+    },
+    selectSort(item) {
+      this.privateDialog.sort = item.name;
+      this.privateDialog.selectShow = false;
+    },
+
+    comfilmPrivate() {
+      if (!this.privateDialog.name) {
+        this.privateDialog.error = '请输入称呼';
+        return false;
+      }
+      if (!this.privateDialog.phone) {
+        this.privateDialog.error = '请输入手机号码';
+        return false;
+      }
+
+      if (this.privateDialog.phone.length !== 11) {
+        this.privateDialog.error = '请输入11位的手机号码';
+        return false;
+      }
+
+      if (!this.privateDialog.wechatId) {
+        this.privateDialog.error = '请输入微信号';
+        return false;
+      }
+
+      if (!this.privateDialog.sort) {
+        this.privateDialog.error = '请选择类型';
+        return false;
+      }
+
+      if (!this.privateDialog.remark) {
+        this.privateDialog.error = '请输入需求描述';
+        return false;
+      }
+
+      this.privateDialog.error = '';
+
+      const query = this.$Bmob.Query('private_orders');
+      if(this.privateDialog.id) {
+        query.set('id', this.privateDialog.id);
+      }
+
+      if(localStorage.getItem('memberInfo')) {
+        const userPointer = this.$Bmob.Pointer('_User');
+        const userID = userPointer.set(this.$store.state.user.objectId);
+        query.set('user', userID);
+      }
+      if(this.privateDialog.name) {
+        query.set('name', this.privateDialog.name);
+      }
+      if(this.privateDialog.phone) {
+        query.set('phone', this.privateDialog.phone);
+      }
+      if(this.privateDialog.wechatId) {
+        query.set('wechatId', this.privateDialog.wechatId);
+      }
+      if(this.privateDialog.sort) {
+        query.set('sort', this.privateDialog.sort);
+      }
+      if(this.privateDialog.remark) {
+        query.set('remark', this.privateDialog.remark);
+      }
+      query.save().then(() => {
+        this.dialogPrivateShow = false;
+        this.privateDialog = {
+          selectShow: false,
+          name: '',
+          phone: '',
+          wechatId: '',
+          sort: '',
+          remark: '',
+          error: '',
+        };
+        this.pagePrivate = 1;
+        this.getPrivateCount();
+        this.getUserPrivate();
+      });
+    },
+
+    showPrivate() {
+      this.dialogPrivateShow = true;
+      this.privateDialog = {
+        selectShow: false,
+        name: '',
+        phone: '',
+        wechatId: '',
+        remark: '',
+        error: '',
+      };
+    },
+    editPrivate(item) {
+      this.dialogPrivateShow = true;
+      this.privateDialog = {
+        selectShow: false,
+        id: item.objectId,
+        name: item.name,
+        phone: item.phone,
+        wechatId: item.wechatId,
+        sort: item.sort,
+        remark: item.remark,
+        error: '',
+      };
+    },
+    online(item) {
+      const query = this.$Bmob.Query('private_orders');
+      query.get(item.objectId).then(privateOrder => {
+        privateOrder.set('online', item.online === false ? true : false);
+        privateOrder.save().then(() => {
+          this.pagePrivate = 1;
+          this.getPrivateCount();
+          this.getUserPrivate();
+        });
+      });
+    },
+
     
     dialogShow(item) {
       console.log(item);
@@ -710,10 +1037,10 @@ export default {
           }
         }
         .new-release {
+          position: relative;
           margin-bottom: 30px;
-          padding: 30px 0 30px 50px;
+          padding: 30px 0 20px 50px;
           height: 379px;
-          // border: 1px solid #979797;
           background-color: #fff;
           box-sizing: border-box;
           .title {
@@ -786,9 +1113,6 @@ export default {
                 text-align: right;
                 color: #888;
               }
-              // &:last-child {
-              //   margin-bottom: 0;
-              // }
               &:hover {
                 .item-title {
                   color: #F4C51D;
@@ -799,11 +1123,50 @@ export default {
               }
             }
           }
+          .pages {
+            position: absolute;
+            right: 45px;
+            bottom: 20px;
+            width: 100%;
+            height: 50px;
+            text-align: right;
+            box-sizing: border-box;
+            .prev, .next, .last {
+              display: inline-block;
+              vertical-align: middle;
+              line-height: 50px;
+              color: #888;
+              font-size: 12px;
+            }
+            .last {
+              margin-left: 25px;
+            }
+            cursor: pointer;
+            .page-list {
+              display: inline-flex;
+              margin: 0 15px;
+              line-height: 50px;
+              vertical-align: middle;
+              .page {
+                width: 34px;
+                height: 50px;
+                line-height: 50px;
+                font-size: 16px;
+                font-weight: bold;
+                color: #000;
+                text-align: center;
+                cursor: pointer;
+                &:hover, &.active {
+                  color: #fff;
+                  background-color: #F4C51D;
+                }
+              }
+            }
+          }
         }
         .attended {
           padding: 30px 50px;
           height: 171px;
-          // border: 1px solid #979797;
           background-color: #fff;
           box-sizing: border-box;
           .title {
@@ -879,6 +1242,147 @@ export default {
       }
     }
   }
+
+  .dialog-layer {
+    position: fixed;
+    left: 0;
+    top: 0;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+    z-index: 2;
+    .dialog-flex {
+      flex: 1;
+      .dialog-block {
+        position: relative;
+        display: block;
+        margin: auto;
+        padding: 40px 50px 35px 50px;
+        width: 370px;
+        background-color: #fff;
+        border-radius: 2px;
+        box-sizing: border-box;
+        .close {
+          position: absolute;
+          right: 16px;
+          top: 12px;
+          cursor: pointer;
+          z-index: 1;
+        }
+        .dialog-title {
+          margin-bottom: 16px;
+          font-size: 16px;
+          line-height: 22px;
+          color: #333;
+        }
+        .input-group {
+          position: relative;
+          display: flex;
+          margin-bottom: 20px;
+          width: 100%;
+          border: 1px solid #979797;
+          border-radius: 2px;
+          box-sizing: border-box;
+          z-index: 0;
+          span {
+            position: relative;
+            display: block;
+            padding-left: 10px;
+            width: 36px;
+            font-size: 12px;
+            color: #888;
+            height: 34px;
+            line-height: 34px;
+            z-index: 1;
+          }
+          input, .select-value {
+            position: relative;
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 0;
+            font-size: 12px;
+            height: 34px;
+            line-height: 34px;
+            z-index: 1;
+          }
+
+          .select-layer {
+            position: absolute;
+            left: 0;
+            top: 0;
+            padding-top: 36px;
+            width: 100%;
+            z-index: 2;
+            .option-list {
+              padding: 14px 0;
+              box-shadow: 0 8px 8px rgba(0,0,0,0.05);
+              background-color: #fff;
+              .option {
+                width: 100%;
+                color:#888;
+                height: 36px;
+                line-height: 36px;
+                text-align: center;
+                font-size: 12px;
+                cursor: pointer;
+                &:hover {
+                  background-color: #F4C51D;
+                  color: #fff;
+                }
+              }
+            }
+          }
+
+          textarea {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            font-size: 12px;
+            resize: none;
+            box-sizing: border-box;
+          }
+        }
+        .error {
+          margin: 10px 0 30px 0;
+          font-size: 12px;
+          height: 17px;
+          color: #E55D5D;
+        }
+        .btn {
+          margin: auto;
+          margin-top: 45px;
+          width: 100px;
+          height: 38px;
+          line-height: 38px;
+          text-align: center;
+          background-color: #F4C51D;
+          color: #000;
+          font-size: 14px;
+          border-radius: 2px;
+          cursor: pointer;
+        }
+      }
+    }
+  }
+
+  /* 可以设置不同的进入和离开动画 */
+  /* 设置持续时间和动画函数 */
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity 0.25s, transform 0.25s;
+  }
+  .fade-enter, .fade-leave-to /* .fade-leave-active, 2.1.8 版本以下 */ {
+    opacity: 0;
+    transform: translate(0, -15px);
+  }
+  .fade-leave, .fade-enter-to {
+    transform: translate(0, 0);
+  }
+
+
   // .user-top {
   //   position: relative;
   //   padding-bottom: 20px;

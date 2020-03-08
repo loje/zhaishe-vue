@@ -61,7 +61,7 @@
                 <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
                 <div class="title">{{item.title}}</div>
               </div>
-              <div class="block-item more-item" @click="showSharer = true">
+              <div class="block-item more-item" @click="showRecommend = true">
                 <div class="icon">加入宅设</div>
                 <div class="title">其他</div>
               </div>
@@ -198,33 +198,33 @@
     <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
 
     <transition name="fade">
-    <div class="dialog-layer" v-if="showSharer">
+    <div class="dialog-layer" v-if="showRecommend">
       <div class="dialog-flex">
         <div class="dialog-block">
-          <span class="close" @click="closeSharer">
+          <span class="close" @click="closeRecommend">
             <i class="iconfont">&#xea13;</i>
           </span>
-          <div class="title">加入宅设分享人</div>
+          <div class="title">填写你推荐的产品</div>
           <div class="input-group">
-            <span>称呼：</span>
-            <input type="text" v-model="sharer.name" placeholder="您的称呼" />
+            <span>称呼</span>
+            <input type="text" v-model="recommend.name" placeholder="您的称呼" />
           </div>
           <div class="input-group">
-            <span>您的联系方式：</span>
-            <input type="text" v-model="sharer.phone" maxlength="11" placeholder="留下您电话方便联系" />
+            <span>电话</span>
+            <input type="text" v-model="recommend.phone" maxlength="11" placeholder="您的联系电话" />
           </div>
           <div class="input-group">
-            <span>个人链接：</span>
-            <input type="text" v-model="sharer.link" placeholder="http://或https://开头" />
+            <span>微信</span>
+            <input type="text" v-model="recommend.wechatId" />
           </div>
           <div class="input-group">
-            <span>分享主题：</span>
-            <input type="text" v-model="sharer.theme" placeholder="填写您的分享主题" />
+            <span>备注</span>
+            <textarea v-model="recommend.remark" rows="4" placeholder="描述你的推荐内容"></textarea>
           </div>
 
-          <div class="error" v-if="sharer.error">{{sharer.error}}</div>
+          <div class="error" v-if="recommend.error">{{recommend.error}}</div>
 
-          <div class="btn" @click="comfilmSharer">确定</div>
+          <div class="btn" @click="comfilmRecommend">确定</div>
         </div>
       </div>
     </div>
@@ -328,13 +328,12 @@ export default {
       showDownload: false,
       dialog: {},
 
-      showSharer: false,
-      sharer: {
-        id: '',
+      showRecommend: false,
+      recommend: {
         name: '',
         phone: '',
-        link: '',
-        theme: '',
+        wechatId: '',
+        remark: '',
         error: '',
       },
       showFeedback: false,
@@ -609,59 +608,63 @@ export default {
       });
     },
 
-    closeSharer() {
-      this.sharer = {};
-      this.showSharer = false;
+    closeRecommend() {
+      this.recommend = {};
+      this.showRecommend = false;
     },
-    comfilmSharer() {
-      if (!this.sharer.name) {
-        this.sharer.error = '请输入称呼';
+    comfilmRecommend() {
+      if (!this.recommend.name) {
+        this.recommend.error = '请输入称呼';
         return false;
       }
-      if (!this.sharer.phone) {
-        this.sharer.error = '请输入手机号码';
-        return false;
-      }
-
-      if (this.sharer.phone.length !== 11) {
-        this.sharer.error = '请输入11位的手机号码';
+      if (!this.recommend.phone) {
+        this.recommend.error = '请输入手机号码';
         return false;
       }
 
-      if (!this.sharer.link) {
-        this.sharer.error = '请输入个人链接';
+      if (this.recommend.phone.length !== 11) {
+        this.recommend.error = '请输入11位的手机号码';
         return false;
       }
 
-      if (!this.sharer.theme) {
-        this.sharer.error = '请输入分享主题';
+      if (!this.recommend.wechatId) {
+        this.recommend.error = '请输入微信号';
         return false;
       }
 
-      this.sharer.error = '';
+      if (!this.recommend.remark) {
+        this.recommend.error = '请输入推荐内容';
+        return false;
+      }
 
-      const query = this.$Bmob.Query('sharer');
-      if(this.sharer.name) {
-        query.set('name', this.sharer.name);
+      this.recommend.error = '';
+
+      const query = this.$Bmob.Query('recommend');
+      if(localStorage.getItem('memberInfo')) {
+        const userPointer = this.$Bmob.Pointer('_User');
+        const userID = userPointer.set(this.$store.state.user.objectId);
+        query.set('user', userID);
       }
-      if(this.sharer.phone) {
-        query.set('phone', this.sharer.phone);
+      if(this.recommend.name) {
+        query.set('name', this.recommend.name);
       }
-      if(this.sharer.link) {
-        query.set('link', this.sharer.link);
+      if(this.recommend.phone) {
+        query.set('phone', this.recommend.phone);
       }
-      if(this.sharer.theme) {
-        query.set('theme', this.sharer.theme);
+      if(this.recommend.wechatId) {
+        query.set('wechatId', this.recommend.wechatId);
+      }
+      if(this.recommend.remark) {
+        query.set('remark', this.recommend.remark);
       }
       query.save().then(() => {
-        this.showSharer = false;
+        this.showRecommend = false;
         this.showFeedback = true;
-        this.sharer = {
-          id: '',
+        this.recommend = {
           name: '',
           phone: '',
-          link: '',
-          theme: '',
+          wechatId: '',
+          remark: '',
           error: '',
         };
       });
@@ -1354,35 +1357,37 @@ export default {
         box-sizing: border-box;
         .close {
           position: absolute;
-          right: 16px;
+          right: 12px;
           top: 12px;
+          line-height: 12px;
           cursor: pointer;
           z-index: 1;
+          i {
+            font-size: 12px;
+          }
         }
         .title {
-          margin-bottom: 30px;
+          margin-bottom: 16px;
           font-size: 16px;
           line-height: 22px;
           color: #333;
-          text-align: center;
-          font-weight: bold;
         }
         .input-group {
           display: flex;
-          align-items: center;
           margin-bottom: 20px;
           width: 100%;
-          height: 36px;
-          line-height: 36px;
           border: 1px solid #979797;
           border-radius: 2px;
+          overflow: hidden;
           box-sizing: border-box;
           span {
             display: block;
             padding-left: 10px;
-            width: 90px;
+            width: 50px;
             font-size: 12px;
             color: #888;
+            height: 36px;
+            line-height: 36px;
           }
           input {
             flex: 1;
@@ -1390,6 +1395,8 @@ export default {
             outline: none;
             padding: 0;
             font-size: 12px;
+            height: 36px;
+            line-height: 36px;
           }
           textarea {
             flex: 1;
@@ -1398,6 +1405,7 @@ export default {
             padding: 10px;
             font-size: 12px;
             resize: none;
+            box-sizing: border-box;
           }
         }
 
@@ -1410,7 +1418,7 @@ export default {
 
         .btn {
           margin: auto;
-          margin-top: 45px;
+          margin-top: 25px;
           width: 100px;
           height: 38px;
           line-height: 38px;
