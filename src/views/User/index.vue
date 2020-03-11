@@ -324,6 +324,76 @@
             </div>
           </div>
         </template>
+        <template v-if="$route.params.tag === 'index'">
+          <div class="right-top" style="height: 67px;line-height: normal;">
+            <div class="tab-list">
+              <div :class="userTab === 1 ? 'tab active' : 'tab'" @click="goTab(1)">修改个人信息</div>
+              <div :class="userTab === 2 ? 'tab active' : 'tab'" @click="goTab(2)">支付记录</div>
+            </div>
+          </div>
+          <div class="user-layer">
+            <template v-if="userTab === 1">
+            <div class="layer-title">基本信息</div>
+            <div class="layer-box">
+              <div class="form-group">
+                <span class="form-title">用户名</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.username"/>
+                </span>
+              </div>
+              <div class="form-group">
+                <span class="form-title">性别</span>
+                <span class="form-text">
+                  <select v-model="user.sex">
+                    <option value="0">未知</option>
+                    <option value="1">男</option>
+                    <option value="2">女</option>
+                  </select>
+                </span>
+              </div>
+              <div class="form-group">
+                <span class="form-title">邮箱</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.email"/>
+                </span>
+              </div>
+              <div class="form-group">
+                <span class="form-title">所在地</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.address"/>
+                </span>
+              </div>
+              <div class="form-group">
+                <span class="form-title">职业</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.professional"/>
+                </span>
+              </div>
+            </div>
+            <div class="layer-title">联系方式</div>
+            <div class="layer-box">
+              <div class="form-group">
+                <span class="form-title">QQ</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.qq"/>
+                </span>
+              </div>
+              <div class="form-group">
+                <span class="form-title">微信</span>
+                <span class="form-text">
+                  <input type="text" v-model="user.wechatId"/>
+                </span>
+              </div>
+            </div>
+
+            <div class="btn-group">
+              <div class="btn">修改</div>
+              <div class="btn disabled">确定</div>
+            </div>
+            </template>
+            <template v-else>支付记录</template>
+          </div>
+        </template>
       </div>
     </div>
 
@@ -342,7 +412,7 @@
             </div>
             <div class="input-group">
               <span>电话</span>
-              <input type="text" v-model="privateDialog.phone" placeholder="您的联系电话" />
+              <input type="text" v-model="privateDialog.phone" placeholder="您的联系电话" maxlength="11" />
             </div>
             <div class="input-group">
               <span>微信</span>
@@ -350,9 +420,8 @@
             </div>
             <div class="input-group" style="z-index: 1;" @mouseenter="selectHover" @mouseleave="privateDialog.selectShow = false">
               <span>类别</span>
-              <div class="select-value">{{privateDialog.sort}}</div>
-
-              <transition name="fade">
+              <input type="text" v-model="privateDialog.sort" />
+              <transition name="fade">+
               <div class="select-layer" v-if="privateDialog.selectShow">
                 <div class="option-list">
                   <div class="option" v-for="(item, $index) in privateSortList" :key="$index" @click="selectSort(item)">{{item.name}}</div>
@@ -400,6 +469,9 @@ export default {
         },{
           tag: 'activity',
           title: '活动',
+        },{
+          tag: 'product',
+          title: '产品',
         },{
           tag: 'index',
           title: '个人中心',
@@ -463,16 +535,21 @@ export default {
         },{
           id: 10,
           name: '动画'
-        },{
-          id: 11,
-          name: '输入'
         },
+        // {
+        //   id: 11,
+        //   name: '输入'
+        // },
       ],
       privateDialog: {
         sort: '',
         selectShow: false,
         error: ''
       },
+
+      userTab: 1,
+      userEdit: false,
+      user: {},
     }
   },
   mounted() {
@@ -485,6 +562,9 @@ export default {
     }
     if (this.$route.params.tag === 'download') {
       this.getDownload();
+    }
+    if (this.$route.params.tag === 'index') {
+      this.getUserInfo();
     }
     
     if (this.$route.query.code) {
@@ -504,6 +584,9 @@ export default {
       }
       if (this.$route.params.tag === 'download') {
         this.getDownload();
+      }
+      if (this.$route.params.tag === 'index') {
+        this.getUserInfo();
       }
     }
   },
@@ -720,6 +803,7 @@ export default {
     },
 
     selectHover() {
+      console.log('selectHover');
       this.privateDialog.selectShow = true;
     },
     selectSort(item) {
@@ -855,6 +939,18 @@ export default {
         console.log(err)
       });
     },
+
+    goTab(tab) {
+      this.userTab = tab;
+    },
+
+    getUserInfo() {
+      const userquery = this.$Bmob.Query('_User');
+      userquery.get(this.$store.state.user.objectId).then((user) => {
+        console.log(user);
+        this.user = user;
+      });
+    },
     // toProductDetail(id) {
     //   console.log(id);
     //   location.href = `/tools/item/${id}`;
@@ -969,7 +1065,6 @@ export default {
         .user-side {
           padding-top: 50px;
           height: 740px;
-          // border: 1px solid #979797;
           background-color: #fff;
           box-sizing: border-box;
           .user-head {
@@ -1022,7 +1117,6 @@ export default {
           height: 128px;
           line-height: 128px;
           text-align: center;
-          // border: 1px solid #979797;
           background-color: #fff;
           .btn {
             display: inline-block;
@@ -1034,6 +1128,21 @@ export default {
             color: #000;
             font-size: 12px;
             cursor: pointer;
+          }
+
+          .tab-list {
+            display: flex;
+            line-height: 67px;
+            .tab {
+              width: 180px;
+              font-size: 14px;
+              color: #6d6d6d;
+              cursor: pointer;
+              transition: all 0.25s ease;
+              &:hover, &.active {
+                background-color: #F4C51D;
+              }
+            }
           }
         }
         .new-release {
@@ -1089,15 +1198,8 @@ export default {
               line-height: 20px;
               box-sizing: border-box;
               cursor: pointer;
-              .icon {
-                width: 16px;
-                height: 16px;
-                border-radius: 50%;
-                background-position: 50%;
-                background-size: cover;
-                i {
-                  display: block;
-                }
+              i {
+                display: block;
               }
               .item-title {
                 flex: 1;
@@ -1239,6 +1341,81 @@ export default {
           }
           
         }
+
+        .user-layer {
+          position: relative;
+          padding: 14px 0 36px 0;
+          height: 640px;
+          background-color: #fff;
+          box-sizing: border-box;
+          .layer-title {
+            margin-left: 185px;
+            padding-top: 40px;
+            width: 70px;
+            text-align: right;
+            font-size: 16px;
+            font-weight: bold;
+            color: #000000;
+            line-height: 22px;
+          }
+          .layer-box {
+            padding-left: 185px;
+            width: 600px;
+            box-sizing: border-box;
+            .form-group {
+              display: flex;
+              margin-top: 25px;
+              width: 100%;
+              .form-title {
+                width: 70px;
+                text-align: right;
+                font-size: 14px;
+                color: #888888;
+                line-height: 32px;
+              }
+              .form-text {
+                flex: 1;
+                padding-left: 58px;
+                font-size: 14px;
+                color: #000000;
+                line-height: 32px;
+                box-sizing: border-box;
+                input, select {
+                  padding: 0 10px;
+                  width: 100%;
+                  height: 32px;
+                  border: 1px solid #999;
+                  border-radius: 3px;
+                  box-sizing: border-box;
+                  outline: none;
+                }
+              }
+            }
+          }
+
+          .btn-group {
+            position: absolute;
+            right: 36px;
+            bottom: 36px;
+            .btn {
+              display: inline-block;
+              margin-left: 30px;
+              width: 100px;
+              height: 36px;
+              line-height: 36px;
+              font-size: 14px;
+              text-align: center;
+              border: 1px solid #f4c51d;
+              border-radius: 2px;
+              box-sizing: border-box;
+              cursor: pointer;
+              &.disabled {
+                border-color:#D9D9D9;
+                color:#D9D9D9;
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -1307,6 +1484,9 @@ export default {
             height: 34px;
             line-height: 34px;
             z-index: 1;
+          }
+          input {
+            z-index: 3;
           }
 
           .select-layer {

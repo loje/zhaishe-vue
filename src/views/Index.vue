@@ -84,11 +84,14 @@
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title">
-                <div class="icon">
-                  <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
+                <div class="title">{{item.remark}}</div>
+                <div class="item-right">
+                  <template v-if="item.isNewst">
+                    <div style="width: 56px;height: 20px;background-color: #f4751d;color:#fff;text-align: center;">新任务</div>
+                  </template>
+                  <template v-else>{{item.createdAt}}</template>
                 </div>
-                <div class="title">{{item.title}}</div>
-                <div class="item-right">{{item.createdTime}}</div>
               </div>
             </div>
             <div class="pulish">
@@ -431,7 +434,14 @@ export default {
       privateQuery.limit(this.priLimit);
       privateQuery.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          res[i].createdTime = `${this.$moment(res[i].createdAt).format('MM-DD')}`;
+          // res[i].createdTime = `${this.$moment(res[i].createdAt).format('MM-DD')}`;
+          let day = parseInt((new Date().getTime() - new Date(res[i].createdAt).getTime()) / 86400000);
+          if (day > 1) {
+            res[i].createdAt = `${day}天前发布`;
+          } else {
+            res[i].createdAt = `新任务`;
+            res[i].isNewst = true;
+          }
         }
         this.privateList = res;
       });
@@ -836,15 +846,8 @@ export default {
           font-size: 12px;
           line-height: 20px;
           cursor: pointer;
-          .icon {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background-position: 50%;
-            background-size: cover;
-            i {
-              display: block;
-            }
+          i {
+            display: block;
           }
           .title {
             flex: 1;
@@ -1378,7 +1381,7 @@ export default {
           width: 100%;
           border: 1px solid #979797;
           border-radius: 2px;
-          overflow: hidden;
+          // overflow: hidden;
           box-sizing: border-box;
           span {
             display: block;
