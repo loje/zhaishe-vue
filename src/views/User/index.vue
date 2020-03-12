@@ -338,35 +338,62 @@
               <div class="form-group">
                 <span class="form-title">用户名</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.username}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.username"/>
+                  </template>
                 </span>
               </div>
               <div class="form-group">
                 <span class="form-title">性别</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span v-if="user.sex === 1">男</span>
+                  <span v-else-if="user.sex === 2">女</span>
+                  <span v-else>未知</span>
+                  </template>
+                  <template v-else>
                   <select v-model="user.sex">
                     <option value="0">未知</option>
                     <option value="1">男</option>
                     <option value="2">女</option>
                   </select>
+                  </template>
                 </span>
               </div>
               <div class="form-group">
                 <span class="form-title">邮箱</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.email}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.email"/>
+                  </template>
                 </span>
               </div>
               <div class="form-group">
                 <span class="form-title">所在地</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.address}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.address"/>
+                  </template>
                 </span>
               </div>
               <div class="form-group">
                 <span class="form-title">职业</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.professional}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.professional"/>
+                  </template>
                 </span>
               </div>
             </div>
@@ -375,23 +402,52 @@
               <div class="form-group">
                 <span class="form-title">QQ</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.qq}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.qq"/>
+                  </template>
                 </span>
               </div>
               <div class="form-group">
                 <span class="form-title">微信</span>
                 <span class="form-text">
+                  <template v-if="userEdit === false">
+                  <span>{{user.wechatId}}</span>
+                  </template>
+                  <template v-else>
                   <input type="text" v-model="user.wechatId"/>
+                  </template>
                 </span>
               </div>
             </div>
 
             <div class="btn-group">
-              <div class="btn">修改</div>
-              <div class="btn disabled">确定</div>
+              <div :class="userEdit === false ? 'btn active' : 'btn disabled'" @click="editUserInfo">修改</div>
+              <div :class="userEdit === true ? 'btn active' : 'btn disabled'" @click="updateUserInfo">确定</div>
             </div>
             </template>
-            <template v-else>支付记录</template>
+            <template v-else>
+              <div class="item-list">
+                <table>
+                  <thead>
+                    <tr>
+                      <td>订单</td>
+                      <td>时间</td>
+                      <td>费用</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td></td>
+                      <td></td>
+                      <td></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </template>
           </div>
         </template>
       </div>
@@ -951,6 +1007,28 @@ export default {
         this.user = user;
       });
     },
+    editUserInfo() {
+      this.userEdit = true;
+    },
+    updateUserInfo() {
+      const userquery = this.$Bmob.Query('_User');
+      userquery.get(this.$store.state.user.objectId).then((user) => {
+        user.set('username', this.user.username ? this.user.username : '');
+        user.set('sex', this.user.sex ? this.user.sex : 0);
+        user.set('email', this.user.email ? this.user.email : '');
+        user.set('address', this.user.address ? this.user.address : '');
+        user.set('professional', this.user.professional ? this.user.professional : '');
+        user.set('qq', this.user.qq ? this.user.qq : '');
+        user.set('wechatId', this.user.wechatId ? this.user.wechatId : '');
+        user.save().then(() => {
+          this.userEdit = false;
+        }).catch((err) => {
+          if (err.toString().indexOf('Cannot convert undefined or null to object') !== -1) {
+            this.userEdit = false;
+          }
+        });
+      });
+    },
     // toProductDetail(id) {
     //   console.log(id);
     //   location.href = `/tools/item/${id}`;
@@ -1408,11 +1486,19 @@ export default {
               border: 1px solid #f4c51d;
               border-radius: 2px;
               box-sizing: border-box;
+              transition: all 250ms ease;
               cursor: pointer;
+              &.active {
+                &:hover {
+                  background-color: #f4c51d;
+                  color: #fff;
+                }
+              }
               &.disabled {
                 border-color:#D9D9D9;
                 color:#D9D9D9;
               }
+
             }
           }
         }
