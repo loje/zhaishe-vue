@@ -324,6 +324,32 @@
             </div>
           </div>
         </template>
+        <template v-if="$route.params.tag === 'product'">
+        <template v-if="productOrderList.length > 0">
+        <div style="padding: 14px 0 14px 60px; font-size: 14px; color: #999;">购买过的产品</div>
+        <div class="product-list">
+          <template v-for="(item, $index) in productOrderList">
+          <div class="product" :key="$index">
+            <div class="item">{{item.product.title}}</div>
+            <div class="item">{{item.name}}</div>
+            <div class="item">{{item.couponCode}}</div>
+            <div class="item">{{item.updatedAt}}</div>
+            <div class="item">{{item.payReslut.total_fee}}</div>
+          </div>
+          </template>
+        </div>
+        </template>
+        <template v-else>
+        <div style="display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 90px;
+          background-color: #fff;">
+          <div style="font-size: 14px;">您还没有购买过产品，去<a href="/tools" style="color: #F4C829;">看一看</a></div>
+        </div>
+        </template>
+        </template>
         <template v-if="$route.params.tag === 'index'">
           <div class="right-top" style="height: 67px;line-height: normal;">
             <div class="tab-list">
@@ -429,24 +455,29 @@
             </div>
             </template>
             <template v-else>
-              <div class="item-list">
-                <table>
-                  <thead>
-                    <tr>
-                      <td>订单</td>
-                      <td>时间</td>
-                      <td>费用</td>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td></td>
-                      <td></td>
-                      <td></td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
+            <div class="item-table">
+              <table>
+                <thead>
+                  <tr>
+                    <td align="left">订单</td>
+                    <td>类别</td>
+                    <td>时间</td>
+                    <td align="right">费用(元)</td>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="(item, $index) in orderList" :key="$index">
+                    <td align="left" v-html="item.objectId"></td>
+                    <td>
+                      <template v-if="item.sort === 'product'">产品</template>
+                      <template v-else-if="item.sort === 'active'">活动</template>
+                    </td>
+                    <td>{{item.updatedAt}}</td>
+                    <td align="right" style="font-family: Arial; font-weight: bold;">{{Number(item.payReslut.total_fee).toFixed(2)}}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             </template>
           </div>
         </template>
@@ -535,7 +566,7 @@ export default {
       ],
       // userList: [],
 
-      // productList: [],
+      // userProductList: [],
       activityList: [],
       userActList: [],
 
@@ -606,6 +637,8 @@ export default {
       userTab: 1,
       userEdit: false,
       user: {},
+      orderList: [],
+      productOrderList: [],
     }
   },
   mounted() {
@@ -618,6 +651,9 @@ export default {
     }
     if (this.$route.params.tag === 'download') {
       this.getDownload();
+    }
+    if (this.$route.params.tag === 'product') {
+      this.getProOrderList();
     }
     if (this.$route.params.tag === 'index') {
       this.getUserInfo();
@@ -640,6 +676,9 @@ export default {
       }
       if (this.$route.params.tag === 'download') {
         this.getDownload();
+      }
+      if (this.$route.params.tag === 'product') {
+        this.getProOrderList();
       }
       if (this.$route.params.tag === 'index') {
         this.getUserInfo();
@@ -757,13 +796,13 @@ export default {
     toActivityDetail(id) {
       location.href = `/activity/item/${id}`;
     },
-    // getProduct() {
+    // getUserProduct() {
     //   const query = this.$Bmob.Query('product_person');
     //   query.equalTo('user', '==', this.$store.state.user.objectId);
     //   query.include('product','product');
     //   query.find().then((res) => {
     //     console.log(res);
-    //     this.productList = res;
+    //     this.userProductList = res;
     //   });
     // },
 
@@ -998,6 +1037,11 @@ export default {
 
     goTab(tab) {
       this.userTab = tab;
+      if (tab === 2) {
+        this.getOrderList();
+      } else if (tab === 1) {
+        this.getUserInfo();
+      }
     },
 
     getUserInfo() {
@@ -1029,6 +1073,34 @@ export default {
         });
       });
     },
+
+    getOrderList() {
+      const userPointer = this.$Bmob.Pointer('_User');
+      const userID = userPointer.set(this.$store.state.user.objectId);
+      const query = this.$Bmob.Query('order_list');
+      query.order('-updatedAt');
+      query.equalTo('user', '==', userID);
+      query.find().then((res) => {
+        for (let i = 0; i < res.length; i += 1) {
+          res[i].objectId = `<span style="color: #999;">PRO-</span>${res[i].objectId.toUpperCase()}`;
+        }
+        this.orderList = res;
+      });
+    },
+
+    getProOrderList() {
+      const userPointer = this.$Bmob.Pointer('_User');
+      const userID = userPointer.set(this.$store.state.user.objectId);
+      const query = this.$Bmob.Query('order_list');
+      query.order('-updatedAt');
+      query.include('product','product');
+      query.equalTo('user', '==', userID);
+      query.equalTo('sort', '==', 'product');
+      query.find().then((res) => {
+        this.productOrderList = res;
+      });
+    },
+
     // toProductDetail(id) {
     //   console.log(id);
     //   location.href = `/tools/item/${id}`;
@@ -1425,6 +1497,7 @@ export default {
           padding: 14px 0 36px 0;
           height: 640px;
           background-color: #fff;
+          overflow: auto;
           box-sizing: border-box;
           .layer-title {
             margin-left: 185px;
@@ -1499,6 +1572,70 @@ export default {
                 color:#D9D9D9;
               }
 
+            }
+          }
+
+          .item-table {
+            padding: 20px;
+            width: 100%;
+            box-sizing: border-box;
+            table {
+              width: 100%;
+              font-size: 14px;
+              text-align: center;
+              border-collapse: collapse;
+              line-height: 40px;
+              border: 1px solid #eee;
+              tr {
+                td {
+                  padding: 0 15px;
+                  border: 1px solid #eee;
+                }
+              }
+              thead {
+                color: #666;
+                background-color: #f6f6f6;
+              }
+              tbody {
+                tr {
+                  &:hover {
+                    background-color: #fafafa;
+                  }
+                }
+              }
+            }
+          }
+        }
+
+        .product-list {
+          width: 100%;
+          height: 740px;
+          overflow: auto;
+          .product {
+            display: flex;
+            margin-bottom: 30px;
+            width: 100%;
+            background-color: #fff;
+            padding: 0 60px;
+            box-sizing: border-box;
+            &:last-child {
+              margin-bottom: 0;
+            }
+            .item {
+              flex: 1;
+              display: flex;
+              align-items: center;
+              height: 80px;
+              font-size: 14px;
+              text-align: center;
+              justify-content: center;
+              box-sizing: border-box;
+              &:first-child {
+                justify-content: flex-start;
+              }
+              &:last-child {
+                justify-content: flex-end;
+              }
             }
           }
         }
