@@ -191,7 +191,7 @@
           <div class="user-head">
             <div class="img" :style="{backgroundImage: `url(${$store.state.user.imgSrc})`}"></div>
             <div class="name">{{$store.state.user.username}}</div>
-            <div class="tips">您还没完成信息补充</div>
+            <!-- <div class="tips">您还没完成信息补充</div> -->
           </div>
 
           <div class="side-list">
@@ -1224,6 +1224,7 @@ export default {
               width: 78px;
               height: 78px;
               border-radius: 50%;
+              background-size: cover;
             }
             .name {
               text-align: center;

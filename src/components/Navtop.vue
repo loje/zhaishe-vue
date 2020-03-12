@@ -45,6 +45,7 @@ export default {
   },
   watch: {
     $route(from) {
+      console.log(this.$route);
       if (from.name === '首页') {
         this.isIndex = true;
       } else {
@@ -56,22 +57,12 @@ export default {
     }
   },
   mounted() {
-    console.log(location.host);
-    // let now = new Date();
-    // let year = now.getFullYear();
-    // let month = this.checkTime(now.getMonth() + 1);
-    // let date = this.checkTime(now.getDate());
-    // let hour = this.checkTime(now.getHours());
-    // let minute = this.checkTime(now.getMinutes());
-    // let second = this.checkTime(now.getSeconds());
-    // console.log(`${year}-${month}-${date} ${hour}:${minute}:${second}`);
     if (this.$route.query.code) {
       this.getToken();
     }
   },
   methods: {
-    closeLogin(i) {
-      console.log(i);
+    closeLogin() {
       this.showLogin = false;
     },
     toRegister() {
@@ -88,9 +79,7 @@ export default {
       });
     },
     goWxLogin() {
-      // encodeURIComponent(location.protocol)
       const url = `${location.protocol}//${location.host.indexOf('www') === -1 ? 'www.' : ''}${location.host}${location.pathname}`;
-      console.log(url);
       const fullUrl = encodeURIComponent(url);
       location.href=`https://open.weixin.qq.com/connect/qrconnect?appid=wx9a76b368090721eb&redirect_uri=${fullUrl}&response_type=code&scope=snsapi_login#wechat_redirect`
     },
@@ -101,7 +90,7 @@ export default {
         this.$store.dispatch('getMember', '');
         location.href = this.$route.path;
       }
-      if (this.$route.path === '/user') {
+      if (this.$route.name === '个人中心') {
         location.href = '/';
       }
     },
