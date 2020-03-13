@@ -73,14 +73,17 @@
                 <i class="iconfont" style="color:#197AFF;">&#xe665;</i>
               </div>
               <div class="title">私单墙</div>
-              <div class="handle">
+              <div class="more" @click="goPrivate">
+                <i class="iconfont">&#xe649;</i>
+              </div>
+              <!-- <div class="handle">
                 <div class="prev" @click="getPrivateList(pagePri - 1)">
                   <i class="iconfont">&#xe693;</i>
                 </div>
                 <div class="next" @click="getPrivateList(pagePri + 1)">
                   <i class="iconfont">&#xe600;</i>
                 </div>
-              </div>
+              </div> -->
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title">
@@ -94,9 +97,9 @@
                 </div>
               </div>
             </div>
-            <div class="pulish">
+            <!-- <div class="pulish">
               <span>我要发布</span>
-            </div>
+            </div> -->
           </div>
         </div>
       </div>
@@ -185,7 +188,7 @@
                   {{item.info}}
                 </div>
                 <div class="btn">个人链接</div>
-                <div class="get">找他接单</div>
+                <div class="get" @click="orderIt(item)">找他接单</div>
               </div>
             </div>
             </swiper-slide>
@@ -247,6 +250,36 @@
               <div class="content" style="margin-top: 30px;">V：zhishehui01</div>
             </div>
             <div class="btn" @click="showFeedback = false">确定</div>
+          </div>
+        </div>
+      </div>
+    </transition>
+
+    <transition name="fade">
+      <div class="dialog-layer" v-if="showOrder">
+        <div class="dialog-flex">
+          <div class="dialog-block">
+            <span class="close" @click="showOrder = false">
+              <i class="iconfont">&#xea13;</i>
+            </span>
+            <div class="order-designer">
+              <img :src="order.src" />
+              <div class="name">{{order.sharerName}}</div>
+            </div>
+              
+            <div class="input-group">
+              <span>称呼：</span>
+              <input type="text" v-model="order.name" placeholder="您的称呼" />
+            </div>
+            <div class="input-group">
+              <span>您的联系方式：</span>
+              <input type="text" v-model="order.phone" placeholder="留下您电话方便联系" />
+            </div>
+            <div class="input-group" style="height:auto;">
+              <textarea v-model="order.content" placeholder="填写您的需求" rows="8"></textarea>
+            </div>
+            <div class="error" v-if="order.error">{{order.error}}</div>
+            <div class="btn" @click="closeContact">确定</div>
           </div>
         </div>
       </div>
@@ -322,11 +355,11 @@ export default {
       },
 
       privateList: [],
-      priTotal: 0,
-      priPages: 0,
-      priLimit: 5,
-      skipPri: 0, // 跳过数量
-      pagePri: 1, // 当前页数
+      // priTotal: 0,
+      // priPages: 0,
+      priLimit: 6,
+      // skipPri: 0, // 跳过数量
+      // pagePri: 1, // 当前页数
 
       showDownload: false,
       dialog: {},
@@ -339,7 +372,9 @@ export default {
         remark: '',
         error: '',
       },
+
       showFeedback: false,
+      showOrder: false,
     }
   },
   computed: {
@@ -402,39 +437,39 @@ export default {
         this.recommendList = arr;
       });
     },
-    getPrivateCount() {
-      let privateQuery = this.$Bmob.Query('private_orders');
-      privateQuery.equalTo('notDelete', '==', true);
-      privateQuery.count().then((total) => {
-        this.priTotal = total;
-        this.priPages = parseInt(total / this.priLimit);
-        if (total % this.priLimit > 0) {
-          this.priPages = this.priPages + 1;
-        }
-        this.getPrivateList(1);
-      });
-    },
-    getPrivateList(page) {
-      if (page) {
-        if (page > this.priPages) {
-          this.pagePri = this.priPages;
-        } else if (page < 0) {
-          this.pagePri = 1;
-        } else {
-          this.pagePri = page;
-        }
-      } else {
-        this.pagePri = 1
-      }
+    // getPrivateCount() {
+    //   let privateQuery = this.$Bmob.Query('private_orders');
+    //   privateQuery.equalTo('notDelete', '==', true);
+    //   privateQuery.count().then((total) => {
+    //     this.priTotal = total;
+    //     this.priPages = parseInt(total / this.priLimit);
+    //     if (total % this.priLimit > 0) {
+    //       this.priPages = this.priPages + 1;
+    //     }
+    //     this.getPrivateList(1);
+    //   });
+    // },
+    getPrivateList() {
+      // if (page) {
+      //   if (page > this.priPages) {
+      //     this.pagePri = this.priPages;
+      //   } else if (page < 0) {
+      //     this.pagePri = 1;
+      //   } else {
+      //     this.pagePri = page;
+      //   }
+      // } else {
+      //   this.pagePri = 1
+      // }
 
       let privateQuery = this.$Bmob.Query('private_orders');
-      this.skipPri = this.priLimit * (this.pagePri - 1);
+      // this.skipPri = this.priLimit * (this.pagePri - 1);
+      privateQuery.order('-createdAt');
       privateQuery.equalTo('notDelete', '==', true);
-      privateQuery.skip(this.skipPri);
+      // privateQuery.skip(this.skipPri);
       privateQuery.limit(this.priLimit);
       privateQuery.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
-          // res[i].createdTime = `${this.$moment(res[i].createdAt).format('MM-DD')}`;
           let day = parseInt((new Date().getTime() - new Date(res[i].createdAt).getTime()) / 86400000);
           if (day > 1) {
             res[i].createdAt = `${day}天前发布`;
@@ -677,6 +712,75 @@ export default {
           remark: '',
           error: '',
         };
+      });
+    },
+
+    closeContact() {
+      if (!this.order.name) {
+        this.order.error = '请输入您的称呼';
+        return false;
+      }
+
+      if (!this.order.phone) {
+        this.order.error = '请输入您的联系方式';
+        return false;
+      }
+
+      if (!this.order.content) {
+        this.order.error = '请输入您的需求';
+        return false;
+      }
+
+      this.order.error = '';
+
+      const query = this.$Bmob.Query('sharer_order');
+
+      const sharerPointer = this.$Bmob.Pointer('sharer');
+      const sharerID = sharerPointer.set(this.order.sharerId)
+
+      query.set('sharerId', sharerID);
+      if(this.order.name) {
+        query.set('name', this.order.name);
+      }
+      if(this.order.phone) {
+        query.set('phone', this.order.phone);
+      }
+      if(this.order.content) {
+        query.set('content', this.order.content);
+      }
+
+      query.save().then(() => {
+        this.showOrder = false;
+        this.showFeedback = true;
+        this.order = {
+          sharerId: '',
+          src: '',
+          name: '',
+          phone: '',
+          content: '',
+        };
+      });
+    },
+    orderIt(item) {
+      this.showOrder = true;
+      this.order = {
+        ...this.order,
+        sharerName: item.name,
+        src: item.src,
+        sharerId: item.id,
+      };
+    },
+    goPrivate() {
+      if (!localStorage.getItem('memberInfo')) {
+        alert('请先点右上角登录');
+        return false;
+      }
+      const memberInfo = localStorage.getItem('memberInfo');
+      this.$router.push({
+        path: '/user/private',
+        query: {
+          code: JSON.parse(memberInfo).objectId,
+        },
       });
     },
   },
@@ -1350,7 +1454,7 @@ export default {
     .dialog-flex {
       flex: 1;
       .dialog-block {
-        position: relative;
+        position: relative; 
         display: block;
         margin: auto;
         padding: 25px 30px 35px 30px;
@@ -1381,12 +1485,11 @@ export default {
           width: 100%;
           border: 1px solid #979797;
           border-radius: 2px;
-          // overflow: hidden;
           box-sizing: border-box;
           span {
             display: block;
             padding-left: 10px;
-            width: 50px;
+            min-width: 50px;
             font-size: 12px;
             color: #888;
             height: 36px;

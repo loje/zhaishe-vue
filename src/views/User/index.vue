@@ -473,7 +473,7 @@
                       <template v-else-if="item.sort === 'active'">活动</template>
                     </td>
                     <td>{{item.updatedAt}}</td>
-                    <td align="right" style="font-family: Arial; font-weight: bold;">{{Number(item.payReslut.total_fee).toFixed(2)}}</td>
+                    <td align="right" style="font-family: Arial; font-weight: bold;">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</td>
                   </tr>
                 </tbody>
               </table>

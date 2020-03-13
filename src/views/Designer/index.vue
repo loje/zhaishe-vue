@@ -506,28 +506,48 @@ export default {
           font-weight: bold;
         }
         .input-group {
+          // display: flex;
+          // align-items: center;
+          // margin-bottom: 20px;
+          // width: 100%;
+          // height: 36px;
+          // line-height: 36px;
+          // border: 1px solid #979797;
+          // border-radius: 2px;
+          // box-sizing: border-box;
           display: flex;
-          align-items: center;
           margin-bottom: 20px;
           width: 100%;
-          height: 36px;
-          line-height: 36px;
           border: 1px solid #979797;
           border-radius: 2px;
           box-sizing: border-box;
           span {
+            // display: block;
+            // padding-left: 10px;
+            // width: 90px;
+            // font-size: 12px;
+            // color: #888;
             display: block;
             padding-left: 10px;
             width: 90px;
             font-size: 12px;
             color: #888;
+            height: 36px;
+            line-height: 36px;
           }
           input {
+            // flex: 1;
+            // border: none;
+            // outline: none;
+            // padding: 0;
+            // font-size: 12px;
             flex: 1;
             border: none;
             outline: none;
             padding: 0;
             font-size: 12px;
+            height: 36px;
+            line-height: 36px;
           }
           textarea {
             flex: 1;
