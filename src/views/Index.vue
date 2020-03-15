@@ -86,12 +86,12 @@
               </div> -->
             </div>
             <div class="layer-list">
-              <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title">
+              <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title" @click="privateShow(item)">
                 <i class="iconfont" style="color:#D3D4D4;">&#xeacd;</i>
                 <div class="title">{{item.remark}}</div>
                 <div class="item-right">
                   <template v-if="item.isNewst">
-                    <div style="width: 56px;height: 20px;background-color: #f4751d;color:#fff;text-align: center;">新任务</div>
+                    <div style="display: inline-block;width: 56px;height: 20px;background-color: #f4751d;color:#fff;text-align: center;">新任务</div>
                   </template>
                   <template v-else>{{item.createdAt}}</template>
                 </div>
@@ -284,6 +284,27 @@
         </div>
       </div>
     </transition>
+
+    <transition name="fade">
+      <div class="dialog-layer" v-if="showPrivate">
+        <div class="dialog-flex">
+          <div class="dialog-block">
+            <span class="right">
+              <template v-if="privateDialog.isNewst">
+                <div style="width: 56px;height: 20px;background-color: #f4751d;color:#fff;text-align: center;">新任务</div>
+              </template>
+              <template v-else>{{privateDialog.createdAt}}</template>
+            </span>
+            <div class="title">{{privateDialog.title || '私单墙详情'}}</div>
+            <div class="remark-box">{{privateDialog.remark}}</div>
+            <div class="private-user">姓名：{{privateDialog.name}}</div>
+            <div class="private-user">微信：{{privateDialog.wechatId}}</div>
+            <div class="private-user">电话：{{privateDialog.phone}}</div>
+            <div class="btn" @click="showPrivate = false">确定</div>
+          </div>
+        </div>
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -354,6 +375,8 @@ export default {
         spaceBetween: 40,
       },
 
+      showPrivate: false,
+      privateDialog: {},
       privateList: [],
       // priTotal: 0,
       // priPages: 0,
@@ -466,6 +489,8 @@ export default {
       // this.skipPri = this.priLimit * (this.pagePri - 1);
       privateQuery.order('-createdAt');
       privateQuery.equalTo('notDelete', '==', true);
+      privateQuery.equalTo('audit', '==', true);
+      privateQuery.equalTo('online', '==', true);
       // privateQuery.skip(this.skipPri);
       privateQuery.limit(this.priLimit);
       privateQuery.find().then((res) => {
@@ -473,6 +498,7 @@ export default {
           let day = parseInt((new Date().getTime() - new Date(res[i].createdAt).getTime()) / 86400000);
           if (day > 1) {
             res[i].createdAt = `${day}天前发布`;
+            res[i].isNewst = false;
           } else {
             res[i].createdAt = `新任务`;
             res[i].isNewst = true;
@@ -480,6 +506,10 @@ export default {
         }
         this.privateList = res;
       });
+    },
+    privateShow(item) {
+      this.showPrivate = true;
+      this.privateDialog = item;
     },
     getActCount(actTab) {
       console.log(actTab);
@@ -1473,6 +1503,12 @@ export default {
             font-size: 12px;
           }
         }
+        .right {
+          float: right;
+          font-size: 12px;
+          color: #333333;
+          line-height: 17px;
+        }
         .title {
           margin-bottom: 16px;
           font-size: 16px;
@@ -1520,6 +1556,24 @@ export default {
           font-size: 12px;
           height: 17px;
           color: #E55D5D;
+        }
+
+        .remark-box {
+          margin-bottom: 25px;
+          padding: 15px;
+          width: 100%;
+          height: 90px;
+          background-color: #f2f2f2;
+          color: #888;
+          font-size: 12px;
+          box-sizing: border-box;
+        }
+
+        .private-user {
+          margin-top: 8px;
+          font-size: 12px;
+          color: #888;
+          line-height: 17px;
         }
 
         .btn {

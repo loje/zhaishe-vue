@@ -417,20 +417,7 @@ export default {
       background-color: #fff;
       .recommend {
         width: 100%;
-        // .img {
-        //   display: block;
-        //   width: 100%;
-        //   height: 230px;
-        //   background-color: #D8D8D8;
-        // }
-        // .author {
-        //   margin-top: 10px;
-        //   margin-right: 50px;
-        //   text-align: right;
-        //   color: #888;
-        //   font-size: 12px;
-        //   box-sizing: border-box;
-        // }
+
         .swiper-container{
           width: 100%;
           height: 230px;
@@ -595,20 +582,19 @@ export default {
         }
         .input-group {
           display: flex;
-          align-items: center;
           margin-bottom: 20px;
           width: 100%;
-          height: 36px;
-          line-height: 36px;
           border: 1px solid #979797;
           border-radius: 2px;
           box-sizing: border-box;
           span {
             display: block;
             padding-left: 10px;
-            width: 36px;
+            min-width: 50px;
             font-size: 12px;
             color: #888;
+            height: 36px;
+            line-height: 36px;
           }
           input {
             flex: 1;
@@ -616,6 +602,8 @@ export default {
             outline: none;
             padding: 0;
             font-size: 12px;
+            height: 36px;
+            line-height: 36px;
           }
         }
         .error {

@@ -185,6 +185,7 @@ export default {
                   province: user.province,
                   country: user.country,
                   isCustomer: true,
+                  isAdmin: false,
                 }
                 this.$Bmob.User.register(params).then(r => {
                   this.$Bmob.User.users().then(u => {

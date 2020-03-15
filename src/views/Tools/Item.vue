@@ -136,7 +136,17 @@
             <i class="iconfont" v-if="payReslut.trade_state === 'SUCCESS'">&#xe607;</i>
             <i class="iconfont" v-else>&#xea13;</i>
 
-            <div class="t">{{payReslut.trade_state_desc}}</div>
+            <template v-if="payReslut.trade_state === 'SUCCESS'">
+              <div class="t" @click="this.$router.push({
+        path: '/user/product',
+        query: {
+          code: JSON.parse(localStorage.getItem('memberInfo')).objectId,
+        },
+      })">{{payReslut.trade_state_desc}}</div>
+            </template>
+            <template v-else>
+              <div class="t">{{payReslut.trade_state_desc}}</div>
+            </template>
           </div>
           </template>
         </div>
