@@ -146,7 +146,8 @@ export default {
                       this.logout();
                       return false;
                     }
-                    // console.log(userlist[i]);
+                    console.log("-----------navtop1");
+                    console.log(userlist[i]);
                     localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
                     let now = new Date();
@@ -192,7 +193,9 @@ export default {
                     let ul = u.results;
                     for (let i = 0; i < ul.length; i += 1) {
                       if (ul[i].objectId === r.objectId) {
-                        localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
+                        console.log("-----------navtop2");
+                        console.log(ul[i]);
+                        localStorage.setItem('memberInfo', JSON.stringify(ul[i]));
                         this.$store.dispatch('getMember', ul[i]);
                         location.href = '/';
                       }

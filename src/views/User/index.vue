@@ -654,6 +654,8 @@ export default {
               if (isWX) {
                 for (let i = 0; i < userlist.length; i += 1) {
                   if (userlist[i].openid === user.openid) {
+                    console.log('---------user1');
+                    console.log(userlist[i]);
                     localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
                   }
@@ -676,8 +678,9 @@ export default {
                     let ul = u.results;
                     for (let i = 0; i < ul.length; i += 1) {
                       if (ul[i].objectId === r.objectId) {
-                        // localStorage.setItem('bmob', JSON.stringify(ul[i]));
-                        localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
+                        console.log('---------user2');
+                        console.log(ul[i]);
+                        localStorage.setItem('memberInfo', JSON.stringify(ul[i]));
                         this.$store.dispatch('getMember', ul[i]);
                         location.href = '/user';
                       }
