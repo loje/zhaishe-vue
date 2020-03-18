@@ -256,21 +256,6 @@ export default {
       query.find().then((res) => {
         this.downloadLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-          // let arrb = [];
-          // if (res[i].system) {
-          //   let sysList = res[i].system;
-          //   var querySys = this.$Bmob.Query('support_sys');
-          //   for (let x = 0; x < sysList.length; x += 1) {
-          //     querySys.get(sysList[x]).then((result) => {
-          //       arrb.push({
-          //         id: result.objectId,
-          //         icon: result.icon,
-          //         title: result.title,
-          //       });
-          //     });
-          //   }
-          // }
-          
           arr.push({
             id: res[i].objectId,
             imgSrc: res[i].imgSrc,
@@ -281,9 +266,6 @@ export default {
             downloads: res[i].downloads,
             link: res[i].link,
             code: res[i].code,
-            // groupPrice: res[i].groupPrice,
-            // price: res[i].price,
-            // sys: arrb,
           });
         }
         this.downloadList = arr;

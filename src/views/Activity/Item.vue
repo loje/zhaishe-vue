@@ -318,6 +318,7 @@ export default {
       const userPointer = this.$Bmob.Pointer('_User');
       const userID = userPointer.set(this.$store.state.user.objectId);
       query.set('user', userID);
+      query.set('delivery', false);
       query.save().then(res => {
         console.log(res);
         const apquery = this.$Bmob.Query('activity_person');

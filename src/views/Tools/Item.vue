@@ -329,6 +329,8 @@ export default {
       if (this.dialog.remark) {
         query.set('remark', this.dialog.remark);
       }
+      query.set('delivery', false);
+
       query.save().then((res) => {
         const proquery = this.$Bmob.Query('product_person');
         const userPointer = this.$Bmob.Pointer('_User')
