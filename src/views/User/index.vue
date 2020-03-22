@@ -129,14 +129,15 @@
         <div style="padding: 14px 0 14px 60px; font-size: 14px; color: #999;">购买过的产品</div>
         <div class="product-list">
           <template v-for="(item, $index) in productOrderList">
-          <div class="product" :key="$index">
-            <div class="item">{{item.product.title}}</div>
-            <div class="item">{{item.name}}</div>
-            <div class="item">{{item.couponCode}}</div>
-            <div class="item">{{item.time_end}}</div>
-            <div class="item">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</div>
-          </div>
+            <div class="product" :key="$index">
+              <div class="item">{{item.product.title}}</div>
+              <div class="item">{{item.name}}</div>
+              <div class="item">{{item.couponCode}}</div>
+              <div class="item">{{item.time_end}}</div>
+              <div class="item">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</div>
+            </div>
           </template>
+          <div class="more" @click="getProOrderList">获取最新</div>
         </div>
         </template>
         <template v-else>
@@ -159,132 +160,132 @@
           </div>
           <div class="user-layer">
             <template v-if="userTab === 1">
-            <div class="layer-title">基本信息</div>
-            <div class="layer-box">
-              <div class="form-group">
-                <span class="form-title">用户名</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.username}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.username"/>
-                  </template>
-                </span>
+              <div class="layer-title">基本信息</div>
+              <div class="layer-box">
+                <div class="form-group">
+                  <span class="form-title">用户名</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.username}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.username"/>
+                    </template>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="form-title">性别</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span v-if="user.sex === 1">男</span>
+                    <span v-else-if="user.sex === 2">女</span>
+                    <span v-else>未知</span>
+                    </template>
+                    <template v-else>
+                    <select v-model="user.sex">
+                      <option value="0">未知</option>
+                      <option value="1">男</option>
+                      <option value="2">女</option>
+                    </select>
+                    </template>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="form-title">邮箱</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.email}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.email"/>
+                    </template>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="form-title">所在地</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.address}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.address"/>
+                    </template>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="form-title">职业</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.professional}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.professional"/>
+                    </template>
+                  </span>
+                </div>
               </div>
-              <div class="form-group">
-                <span class="form-title">性别</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span v-if="user.sex === 1">男</span>
-                  <span v-else-if="user.sex === 2">女</span>
-                  <span v-else>未知</span>
-                  </template>
-                  <template v-else>
-                  <select v-model="user.sex">
-                    <option value="0">未知</option>
-                    <option value="1">男</option>
-                    <option value="2">女</option>
-                  </select>
-                  </template>
-                </span>
+              <div class="layer-title">联系方式</div>
+              <div class="layer-box">
+                <div class="form-group">
+                  <span class="form-title">QQ</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.qq}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.qq"/>
+                    </template>
+                  </span>
+                </div>
+                <div class="form-group">
+                  <span class="form-title">微信</span>
+                  <span class="form-text">
+                    <template v-if="userEdit === false">
+                    <span>{{user.wechatId}}</span>
+                    </template>
+                    <template v-else>
+                    <input type="text" v-model="user.wechatId"/>
+                    </template>
+                  </span>
+                </div>
               </div>
-              <div class="form-group">
-                <span class="form-title">邮箱</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.email}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.email"/>
-                  </template>
-                </span>
-              </div>
-              <div class="form-group">
-                <span class="form-title">所在地</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.address}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.address"/>
-                  </template>
-                </span>
-              </div>
-              <div class="form-group">
-                <span class="form-title">职业</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.professional}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.professional"/>
-                  </template>
-                </span>
-              </div>
-            </div>
-            <div class="layer-title">联系方式</div>
-            <div class="layer-box">
-              <div class="form-group">
-                <span class="form-title">QQ</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.qq}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.qq"/>
-                  </template>
-                </span>
-              </div>
-              <div class="form-group">
-                <span class="form-title">微信</span>
-                <span class="form-text">
-                  <template v-if="userEdit === false">
-                  <span>{{user.wechatId}}</span>
-                  </template>
-                  <template v-else>
-                  <input type="text" v-model="user.wechatId"/>
-                  </template>
-                </span>
-              </div>
-            </div>
 
-            <div class="btn-group">
-              <div :class="userEdit === false ? 'btn active' : 'btn disabled'" @click="editUserInfo">修改</div>
-              <div :class="userEdit === true ? 'btn active' : 'btn disabled'" @click="updateUserInfo">确定</div>
-            </div>
+              <div class="btn-group">
+                <div :class="userEdit === false ? 'btn active' : 'btn disabled'" @click="editUserInfo">修改</div>
+                <div :class="userEdit === true ? 'btn active' : 'btn disabled'" @click="updateUserInfo">确定</div>
+              </div>
             </template>
             <template v-else>
-            <div class="item-table">
-              <table>
-                <thead>
-                  <tr>
-                    <td align="left">订单</td>
-                    <td>类别</td>
-                    <td>时间</td>
-                    <td align="right">费用(元)</td>
-                    <td>备注</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="(item, $index) in orderList" :key="$index">
-                    <td align="left" v-html="item.objectId"></td>
-                    <td>
-                      <template v-if="item.sort === 'product'">产品</template>
-                      <template v-else-if="item.sort === 'active'">活动</template>
-                    </td>
-                    <td>{{item.time_end}}</td>
-                    <td align="right" style="font-family: Arial; font-weight: bold;">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</td>
-                    <td>
-                      <template v-if="item.name">姓名：{{item.name}}<br/></template>
-                      <template v-if="item.phone">手机号：{{item.phone}}<br/></template>
-                      <template v-if="item.wechatId">微信号：{{item.wechatId}}<br/></template>
-                      <template v-if="item.email">邮箱：{{item.email}}</template>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              <div class="item-table">
+                <table>
+                  <thead>
+                    <tr>
+                      <td align="left">订单</td>
+                      <td>类别</td>
+                      <td>时间</td>
+                      <td align="right">费用(元)</td>
+                      <td>备注</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr v-for="(item, $index) in orderList" :key="$index">
+                      <td align="left" v-html="item.payReslut.out_trade_no"></td>
+                      <td>
+                        <template v-if="item.sort === 'product'">产品</template>
+                        <template v-else-if="item.sort === 'active'">活动</template>
+                      </td>
+                      <td>{{item.time_end}}</td>
+                      <td align="right" style="font-family: Arial; font-weight: bold;">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</td>
+                      <td>
+                        <template v-if="item.name">姓名：{{item.name}}<br/></template>
+                        <template v-if="item.phone">手机号：{{item.phone}}<br/></template>
+                        <template v-if="item.wechatId">微信号：{{item.wechatId}}<br/></template>
+                        <template v-if="item.email">邮箱：{{item.email}}</template>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
             </template>
           </div>
         </template>
@@ -1198,13 +1199,12 @@ export default {
       query.include('product','product');
       query.equalTo('user', '==', userID);
       query.equalTo('sort', '==', 'product');
+      query.skip(this.productOrderList.length);
+      query.limit(5);
       query.find().then((res) => {
-        // this.productOrderList = res;
         let list = res;
 
         for (let i = 0; i < list.length; i += 1) {
-          // list[i].objectId = `<span style="color: #999;">PRO-</span>${list[i].objectId.toUpperCase()}`;
-
           const time_end = list[i].payReslut.time_end;
           const time = `${time_end.substring(0, 4)}/${time_end.substring(4, 6)}/${time_end.substring(6, 8)} ${time_end.substring(8, 10)}:${time_end.substring(10, 12)}:${time_end.substring(12, 14)}`;
           list[i] = {
@@ -1213,6 +1213,8 @@ export default {
             time_end: time
           };
         }
+
+        list = list.concat(this.productOrderList);
 
         for(var i = 0; i < list.length - 1; i += 1){
           //内层比较次数length-1-i次
@@ -1649,6 +1651,7 @@ export default {
             width: 100%;
             background-color: #fff;
             padding: 0 20px;
+            transition: all 250ms ease;
             box-sizing: border-box;
             &:last-child {
               margin-bottom: 0;
@@ -1668,6 +1671,23 @@ export default {
               &:last-child {
                 justify-content: flex-end;
               }
+            }
+            &:hover {
+              box-shadow: 0px 0px 8px rgba(0,0,0,0.05);
+            }
+          }
+          .more {
+            font-size: 14px;
+            text-align: center;
+            color: #666;
+            border: 1px solid #f4c51d;
+            line-height: 36px;
+            border-radius: 3px;
+            transition: all 250ms ease;
+            cursor: pointer;
+            &:hover {
+              background-color: #F4C51D;
+              color: #fff;
             }
           }
         }
