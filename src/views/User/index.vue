@@ -133,7 +133,7 @@
             <div class="item">{{item.product.title}}</div>
             <div class="item">{{item.name}}</div>
             <div class="item">{{item.couponCode}}</div>
-            <div class="item">{{item.updatedAt}}</div>
+            <div class="item">{{item.time_end}}</div>
             <div class="item">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</div>
           </div>
           </template>
@@ -263,6 +263,7 @@
                     <td>类别</td>
                     <td>时间</td>
                     <td align="right">费用(元)</td>
+                    <td>备注</td>
                   </tr>
                 </thead>
                 <tbody>
@@ -272,8 +273,14 @@
                       <template v-if="item.sort === 'product'">产品</template>
                       <template v-else-if="item.sort === 'active'">活动</template>
                     </td>
-                    <td>{{item.updatedAt}}</td>
+                    <td>{{item.time_end}}</td>
                     <td align="right" style="font-family: Arial; font-weight: bold;">{{(Number(item.payReslut.total_fee)/ 100).toFixed(2)}}</td>
+                    <td>
+                      <template v-if="item.name">姓名：{{item.name}}<br/></template>
+                      <template v-if="item.phone">手机号：{{item.phone}}<br/></template>
+                      <template v-if="item.wechatId">微信号：{{item.wechatId}}<br/></template>
+                      <template v-if="item.email">邮箱：{{item.email}}</template>
+                    </td>
                   </tr>
                 </tbody>
               </table>
@@ -1142,10 +1149,44 @@ export default {
       query.order('-updatedAt');
       query.equalTo('user', '==', userID);
       query.find().then((res) => {
-        for (let i = 0; i < res.length; i += 1) {
-          res[i].objectId = `<span style="color: #999;">PRO-</span>${res[i].objectId.toUpperCase()}`;
+        let list = res;
+
+        for (let i = 0; i < list.length; i += 1) {
+          list[i].objectId = `<span style="color: #999;">PRO-</span>${list[i].objectId.toUpperCase()}`;
+
+          const time_end = list[i].payReslut.time_end;
+          if (time_end) {
+            const time = `${time_end.substring(0, 4)}/${time_end.substring(4, 6)}/${time_end.substring(6, 8)} ${time_end.substring(8, 10)}:${time_end.substring(10, 12)}:${time_end.substring(12, 14)}`;
+            list[i] = {
+              ...list[i],
+              out_trade_no: list[i].payReslut.out_trade_no,
+              time_end: time
+            };
+          } else {
+            list[i] = {
+              ...list[i],
+              out_trade_no: list[i].payReslut.out_trade_no,
+            };
+          }
         }
-        this.orderList = res;
+
+        for(var i = 0; i < list.length - 1; i += 1){
+          //内层比较次数length-1-i次
+          for(var j = 0; j < list.length - 1 - i; j += 1){
+            //谁跟谁比较？
+            if (!list[j].time_end) {
+              list[j].time_end = 0;
+            }
+            if (new Date(list[j].time_end).getTime() > new Date(list[j+1].time_end).getTime()) {
+              //交换顺序
+              var temp = list[j];
+              list[j] = list[j+1];
+              list[j+1] = temp;
+            }
+          }
+        }
+
+        this.orderList = list.reverse();
       });
     },
 
@@ -1158,7 +1199,35 @@ export default {
       query.equalTo('user', '==', userID);
       query.equalTo('sort', '==', 'product');
       query.find().then((res) => {
-        this.productOrderList = res;
+        // this.productOrderList = res;
+        let list = res;
+
+        for (let i = 0; i < list.length; i += 1) {
+          // list[i].objectId = `<span style="color: #999;">PRO-</span>${list[i].objectId.toUpperCase()}`;
+
+          const time_end = list[i].payReslut.time_end;
+          const time = `${time_end.substring(0, 4)}/${time_end.substring(4, 6)}/${time_end.substring(6, 8)} ${time_end.substring(8, 10)}:${time_end.substring(10, 12)}:${time_end.substring(12, 14)}`;
+          list[i] = {
+            ...list[i],
+            out_trade_no: list[i].payReslut.out_trade_no,
+            time_end: time
+          };
+        }
+
+        for(var i = 0; i < list.length - 1; i += 1){
+          //内层比较次数length-1-i次
+          for(var j = 0; j < list.length - 1 - i; j += 1){
+            //谁跟谁比较？
+            if (new Date(list[j].time_end).getTime() > new Date(list[j+1].time_end).getTime()) {
+              //交换顺序
+              var temp = list[j];
+              list[j] = list[j+1];
+              list[j+1] = temp;
+            }
+          }
+        }
+
+        this.productOrderList = list.reverse();
       });
     },
   },
@@ -1541,19 +1610,17 @@ export default {
           }
 
           .item-table {
-            padding: 20px;
+            padding: 0 10px;
             width: 100%;
             box-sizing: border-box;
             table {
               width: 100%;
               font-size: 14px;
-              text-align: center;
               border-collapse: collapse;
-              line-height: 40px;
               border: 1px solid #eee;
               tr {
                 td {
-                  padding: 0 15px;
+                  padding: 5px 10px;
                   border: 1px solid #eee;
                 }
               }

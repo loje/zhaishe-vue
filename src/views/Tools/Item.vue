@@ -99,7 +99,7 @@
               </div>
               <div class="input-group">
                 <span>电话</span>
-                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" maxlength="11" />
+                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" maxlength="11" />
               </div>
               <div class="input-group">
                 <span>邮箱</span>
@@ -247,12 +247,12 @@ export default {
         return false;
       }
       this.step = 2;
-      this.dialog = {
-        name: this.$store.state.user.name,
-        wechat: this.$store.state.user.wechatId,
-        phone: this.$store.state.user.mobilePhoneNumber,
-        email: this.$store.state.user.email.indexOf('@bmob.cn') !== -1 ? undefined : this.$store.state.user.email,
-      };
+      // this.dialog = {
+      //   name: this.$store.state.user.name,
+      //   wechat: this.$store.state.user.wechatId,
+      //   phone: this.$store.state.user.mobilePhoneNumber,
+      //   email: this.$store.state.user.email.indexOf('@bmob.cn') !== -1 ? undefined : this.$store.state.user.email,
+      // };
     },
     payit() {
       if (!this.dialog.name) {
@@ -273,7 +273,7 @@ export default {
       }
 
       this.payForm = {
-        out_trade_no: `test${new Date().getTime()}`,
+        out_trade_no: `zdesigner${new Date().getTime()}`,
         total_fee: this.activePrice === 2 ? this.info.groupPrice : this.info.price,
         body: this.info.title,
       };

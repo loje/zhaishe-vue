@@ -16,7 +16,7 @@
       out_trade_no: { // 微信会有自己订单号、我们自己的系统需要设置自己的订单号
         type: [String],
         default() {
-          return `test${new Date().getTime()}`;
+          return `zdesigner${new Date().getTime()}`;
         },
       },
       total_fee: {

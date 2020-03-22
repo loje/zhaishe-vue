@@ -283,7 +283,7 @@ export default {
       }
 
       this.payForm = {
-        out_trade_no: `test${new Date().getTime()}`,
+        out_trade_no: `zdesigner${new Date().getTime()}`,
         total_fee: this.activePrice === 2 ? this.info.birdPrice : this.info.price,
         body: this.info.title,
       };

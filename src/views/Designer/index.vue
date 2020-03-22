@@ -355,9 +355,6 @@ export default {
         border: 1px solid #D8D8D8;
         box-sizing: border-box;
         overflow: hidden;
-        // &:nth-child(2n+5) {
-        //   margin-right: 0;
-        // }
         .img {
           position: relative;
           width: 100%;
@@ -375,10 +372,7 @@ export default {
           height: 260px;
           background-color: #fff;
           box-sizing: border-box;
-          transition: all ease-in-out 0.25s;
-          &:hover {
-            bottom: 0px;
-          }
+          transition: all ease-in-out 300ms;
           .name {
             font-size: 16px;
             line-height: 20px;
@@ -413,13 +407,21 @@ export default {
             cursor: pointer;
           }
           .get {
+            opacity: 0;
             margin-top: 50px;
             font-size: 16px;
             font-family: PingFangSC;
             font-weight: bold;
             color: rgba(51,51,51,1);
             line-height: 22px;
+            transition: all 250ms ease;
             cursor: pointer;
+          }
+          &:hover {
+            bottom: 0px;
+            .get {
+              opacity: 1;
+            }
           }
         }
       }
