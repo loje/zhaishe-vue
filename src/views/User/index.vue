@@ -1092,7 +1092,7 @@ export default {
     },
     openLink() {
       const query = this.$Bmob.Query('download');
-      query.get(this.dialog.id).then((res) => {
+      query.get(this.dialog.objectId).then((res) => {
         res.set('downloads', Number(res.downloads) + 1);
         res.save().then(() => {
           window.open(this.dialog.link);
