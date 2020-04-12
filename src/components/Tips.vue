@@ -28,23 +28,6 @@ export default {
       },
     },
   },
-  data() {
-    return {
-      // show: false,
-    }
-  },
-  // mounted() {
-  //   let t = setTimeout(() => {
-  //     this.show = false;
-  //     clearTimeout(t);
-  //   }, 2000);
-  // },
-  // methods: {
-  //   showTips() {
-  //     this.show = true;
-  //     this.$emit('show');
-  //   },
-  // },
 };
 </script>
 

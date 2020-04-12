@@ -64,3 +64,7 @@ input:focus::-moz-placeholder { color:transparent; }
 
 /* IE 10+ */
 input:focus:-ms-input-placeholder { color:transparent; }
+
+
+::selection{color:#000;background-color:rgba(244, 197, 29, 0.3);}
+::-moz-selection{color:#000;background-color:rgba(244, 197, 29, 0.3);}

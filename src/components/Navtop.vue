@@ -24,12 +24,15 @@
     <transition name="fade">
     <Login v-show="showLogin" :status="loginStatus" @close-login="closeLogin"></Login>
     </transition>
+
+    <tips :tips="tipsText" :tipsBackgroundColor="tipsBackgroundColor"></tips>
   </div>
 </template>
 
 <script>
 import { routes } from './../router/index'
 import Login from './Login'
+import tips from '@/components/Tips';
 
 export default {
   data() {
@@ -38,14 +41,17 @@ export default {
       isIndex: false,
       showLogin: false,
       loginStatus: 'login',
+
+      tipsText: '',
+      tipsBackgroundColor: 'rgba(255, 0, 24, 0.75)',
     }
   },
   components: {
     Login,
+    tips,
   },
   watch: {
     $route(from) {
-      console.log(this.$route);
       if (from.name === '首页') {
         this.isIndex = true;
       } else {
@@ -70,12 +76,8 @@ export default {
       this.loginStatus = 'register';
     },
     toUser() {
-      const memberInfo = localStorage.getItem('memberInfo');
       this.$router.push({
         path: '/user/index',
-        query: {
-          code: JSON.parse(memberInfo).objectId,
-        },
       });
     },
     goWxLogin() {
@@ -96,8 +98,13 @@ export default {
     },
     clear() {
       localStorage.clear();
-      alert('登录缓存已清除');
-      location.reload();
+      this.tipsText = '登录缓存已清除，将回到首页';
+      let t = setTimeout(() => {
+				this.tipsText = '';
+				location.reload();
+				clearTimeout(t);
+			}, 1500);
+			return false;
     },
     checkTime(i) {
       if (i < 10) { i="0" + i }
@@ -105,6 +112,7 @@ export default {
     },
     getToken() {
       if (!localStorage.getItem('memberInfo')) {
+        // 如果localStorage里没有用户数据，就去扫码登录吧
         let params = {
           funcName: 'access_token',
           data: {
@@ -113,7 +121,12 @@ export default {
         };
         this.$Bmob.functions(params.funcName, params.data).then((respon) => {
           if (respon.errcode === 40163) {
-            location.href = '/';
+            this.tipsText = 'Code been used.（若多次出现此报错，请联系系统管理员）';
+            let t = setTimeout(() => {
+              this.tipsText = '';
+              location.href = '/';
+              clearTimeout(t);
+            }, 1500);
             return false;
           }
 
@@ -125,8 +138,8 @@ export default {
             }
           };
           this.$Bmob.functions(param.funcName, param.data).then((user) => {
+            console.log(user);
             if (user.sucess === false) { 
-
               this.$router.push('/');
               this.tipsText = user.message;
               let t = setTimeout(() => {
@@ -135,19 +148,29 @@ export default {
               }, 1500);
               return false;
             }
-            this.$Bmob.User.users().then((res) => {
-              const userlist = res.results;
+            let alluser = this.$Bmob.Query('_User');
+            alluser.limit(1000);
+            alluser.find().then((res) => {
+              console.log(res);
+            // this.$Bmob.User.users().then((res) => {
+              const userlist = res;
               const isWX = userlist.some((item) => item.openid === user.openid && user.openid !== '');
+              console.log(res);
+              console.log('----isWX-----');
+              console.log(isWX);
               if (isWX) {
+                console.log('------登录------');
                 for (let i = 0; i < userlist.length; i += 1) {
                   if (userlist[i].openid === user.openid) {
                     if (!userlist[i].isCustomer) {
-                      alert('账号已被禁用，请联系管理员');
-                      this.logout();
+											this.tipsText = '账号已被禁用，请联系管理员';
+											let t = setTimeout(() => {
+												this.logout();
+												this.tipsText = '';
+												clearTimeout(t);
+											}, 1500);
                       return false;
                     }
-                    console.log("-----------navtop1");
-                    console.log(userlist[i]);
                     localStorage.setItem('memberInfo', JSON.stringify(userlist[i]));
                     this.$store.dispatch('getMember', userlist[i]);
                     let now = new Date();
@@ -174,6 +197,7 @@ export default {
                   }
                 }
               } else {
+                console.log('------注册------');
                 const email = `user${new Date().getTime()}@bmob.cn`;
                 let params = {
                   username: user.nickname,
@@ -189,12 +213,14 @@ export default {
                   isAdmin: false,
                 }
                 this.$Bmob.User.register(params).then(r => {
-                  this.$Bmob.User.users().then(u => {
+                  console.log(r);
+                  let alluserAgain = this.$Bmob.Query('_User');
+                  alluserAgain.limit(1000);
+                  alluserAgain.find().then((u) => {
+                  // this.$Bmob.User.users().then(u => {
                     let ul = u.results;
                     for (let i = 0; i < ul.length; i += 1) {
                       if (ul[i].objectId === r.objectId) {
-                        console.log("-----------navtop2");
-                        console.log(ul[i]);
                         localStorage.setItem('memberInfo', JSON.stringify(ul[i]));
                         this.$store.dispatch('getMember', ul[i]);
                         location.href = '/';
