@@ -187,7 +187,7 @@
                 <div class="title">
                   {{item.info}}
                 </div>
-                <div class="btn">个人链接</div>
+                <a class="btn" :href="item.link" target="blank" v-if="item.link">个人链接</a>
                 <div class="get" @click="orderIt(item)">找他接单</div>
               </div>
             </div>

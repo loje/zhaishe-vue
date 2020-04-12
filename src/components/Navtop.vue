@@ -139,6 +139,15 @@ export default {
           };
           this.$Bmob.functions(param.funcName, param.data).then((user) => {
             console.log(user);
+            if (user.errcode) {
+              this.tipsText = user.errmsg;
+              let t = setTimeout(() => {
+                this.tipsText = '';
+                location.href = '/';
+                clearTimeout(t);
+              }, 1500);
+              return false;
+            }
             if (user.sucess === false) { 
               this.$router.push('/');
               this.tipsText = user.message;
