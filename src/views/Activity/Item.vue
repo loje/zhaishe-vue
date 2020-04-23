@@ -64,6 +64,7 @@
               <div class="step-t">支付信息</div>
             </div>
             <div class="line"></div>
+            <template v-if="(activePrice === 1 && info.price > 0) || (activePrice === 2 && info.birdPrice > 0)">
             <div class="step">
               <div :class="step === 3 ? 'count active' : 'count'">3</div>
               <div class="step-t">确认扫码</div>
@@ -73,6 +74,13 @@
               <div :class="step === 4 ? 'count active' : 'count'">4</div>
               <div class="step-t">支付反馈</div>
             </div>
+            </template>
+            <template v-else>
+            <div class="step">
+              <div :class="step === 4 ? 'count active' : 'count'">3</div>
+              <div class="step-t">信息反馈</div>
+            </div>
+            </template>
           </div>
 
           <div class="buy-box" v-if="step === 2">
@@ -98,10 +106,17 @@
               <div class="text" v-if="activePrice === 1">您选择的是正常票 价格<span>{{info.price}}</span>元</div>
               <div class="text" v-if="activePrice === 2">您选择的是早鸟票 价格<span>{{info.birdPrice}}</span>元</div>
 
+              <template v-if="(activePrice === 1 && info.price > 0) || (activePrice === 2 && info.birdPrice > 0)">
               <div class="btn" @click="payit">
                 <i class="iconfont">&#xe629;</i>
                 <span>微信支付</span>
               </div>
+              </template>
+              <template v-else>
+              <div class="btn" @click="payit" style="border-color:#FF5D01;">
+                <span style="color:#FF5D01;">报名</span>
+              </div>
+              </template>
             </div>
           </div>
 
@@ -115,10 +130,10 @@
           </template>
 
           <template v-if="step === 4">
+          <template v-if="(activePrice === 1 && info.price > 0) || (activePrice === 2 && info.birdPrice > 0)">
           <div :class="payReslut.trade_state !== 'SUCCESS' ? 'pay-result fail' : 'pay-result'">
             <i class="iconfont" v-if="payReslut.trade_state === 'SUCCESS'">&#xe607;</i>
             <i class="iconfont" v-else>&#xea13;</i>
-
             <template v-if="payReslut.trade_state === 'SUCCESS'">
               <div class="t" @click="this.$router.push({
         path: '/user/activity',
@@ -132,7 +147,26 @@
             </template>
           </div>
           </template>
-
+          <template v-else>
+            <i class="iconfont" style="display: block;
+              margin-top: 30px;
+              text-align: center;
+              color: #ff5d01;
+              font-size: 48px;">&#xe607;</i>
+            <div style="
+              padding-top: 30px;
+              font-size: 21px;
+              text-align: center;
+              color: #ff5d01;
+              line-height: 29px;">报名成功</div>
+            <div style="
+              padding-top:5px;
+              font-size: 12px;
+              text-align: center;
+              color: #9a9a9a;
+              line-height: 17px;">可以在个人中心查看已报名活动</div>
+          </template>
+          </template>
         </div>
         <div class="buy-tips">
           <div class="tips-left">
@@ -282,6 +316,14 @@ export default {
         return false;
       }
 
+      // 邮箱验证正则
+      // eslint-disable-next-line no-useless-escape
+      const reg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+      if (!reg.test(this.dialog.email)) {
+        this.dialogError = '邮箱格式不正确';
+        return false;
+      }
+
       this.payForm = {
         out_trade_no: `zdesigner${new Date().getTime()}`,
         total_fee: this.activePrice === 2 ? this.info.birdPrice : this.info.price,
@@ -295,7 +337,12 @@ export default {
         user.set('email', this.dialog.email);
         user.set('wechatId', this.dialog.wechat);
         user.save().then(() => {
-          this.step = 3;
+          if ((this.activePrice === 1 && this.info.price > 0) || (this.activePrice === 2 && this.info.birdPrice > 0)) {
+            this.step = 3;
+          } else {
+            this.step = 4;
+            this.getReslut({});
+          }
         }).catch(err => {
           console.log(err);
           if (err.code === 209) {

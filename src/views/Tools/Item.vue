@@ -272,6 +272,14 @@ export default {
         return false;
       }
 
+      // 邮箱验证正则
+      // eslint-disable-next-line no-useless-escape
+      const reg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+      if (!reg.test(this.dialog.email)) {
+        this.dialogError = '邮箱格式不正确';
+        return false;
+      }
+
       this.payForm = {
         out_trade_no: `zdesigner${new Date().getTime()}`,
         total_fee: this.activePrice === 2 ? this.info.groupPrice : this.info.price,

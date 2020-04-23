@@ -1119,6 +1119,13 @@ export default {
       this.userEdit = true;
     },
     updateUserInfo() {
+      // 邮箱验证正则
+      // eslint-disable-next-line no-useless-escape
+      const reg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+      if (!reg.test(this.user.email)) {
+        this.dialogError = '邮箱格式不正确';
+        return false;
+      }
       const userquery = this.$Bmob.Query('_User');
       userquery.get(this.$store.state.user.objectId).then((user) => {
         user.set('username', this.user.username ? this.user.username : '');

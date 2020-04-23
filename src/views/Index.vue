@@ -150,7 +150,9 @@
               </div>
               <div class="activity-right">
                 <div class="btn" @click="$router.push(`/activity/item/${item.id}`)">查看活动</div>
-                <div class="price">￥{{item.fee}}</div>
+                <div class="price" v-if="item.fee">￥{{item.fee}}</div>
+                <div class="price" v-else>免费</div>
+
                 <div class="toggle" @click="toggle($index)" v-if="item.agendaList"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
               </div>
               <div class="speaker-list" v-show="item.toggleStatus === true" v-if="item.agendaList">

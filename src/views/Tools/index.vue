@@ -162,6 +162,7 @@ export default {
       let arr = [];
       query.order('-endTime');
       query.equalTo('notDelete', '==', true);
+      query.equalTo('status', '==', 0);
       if (this.keyword) {
         query.equalTo("title","===", this.keyword);
       }
