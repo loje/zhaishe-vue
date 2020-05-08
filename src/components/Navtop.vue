@@ -117,6 +117,8 @@ export default {
           funcName: 'access_token',
           data: {
             code : this.$route.query.code,
+            appid: 'wx9a76b368090721eb',
+            secret: 'f17b3a8b2b6f23e998b8af0372fd7774',
           }
         };
         this.$Bmob.functions(params.funcName, params.data).then((respon) => {

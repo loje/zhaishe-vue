@@ -106,8 +106,6 @@
                 <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
               </div>
               <div class="input-group" style="margin: 0;padding:0px;height: auto;">
-                <!-- <span>备注</span> -->
-                <!-- <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" /> -->
                 <textarea v-model="dialog.remark" placeholder="有需要可以留下你的备注" rows="4" style="padding:10px;width:100%;border:0;outline:none;resize:none;"></textarea>
               </div>
               <div class="error">{{dialogError}}</div>
