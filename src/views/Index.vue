@@ -14,6 +14,12 @@
               </swiper-slide>
               </template>
             </swiper>
+            <div class="swiper-left swiper-left-prev swiper-button-prev">
+							<i class="iconfont">&#xe693;</i>
+						</div>
+            <div class="swiper-left swiper-left-next swiper-button-next">
+							<i class="iconfont">&#xe600;</i>
+						</div>
           </div>
           <div class="box-right">
             <loading v-if="bannerLoading"></loading>
@@ -56,16 +62,35 @@
                 <i class="iconfont">&#xe649;</i>
               </div>
             </div>
-            <div class="layer-block">
-              <div class="block-item" v-for="(item, $index) in recommendList" :key="$index" @click="$router.push(`/tools/item/${item.id}`)">
+
+						<swiper :options="recommendSwiperOption" ref="recommendSwiper">
+						<template v-for="(items, $index) in recommendSwiperList">
+							<swiper-slide :key="$index">
+								<div class="layer-block">
+								<template v-for="(item, $i) in items">
+									<div class="block-item" :key="$i" @click="$router.push(`/tools/item/${item.id}`)">
+										<div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
+										<div class="title">{{item.title}}</div>
+									</div>
+								</template>
+								</div>
+							</swiper-slide>
+						</template>
+							<div class="swiper-pagination" slot="pagination"></div>
+						</swiper>
+
+            <!-- <div class="layer-block">
+							<template v-for="(item, $index) in recommendList">
+              <div class="block-item" :key="$index" @click="$router.push(`/tools/item/${item.id}`)">
                 <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
                 <div class="title">{{item.title}}</div>
               </div>
+							</template>
               <div class="block-item more-item" @click="showRecommend = true">
                 <div class="icon">加入宅设</div>
                 <div class="title">其他</div>
               </div>
-            </div>
+            </div> -->
           </div>
           <div class="layer-flex">
             <div class="layer-title">
@@ -110,15 +135,20 @@
           <div class="title">深圳同城</div>
           <div class="layer-nav">
             <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActCount('宅设主办')">宅设主办</div>
-            <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActCount('其他活动')">其他活动</div>
+            <!-- <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActCount('其他活动')">其他活动</div> -->
+            <div :class="actTab === '同盟活动' ? 'nav active' : 'nav'" @click="getActCount('同盟活动')">同盟活动</div>
+            <div :class="actTab === '节日活动' ? 'nav active' : 'nav'" @click="getActCount('节日活动')">节日活动</div>
           </div>
-          <div class="pages">
+          <!-- <div class="pages">
             <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
             <div class="page-list">
               <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
             </div>
             <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
-          </div>
+          </div> -->
+					<div class="more" @click="$router.push('./activity')">
+						<i class="iconfont">&#xe649;</i>
+					</div>
         </div>
 
         <div class="activity-list">
@@ -131,10 +161,24 @@
                 <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
               </div>
               <div class="activity-mid">
-                <div class="title"><span v-if="pageAct === 1 && $index === 0">最新活动</span>{{item.title}}</div>
+                <div class="title">
+									<!-- <span v-if="pageAct === 1 && $index === 0">最新活动</span> -->
+									{{item.title}}
+								</div>
+								<div class="mid-info">
+									<div class="price" v-if="item.fee">{{item.fee}}元</div>
+									<div class="price" v-else>免费</div>
+									<span class="sort">
+                    <template v-if="item.mode === 1">线下活动</template>
+                    <template v-else-if="item.mode === 2">线上直播</template>
+                  </span>
+								</div>
                 <div class="desc">{{item.desc}}</div>
                 <div class="tag">
-                  <span>
+									<span class="num">报名人数：{{item.number}}</span>
+									<span class="count">已报名：{{item.count}}</span>
+
+                  <!-- <span>
                     <template v-if="item.sort === 1">宅设主办</template>
                     <template v-else-if="item.sort === 2">推荐活动</template>
                     <template v-else-if="item.sort === 3">合作活动</template>
@@ -145,25 +189,46 @@
                     <template v-else-if="item.mode === 2">线上直播</template>
                   </span>
                   <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
-                  <span class="num">参与人数：{{item.number}}</span>
+                  <span class="num">参与人数：{{item.number}}</span> -->
                 </div>
               </div>
               <div class="activity-right">
-                <div class="btn" @click="$router.push(`/activity/item/${item.id}`)">查看活动</div>
-                <div class="price" v-if="item.fee">￥{{item.fee}}</div>
-                <div class="price" v-else>免费</div>
+                <div class="btn will" @click="$router.push(`/activity/item/${item.id}`)" v-if="item.actStatus === 1">未开始</div>
+                <div class="btn" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 2">我要报名 ></div>
+                <div class="btn end" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 3">已结束</div>
 
-                <div class="toggle" @click="toggle($index)" v-if="item.agendaList"><i :class="item.toggleStatus === true ? 'iconfont show' : 'iconfont'">&#xe667;</i>查看分享人</div>
+                <!-- <div class="btn end" @click="$router.push(`/activity/item/${item.id}`)">已结束</div> -->
+
+                <!-- <div class="price" v-if="item.fee">￥{{item.fee}}</div> -->
+                <!-- <div class="price" v-else>免费</div> -->
+
+                <div class="toggle" @click="toggle($index)" v-if="item.agendaList">活动阵容</div>
               </div>
-              <div class="speaker-list" v-show="item.toggleStatus === true" v-if="item.agendaList">
-                <div class="speaker" v-for="(i, $index) in item.agendaList" :key="$index">
-                  <div class="img" :style="{backgroundImage: `url(${i.imgSrc})`}"></div>
-                  <div class="speaker-right">
-                    <div class="title">{{i.title}}</div>
-                    <div class="theme">《{{i.theme}}》</div>
-                  </div>
-                </div>
-              </div>
+
+							<div class="agenda-layer" v-show="item.toggleStatus === true" v-if="item.agendaList">
+								<swiper :options="agendaSwiperOption" ref="agendaSwiper">
+								<template v-for="(is, $index) in item.agendaSwiperList">
+									<swiper-slide :key="$index">
+									<div class="speaker-list">
+										<div class="speaker" v-for="(i, $i) in is" :key="$i">
+											<div class="img" :style="{backgroundImage: `url(${i.imgSrc})`}"></div>
+											<div class="speaker-right">
+												<div class="title">{{i.title}}</div>
+												<div class="theme">《{{i.theme}}》</div>
+												<div class="position">腾讯设计师</div>
+											</div>
+										</div>
+									</div>
+									</swiper-slide>
+								</template>
+								</swiper>
+								<div class="swiper-agenda swiper-agenda-prev swiper-button-prev">
+									<i class="iconfont">&#xe693;</i>
+								</div>
+								<div class="swiper-agenda swiper-agenda-next swiper-button-next">
+									<i class="iconfont">&#xe600;</i>
+								</div>
+							</div>
             </div>
           </template>
         </div>
@@ -197,6 +262,13 @@
             </template>
           </swiper>
         </div>
+				<div class="swiper-people swiper-people-prev swiper-button-prev">
+					<i class="iconfont">&#xe693;</i>
+				</div>
+				<div class="swiper-people swiper-people-next swiper-button-next">
+					<i class="iconfont">&#xe600;</i>
+				</div>
+				<div class="layer-bg"></div>
       </div>
     </div>
     <div class="btm-bannner">
@@ -332,9 +404,13 @@ export default {
         autoplay: true,
         loop : true,
         delay: 1000,
-        pagination: {
-          el: '.swiper-pagination',
-        }
+        // pagination: {
+        //   el: '.swiper-pagination',
+        // },
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
       },
       rightSwiperOption: {
         autoplay: false,
@@ -351,14 +427,33 @@ export default {
       bannerRight: [],
       bannerLoading: false,
 
-      recommendList: [],
+			recommendSwiperOption: {
+				autoplay: true,
+        loop : false,
+        delay: 1000,
+        pagination: {
+          el: '.swiper-pagination',
+        },
+			},
+			recommendList: [],
+			recommendSwiperList: [],
       recommendLoading: false,
 
       actTab: '宅设主办',
       actTotal: 0, // 总条数
       actPages: 0, // 总页数
       actLimit: 3, // 每页条数
-      activityList: [],
+			activityList: [],
+			// agendaSwiperList: [],
+			agendaSwiperOption: {
+				autoplay: true,
+        loop : false,
+        delay: 1000,
+        navigation: {
+          nextEl: '.swiper-agenda-next',
+          prevEl: '.swiper-agenda-prev',
+        },
+			},
       activityLoading: false,
       skipAct: 0, // 跳过数量
       pageAct: 1, // 当前页数
@@ -371,10 +466,14 @@ export default {
 
       designerSwiperOption: {
         autoplay: true,
-        loop : true,
+        loop : false,
         delay: 1000,
         slidesPerView: 5,
-        spaceBetween: 40,
+				spaceBetween: 40,
+        navigation: {
+          nextEl: '.swiper-button-next',
+          prevEl: '.swiper-button-prev',
+        },
       },
 
       showPrivate: false,
@@ -459,7 +558,14 @@ export default {
             imgSrc: res[i].imgSrc
           });
         }
-        this.recommendList = arr;
+				// this.recommendList = arr;
+
+				let index = 0;
+				let newArray = [];
+				while(index < arr.length) {
+          newArray.push(arr.slice(index, index += 6));
+				}
+				this.recommendSwiperList = newArray;
       });
     },
     // getPrivateCount() {
@@ -532,23 +638,30 @@ export default {
       });
     },
     getActivity(actTab, page) {
-      console.log(page);
+			console.log(page);
+			let apList = [];
+			
+			var apQuery = this.$Bmob.Query('activity_person');
+      apQuery.find().then((res) => {
+        apList = res;
+      });
+			
       this.actTab = actTab;
 
-      if (page) {
-        if (page > this.actPages) {
-          this.pageAct = this.actPages;
-        } else if (page < 0) {
-          this.pageAct = 1;
-        } else {
-          this.pageAct = page;
-        }
-      } else {
-        this.pageAct = 1
-      }
+      // if (page) {
+      //   if (page > this.actPages) {
+      //     this.pageAct = this.actPages;
+      //   } else if (page < 0) {
+      //     this.pageAct = 1;
+      //   } else {
+      //     this.pageAct = page;
+      //   }
+      // } else {
+      //   this.pageAct = 1
+      // }
       
       var query = this.$Bmob.Query('activity');
-      this.skipAct = this.actLimit * (this.pageAct - 1);
+      // this.skipAct = this.actLimit * (this.pageAct - 1);
 
       let arr = [];
       query.order('-endTime');
@@ -559,12 +672,18 @@ export default {
         query.equalTo('sort', '!=', 1);
       }
 
-      query.skip(this.skipAct);
-      query.limit(this.actLimit);
+      // query.skip(this.skipAct);
+      query.limit(3);
       this.activityLoading = true;
       query.find().then((res) => {
         this.activityLoading = false;
         for (let i = 0; i < res.length; i += 1) {
+					let count = 0;
+					for (let j = 0; j < apList.length; j += 1) {
+            if (res[i].objectId === apList[j].activity.objectId) {
+              count += 1;
+            }
+          }
           for (let key in res[i].startTime) {
             if (key === 'iso') {
               res[i].startTime = res[i].startTime[key];
@@ -574,21 +693,39 @@ export default {
             if (key === 'iso') {
               res[i].endTime = res[i].endTime[key];
             }
-          }
+					}
+					if (res[i].agenda) {
+						let index = 0;
+						let newArray = [];
+						while(index < JSON.parse(res[i].agenda).length) {
+							newArray.push(JSON.parse(res[i].agenda).slice(index, index += 3));
+						}
+						res[i].agendaSwiperList = newArray;
+					}
+					if (Date.now() < new Date(res[i].startTime).getTime()) {
+						res[i].actStatus = 1
+					} else if (Date.now() > new Date(res[i].startTime).getTime() && Date.now() < new Date(res[i].endTime).getTime()) {
+						res[i].actStatus = 2
+					} else if (Date.now() > new Date(res[i].endTime).getTime()) {
+						res[i].actStatus = 3
+					}
           arr.push({
             id: res[i].objectId,
             title: res[i].title,
             imgSrc: res[i].imgSrc,
-            desc: res[i].desc,
+						desc: res[i].desc,
+						count,
             status: res[i].status,
             sort: res[i].sort,
             mode: res[i].mode,
             number: res[i].number,
             fee: res[i].fee,
             startTime: res[i].startTime,
-            endTime: res[i].endTime,
+						endTime: res[i].endTime,
+						actStatus: res[i].actStatus,
             toggleStatus: false,
-            agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
+						agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
+						agendaSwiperList: res[i].agenda ? res[i].agendaSwiperList : undefined,
           });
         }
         this.activityList = arr;
@@ -825,20 +962,22 @@ export default {
       position: relative;
       display: flex;
       margin-top: 30px;
-      margin-bottom: 40px;
+      margin-bottom: 20px;
       width: 100%;
       height: 340px;
       overflow: visible;
       z-index: 0;
       .box-left {
-        padding-right: 20px;
-        width: 730px;
+        position: relative;
+        width: 725px;
         height: 100%;
         background-position: 50%;
         background-size: cover;
         .swiper-container{
+					position: relative;
           width: 100%;
-          height: 100%;
+					height: 100%;
+					z-index: 0;
           .swiper-slide {
             .img {
               width: 100%;
@@ -855,7 +994,8 @@ export default {
         }
       }
       .box-right {
-        width: 370px;
+        padding-left: 25px;
+        width: 375px;
         .swiper-container{
           width: 100%;
           height: 100%;
@@ -871,7 +1011,9 @@ export default {
       }
     }
     .swiper-pagination-bullet-active {
-      background-color: #fff;
+			background-color: #fff;
+			border: 1px solid #F4C51D;
+			box-sizing: border-box;
     }
     .layer {
       position: relative;
@@ -882,7 +1024,7 @@ export default {
   .layer {
     display: flex;
     width: 100%;
-    margin-bottom: 40px;
+    margin-bottom: 30px;
     justify-content: space-between;
     .layer-flex {
       position: relative;
@@ -894,7 +1036,7 @@ export default {
       box-sizing: border-box;
       .layer-title {
         position: relative;
-        margin-bottom: 20px;
+        margin-bottom: 15px;
         padding-right: 50px;
         width: 100%;
         height: 22px;
@@ -918,7 +1060,7 @@ export default {
           font-weight: bold;
           color: #383838;
           line-height: 22px;
-          vertical-align: middle;
+					vertical-align: middle;
         }
         .more {
           position: absolute;
@@ -1032,7 +1174,7 @@ export default {
       .layer-block {
         display: flex;
         flex-wrap: wrap;
-        justify-content: space-between;
+        // justify-content: space-between;
         width: 100%;
         .block-item {
           margin-bottom: 10px;
@@ -1070,25 +1212,27 @@ export default {
   }
 
   .activity-layer {
-    background-color: #fff;
+		margin-bottom: 30px;
     .max-width {
-      margin: auto;
+			margin: auto;
+			background-color: #fff;
       .layer-title {
+				position: relative;
         display: flex;
         margin-bottom: 30px;
         align-items: center;
         width: 100%;
-        height: 50px;
+        height: 60px;
         border-bottom: 1px solid #F2F2F2;
         box-sizing: border-box;
         .title {
-          padding-left: 10px;
+          padding-left: 20px;
           width: 280px;
           font-size: 16px;
           font-family: PingFangSC;
           font-weight: bold;
           color: #383838;
-          line-height: 50px;
+          line-height: 60px;
           vertical-align: middle;
         }
         .layer-nav {
@@ -1096,8 +1240,8 @@ export default {
           display: flex;
           .nav {
             margin: 0 30px;
-            height: 50px;
-            line-height: 50px;
+            height: 60px;
+            line-height: 60px;
             border-bottom: 4px solid transparent;
             box-sizing: border-box;
             cursor: pointer;
@@ -1106,71 +1250,96 @@ export default {
               border-bottom: 4px solid #F4C51D;
             }
           }
-        }
-        .pages {
-          .prev {
-            display: inline-block;
-            padding: 0 15px;
-            height: 50px;
-            line-height: 50px;
-            vertical-align: middle;
-            font-size: 12px;
-            color: #888;
-            cursor: pointer;
+				}
+				.more {
+          position: absolute;
+          right: 20px;
+          top: 18px;
+          width: 40px;
+          height: 22px;
+          line-height: 22px;
+          text-align: center;
+          border: 1px solid #F2F2F2;
+          color: #F4C51D;
+          font-size: 24px;
+          border-radius: 2px;
+          transition: all ease 0.25s;
+          cursor: pointer;
+          i {
+            display: block;
+            font-size: 22px;
+            line-height: 22px;
           }
-          .page-list {
-            display: inline-block;
-            vertical-align: middle;
-            .page {
-              display: inline-block;
-              width: 34px;
-              height: 50px;
-              line-height: 50px;
-              vertical-align: middle;
-              text-align: center;
-              cursor: pointer;
-              font-weight: bold;
-              transition: all ease 0.25s;
-              &.more {
-                color: #D8D8D8;
-                font-weight: normal;
-                letter-spacing: 4px;
-              }
-              &:hover, &.active {
-                background-color: #F4C51D;
-                color: #000;
-              }
-            }
+          &:hover {
+            border-color: #F4C51D;
           }
-          .next {
-            display: inline-block;
-            padding: 0 15px;
-            height: 50px;
-            line-height: 50px;
-            vertical-align: middle;
-            font-size: 12px;
-            color: #888;
-            cursor: pointer;
-          }
-        }
+				}
+        // .pages {
+        //   .prev {
+        //     display: inline-block;
+        //     padding: 0 15px;
+        //     height: 50px;
+        //     line-height: 50px;
+        //     vertical-align: middle;
+        //     font-size: 12px;
+        //     color: #888;
+        //     cursor: pointer;
+        //   }
+        //   .page-list {
+        //     display: inline-block;
+        //     vertical-align: middle;
+        //     .page {
+        //       display: inline-block;
+        //       width: 34px;
+        //       height: 50px;
+        //       line-height: 50px;
+        //       vertical-align: middle;
+        //       text-align: center;
+        //       cursor: pointer;
+        //       font-weight: bold;
+        //       transition: all ease 0.25s;
+        //       &.more {
+        //         color: #D8D8D8;
+        //         font-weight: normal;
+        //         letter-spacing: 4px;
+        //       }
+        //       &:hover, &.active {
+        //         background-color: #F4C51D;
+        //         color: #000;
+        //       }
+        //     }
+        //   }
+        //   .next {
+        //     display: inline-block;
+        //     padding: 0 15px;
+        //     height: 50px;
+        //     line-height: 50px;
+        //     vertical-align: middle;
+        //     font-size: 12px;
+        //     color: #888;
+        //     cursor: pointer;
+        //   }
+        // }
       }
 
       .activity-list {
+				padding: 0 20px 40px 20px;
+				box-sizing: border-box;
         width: 100%;
         .the-activity {
           display: flex;
           flex-wrap: wrap;
-          margin-bottom: 60px;
+          margin-bottom: 40px;
           width: 100%;
           &:last-child {
             margin-bottom: 0;
           }
           .activity-left {
             width: 280px;
-            height: 160px;
+            height: 165px;
             .img {
               width: 280px;
-              height: 160px;
+              height: 165px;
               background-color: #888;
               border-radius: 3px;
               background-position: 50%;
@@ -1180,14 +1349,14 @@ export default {
           .activity-mid {
             position: relative;
             flex: 1;
-            height: 160px;
-            padding: 0 30px;
+            height: 165px;
+            padding: 0 20px;
             box-sizing: border-box;
             .title {
-              margin-bottom: 10px;
+              // margin-bottom: 10px;
               font-size: 20px;
-              font-family: PingFangSC;
-              font-weight: 600;
+              // font-family: PingFangSC;
+              // font-weight: 600;
               color: #262626;
               line-height: 32px;
               span {
@@ -1203,143 +1372,211 @@ export default {
                 color: #FF5D01;
                 vertical-align: middle;
               }
-            }
+						}
+						.mid-info {
+							padding: 10px 0;
+							// margin-bottom: 10px;
+							.price {
+								display: inline-block;
+								margin-right: 24px;
+								font-size: 24px;
+								color: #F4751D;
+								vertical-align: middle;
+							}
+							.sort {
+								display: inline-block;
+								vertical-align: middle;
+								margin-right: 15px;
+								width: 63px;
+								height: 20px;
+								line-height: 20px;
+								text-align: center;
+								background-color: #F5F5F5;
+								color:#999999;
+								font-size: 12px;
+							}
+						}
             .desc {
               font-size: 14px;
               color: #888;
-              line-height: 24px;
+							line-height: 24px;
+							overflow: hidden;
+							text-overflow: ellipsis;
+							display: -webkit-box;
+							-webkit-line-clamp: 2;
+							-webkit-box-orient: vertical;
             }
             .tag {
               position: absolute;
-              left: 30px;
+              left: 20px;
               bottom: 0;
               width: 100%;
               font-size: 12px;
-              line-height: 17px;
-              span {
-                color: #262626;
-              }
-              .sort {
-                color: #888;
-                margin-left: 25px;
-              }
-              .time {
-                color: #888;
-                margin-left: 25px;
-              }
-              .num {
-                color: #888;
-                margin-left: 25px;
-              }
+							line-height: 17px;
+							.num {
+								margin-right: 30px;
+								font-size: 14px;
+								line-height: 20px;
+								color: #888;
+							}
+							.count {
+								font-size: 14px;
+								line-height: 20px;
+								color: #888;
+							}
+              // span {
+              //   color: #262626;
+              // }
+              // .sort {
+              //   color: #888;
+              //   margin-left: 25px;
+              // }
+              // .time {
+              //   color: #888;
+              //   margin-left: 25px;
+              // }
+              // .num {
+              //   color: #888;
+              //   margin-left: 25px;
+              // }
             }
           }
           .activity-right {
             position: relative;
             width: 100px;
-            height: 160px;
+            height: 165px;
             text-align: right;
             .btn {
               display: inline-block;
               width: 100px;
-              height: 40px;
+              height: 38px;
               line-height: 38px;
               text-align: center;
-              cursor: pointer;
-              border-radius: 3px;
-              border: 1px solid #F4C51D;
-              box-sizing: border-box;
+              border-radius: 2px;
               font-size: 14px;
-              font-weight: bold;
-              color: #262626;
-              &:hover {
-                background-color: rgba(244,197,29,0.30);
-              }
+							color: #fff;
+							background-color: #F4751D;
+              box-sizing: border-box;
+							cursor: pointer;
+							&.end, &.will {
+								background-color: #F5F5F5;
+								color: #2B2B2B;
+							}
             }
-            .price {
-              margin-top: 10px;
-              width: 100px;
-              font-size: 16px;
-              font-weight: 600;
-              color: rgba(244,117,29,1);
-              line-height: 22px;
-              text-align: center;
-            }
+            // .price {
+            //   margin-top: 10px;
+            //   width: 100px;
+            //   font-size: 16px;
+            //   font-weight: 600;
+            //   color: rgba(244,117,29,1);
+            //   line-height: 22px;
+            //   text-align: center;
+            // }
             .toggle {
               position: absolute;
               right: 0;
-              bottom: 0;
-              color: #2B2B2B;
-              font-size: 12px;
+							bottom: 0;
+							width: 73px;
+							height: 25px;
+							line-height: 25px;
+              color: #F4C51D;
+							font-size: 12px;
+							border: 1px solid #eeeeee;
+							border-radius: 2px;
+							text-align: center;
               cursor: pointer;
-              i {
-                display: inline-block;
-                margin-right: 5px;
-                height: 12px;
-                font-size: 12px;
-                color: #231916;
-                transform: rotate(0deg);
-                transition: transform 0.25s linear;
-                &.show {
-                  transform: rotate(-180deg);
-                }
-              }
+              // i {
+              //   display: inline-block;
+              //   margin-right: 5px;
+              //   height: 12px;
+              //   font-size: 12px;
+              //   color: #231916;
+              //   transform: rotate(0deg);
+              //   transition: transform 0.25s linear;
+              //   &.show {
+              //     transform: rotate(-180deg);
+              //   }
+              // }
             }
-          }
-          .speaker-list {
-            margin-top: 20px;
-            width: 100%;
-            background-color: #FCFCFC;
-            white-space:nowrap;
-            overflow: auto;
-            .speaker {
-              display: inline-block;
-              padding: 19px 30px;
-              vertical-align: middle;
-              .img {
-                display: inline-block;
-                width: 80px;
-                height: 80px;
-                border-radius: 50%;
-                background-color: #999;
-                vertical-align: middle;
-                background-size: cover;
-              }
-              .speaker-right {
-                display: inline-block;
-                vertical-align: middle;
-                padding-left: 15px;
-                .title {
-                  font-size: 14px;
-                  line-height: 20px;
-                  color: #2B2B2B;
-                }
-                .theme {
-                  margin-top: 10px;
-                  font-size: 12px;
-                  line-height: 17px;
-                  color: #2B2B2B;
-                }
-              }
-            }
-          }
+					}
+					.agenda-layer {
+						position: relative;
+						margin-top: 20px;
+						padding: 0 100px;
+						width: 100%;
+						background-color: #FCFCFC;
+						// white-space:nowrap;
+						// overflow: auto;
+						box-sizing: border-box;
+						.speaker-list {
+							display: flex;
+							justify-content: space-between;
+							flex-wrap: wrap;
+							width: 100%;
+							.speaker {
+								// display: inline-block;
+								// width: 33.33%;
+								padding: 19px 30px;
+								vertical-align: middle;
+								.img {
+									display: inline-block;
+									width: 80px;
+									height: 80px;
+									border-radius: 50%;
+									background-color: #999;
+									vertical-align: middle;
+									background-size: cover;
+								}
+								.speaker-right {
+									display: inline-block;
+									vertical-align: middle;
+									padding-left: 15px;
+									.title {
+										font-size: 14px;
+										line-height: 20px;
+										color: #2B2B2B;
+									}
+									.theme {
+										margin-top: 10px;
+										font-size: 12px;
+										line-height: 17px;
+										color: #2B2B2B;
+									}
+									.position {
+										margin-top: 5px;
+										font-size: 12px;
+										line-height: 17px;
+										color: #999999;
+									}
+								}
+							}
+						}
+					}
         }
       }
     }
   }
 
   .designer-layer {
-    padding-top: 50px;
-    padding-bottom: 30px;
-    background-color: #fff;
+		margin-bottom: 30px;
+    // padding-top: 50px;
+    // padding-bottom: 30px;
     .max-width {
-      margin: auto;
+			position: relative;
+			margin: auto;
+			padding: 0 30px;
+			
+			box-sizing: border-box;
       .layer-title {
         position: relative;
-        margin-bottom: 20px;
-        padding-right: 50px;
-        width: 100%;
-        height: 22px;
-        box-sizing: border-box;
+        // padding: 20px 0;
+        // padding-right: 50px;
+				width: 100%;
+				height: 60px;
+				line-height: 60px;
+        // height: 22px;
+				box-sizing: border-box;
+				z-index: 1;
         .title {
           display: inline-block;
           font-size: 16px;
@@ -1360,7 +1597,7 @@ export default {
         .more {
           position: absolute;
           right: 0;
-          top: 0;
+          top: 18px;
           width: 40px;
           height: 22px;
           line-height: 22px;
@@ -1388,7 +1625,7 @@ export default {
           position: relative;
           width: 100%;
           height: 340px;
-          border: 1px solid #D8D8D8;
+          // border: 1px solid #D8D8D8;
           overflow: hidden;
           box-sizing: border-box;
           .img {
@@ -1410,14 +1647,11 @@ export default {
             background-color: #fff;
             box-sizing: border-box;
             transition: all ease-in-out 0.25s;
-            &:hover {
-              bottom: 0px;
-            }
             .name {
               font-size: 16px;
-              line-height: 20px;
-              font-family: PingFang SC Regular;
-              color: #383838;
+              line-height: 22px;
+							color: #383838;
+							font-weight: bold;
             }
             .title {
               margin-top: 20px;
@@ -1447,17 +1681,34 @@ export default {
               cursor: pointer;
             }
             .get {
-              margin-top: 50px;
+							position: absolute;
+							left: 15px;
+							bottom: 15px;
+              // margin-top: 50px;
               font-size: 16px;
-              font-family: PingFangSC;
+              // font-family: PingFangSC;
               font-weight: bold;
               color: rgba(51,51,51,1);
               line-height: 22px;
               cursor: pointer;
             }
-          }
+					}
+					&:hover {
+						.info {
+							bottom: 0px;
+						}
+					}
         }
-      }
+			}
+			.layer-bg {
+				position: absolute;
+				left: 0;
+				top: 0;
+				width: 100%;
+				height: 290px;
+				background-color: #fff;
+				z-index: 0;
+			}
     }
   }
 

@@ -6,8 +6,7 @@
         <div class="desc">深圳宅设传媒有限公司是一家以设计师为主题活动的公司，旗下平台宅设会以设计师活动聚集地为中心，分别有线下活动，优惠活动、外包信息公布等，一个让设计师聚集的福利平台</div>
         <div class="title">联系我们</div>
         <div class="desc">公司地址：深圳市南山区华侨城创意园北区A1栋602<br/>联系方式：186 6437 3764</div>
-        <div class="cop">粤ICP备17153005号-1</div>
-        <div class="about">about me 关于我们</div>
+        <!-- <div class="cop">法律声明：粤ICP备17153005号-1</div> -->
       </div>
       <div class="bottom-line"></div>
       <div class="bottom-flex friend-link">
@@ -28,6 +27,13 @@
         <div class="the-email">
           商务合作邮箱<br/>zoupengyu@zdesigner.cn
         </div>
+      </div>
+      <div class="sys-list">
+        <div class="sys">法律声明：粤ICP备17153005号-1</div>
+        <div class="sys">关于我们</div>
+        <div class="sys">用户协议</div>
+        <div class="sys">商务合作</div>
+        <div class="sys">联系我们</div>
       </div>
     </div>
   </div>
@@ -73,6 +79,7 @@ export default {
     width: 100%;
     background-color: #262626;
     .max-width {
+      position: relative;
       display: flex;
       .bottom-flex {
         position: relative;
@@ -80,29 +87,21 @@ export default {
         .title {
           font-size: 16px;
           line-height: 22px;
+          font-weight: bold;
         }
         &.intro {
           padding-right: 55px;
           width: 440px;
           box-sizing: border-box;
           .desc {
-            margin-top: 10px;
-            margin-bottom: 20px;
+            margin-top: 5px;
+            margin-bottom: 10px;
             font-size: 12px;
             line-height: 26px;
           }
           .cop {
             font-size: 14px;
             line-height: 17px;
-          }
-          .about {
-            position: absolute;
-            right: 55px;
-            bottom: 0;
-            font-size: 12px;
-            color: #79798A;
-            line-height: 17px;
-            cursor: pointer;
           }
         }
         &.friend-link {
@@ -145,9 +144,9 @@ export default {
             }
           }
           .the-wechat, .the-email {
-            margin-top: 20px;
-            font-size: 14px;
-            line-height: 20px;
+            margin-top: 26px;
+            font-size: 12px;
+            line-height: 17px;
           }
         }
       }
@@ -156,6 +155,20 @@ export default {
         height: 150px;
         background-color: #222229;
         box-shadow: 1px 0px 0px #33333C;
+      }
+
+      .sys-list {
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        .sys {
+          display: inline;
+          margin-right: 50px;
+          font-size: 12px;
+          color: #79798A;
+          line-height: 17px;
+          cursor: pointer;
+        }
       }
       // .bottom-left {
       //   position: relative;

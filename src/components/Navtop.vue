@@ -1,5 +1,5 @@
 <template>
-  <div class="nav-bar">
+  <div :class="$route.name === '设计师工具' || $route.name === '设计师工具详情' ? 'nav-bar no-shadow' : 'nav-bar'">
     <div class="max-width">
       <div class="nav-top">
         <div class="logo" @click="$router.push('/')">
@@ -25,14 +25,17 @@
     <Login v-show="showLogin" :status="loginStatus" @close-login="closeLogin"></Login>
     </transition>
 
-    <tips :tips="tipsText" :tipsBackgroundColor="tipsBackgroundColor"></tips>
+    <Tips :tips="tipsText" :tipsBackgroundColor="tipsBackgroundColor"></Tips>
+
+    <Auth></Auth>
   </div>
 </template>
 
 <script>
 import { routes } from './../router/index'
 import Login from './Login'
-import tips from '@/components/Tips';
+import Tips from '@/components/Tips';
+import Auth from '@/components/Auth';
 
 export default {
   data() {
@@ -48,7 +51,8 @@ export default {
   },
   components: {
     Login,
-    tips,
+    Tips,
+    Auth,
   },
   watch: {
     $route(from) {
@@ -117,6 +121,8 @@ export default {
           funcName: 'access_token',
           data: {
             code : this.$route.query.code,
+            appid: 'wx9a76b368090721eb',
+            secret: 'f17b3a8b2b6f23e998b8af0372fd7774',
           }
         };
         this.$Bmob.functions(params.funcName, params.data).then((respon) => {
@@ -148,7 +154,7 @@ export default {
               }, 1500);
               return false;
             }
-            if (user.sucess === false) { 
+            if (user.sucess === false) {
               this.$router.push('/');
               this.tipsText = user.message;
               let t = setTimeout(() => {
@@ -195,9 +201,10 @@ export default {
                     };
 
                     const userquery = this.$Bmob.Query('_User');
-                    userquery.get(userlist[i].objectId).then(user => {
-                      user.set('loginTime', data);
-                      user.save().then(() => {
+                    userquery.get(userlist[i].objectId).then(userdata => {
+                      userdata.set('loginTime', data);
+                      userdata.set('unionid', user.unionid);
+                      userdata.save().then(() => {
                         console.log('---已记录登录时间---');
                       }).catch(err => {
                         console.log(err)
@@ -214,6 +221,7 @@ export default {
                   email,
                   imgSrc: user.headimgurl,
                   openid: user.openid,
+                  unionid: user.unionid,
                   sex: user.sex,
                   city: user.city,
                   province: user.province,
@@ -264,6 +272,11 @@ export default {
     background-color: #fff;
     box-shadow: 0px -34px 49px 9px #bbb;
     z-index: 2;
+    &.no-shadow {
+      box-shadow: none;
+      border-bottom: 1px solid #eee;
+    }
+
     .max-width {
       margin: auto;
       height: 100%;

@@ -27,10 +27,16 @@ export const routes = [
         meta: { menu: false },
       },
       {
+        path: '/tools/payment',
+        name: '支付详情',
+        component: () => import('@/views/Tools/Payment'),
+        meta: { menu: false },
+      },
+      {
         path: '/activity',
-        name: '活动',
+        name: '宅社活动',
         component: () => import('@/views/Activity/index'),
-        meta: { menu: false, keepAlive: true },
+        meta: { menu: true, keepAlive: true },
       },
       {
         path: '/activity/item/:id',
@@ -47,6 +53,12 @@ export const routes = [
       {
         path: '/download',
         name: '灵感库',
+        component: () => import('@/views/Download/index'),
+        meta: { menu: true, keepAlive: true },
+      },
+      {
+        path: '/download',
+        name: '私单墙',
         component: () => import('@/views/Download/index'),
         meta: { menu: true, keepAlive: true },
       },
@@ -73,6 +85,12 @@ export const routes = [
         name: '个人中心',
         component: () => import('@/views/User/index'),
         meta: { menu: false, keepAlive: true },
+      },
+      {
+        path: '/auth',
+        name: '身份验证',
+        meta: { menu: false },
+        component: () => import('@/views/Auth/index'),
       },
     ],
   },

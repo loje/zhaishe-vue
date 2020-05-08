@@ -1,6 +1,70 @@
 <template>
   <div class="tools-page">
-    <div class="tools-top">
+    <Search></Search>
+
+    <div class="max-width">
+      <div class="tool-detail">
+        <div class="tool-info">
+          <div class="info-left">
+            <div class="info-img" :style="{backgroundImage: `url(${info.imgSrc})`}"></div>
+            <div class="the-info">
+              <div class="t">官方信息</div>
+              <div class="url">{{info.website}}</div>
+              <div class="t">支持系统</div>
+              <div class="tag-list">
+                <div class="tag">MAC</div>
+                <div class="tag">WIN</div>
+                <div class="tag">IOS</div>
+                <div class="tag">LINUX</div>
+              </div>
+              <div class="sell">已销售 {{info.count}} 份</div>
+            </div>
+          </div>
+          <div class="info-right">
+            <div class="title">{{info.title}}</div>
+            <div class="desc">{{info.desc}}</div>
+
+            <div class="price-bar">
+              <div class="the-price">价格 <span class="val">140元</span></div>
+              <div class="like">
+                <i class="iconfont">&#xe602;</i> 1020
+              </div>
+            </div>
+
+            <div class="edit-sku">
+              <div class="title">选择购买套餐</div>
+              <div class="attrs">
+                <template v-for="(item, $index) in attrs">
+                <div :class="selectAttr.objectId === item.objectId ? 'attr active':'attr'" :key="$index" @click="selSku(item)">{{item.attrName}}-{{item.attrPrice}}元</div>
+                </template>
+              </div>
+
+              <div class="sell-tips">
+                <span class="tips-left">今日团购：<span class="count">{{info.count}}人</span></span>
+                <span class="tips-right">每日18:00左右发码</span>
+              </div>
+
+              <div class="sell-func">
+                <div class="btn" @click="toPayment">确定</div>
+                <div class="count-control">
+                  <input type="text" v-model="amount" @change="changeAmount" />
+                  <div class="control">
+                    <span @click="addAmount">+</span>
+                    <span @click="minus">-</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tool-content">
+          <div class="title">工具详情</div>
+          <article v-html="info.content"></article>
+        </div>
+      </div>
+    </div>
+    <!-- <div class="tools-top">
       <div class="max-width">
         <div class="media">
           <div class="media-left">
@@ -106,8 +170,6 @@
                 <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
               </div>
               <div class="input-group" style="margin: 0;padding:0px;height: auto;">
-                <!-- <span>备注</span> -->
-                <!-- <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" /> -->
                 <textarea v-model="dialog.remark" placeholder="有需要可以留下你的备注" rows="4" style="padding:10px;width:100%;border:0;outline:none;resize:none;"></textarea>
               </div>
               <div class="error">{{dialogError}}</div>
@@ -156,30 +218,38 @@
         </div>
         </template>
       </div>
-    </div>
+    </div> -->
 
-    <div class="tools-detail" v-if="step === 1">
+    <!-- <div class="tools-detail" v-if="step === 1">
       <div class="max-width">
         <loading v-if="loading === true"></loading>
         <article v-else v-html="info.content"></article>
       </div>
-    </div>
+    </div> -->
   </div>
 </template>
 
 <script>
-import loading from '@/components/Loading';
-import wechatPay from '@/components/WechatPay';
+// import loading from '@/components/Loading';
+// import wechatPay from '@/components/WechatPay';
+
+import Search from '@/components/Search';
+
 
 export default {
   components: {
-    loading,
-    wechatPay,
+    // loading,
+    // wechatPay,
+    Search,
   },
   data() {
     return {
       loading: false,
       info: {},
+
+      attrs: [],
+      selectAttr: '',
+      amount: 0,
 
       activePrice: 1,
       dialog: {},
@@ -204,6 +274,31 @@ export default {
     selectPrice(i) {
       this.activePrice = i;
     },
+    selSku(item) {
+      this.selectAttr = item;
+    },
+    addAmount() {
+      if (this.attrs.length > 0 && this.selectAttr === '') {
+        alert('请选择套餐')
+        return false;
+      }
+      if (this.amount < this.selectAttr.attrNum) {
+        this.amount += 1
+      }
+    },
+    minus() {
+      if (this.amount > 0) {
+        this.amount -= 1
+      }
+    },
+    changeAmount() {
+      if (this.amount > this.selectAttr.attrNum) {
+        this.amount = this.selectAttr.attrNum;
+      }
+      if (this.amount < 0) {
+        this.amount = 1
+      }
+    },
     getinfo() {
       this.loading = true;
       var query = this.$Bmob.Query('product');
@@ -223,19 +318,48 @@ export default {
           groupInventory: res.groupInventory || 0,
           content: res.content,
         };
+        let skuquery = this.$Bmob.Query('skus');
+        skuquery.equalTo('productId', '===', this.$route.params.id);
+        skuquery.find().then((r) => {
+          this.attrs = r;
+        });
       });
 
       const pointer = this.$Bmob.Pointer('product')
       const poiID = pointer.set(this.$route.params.id);
 
+
+      // let aDay = {
+      //     "__type": "Date",
+      //     "iso": `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 00:00:00`
+      // };
+      // let bDay = {
+      //     "__type": "Date",
+      //     "iso": `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`
+      // };
       let orderQuery = this.$Bmob.Query('order_list');
       orderQuery.equalTo("product","==", poiID);
+      // orderQuery.equalTo("createdAt", ">", aDay);
+      // orderQuery.equalTo("createdAt", "<", bDay);
       orderQuery.count().then((count) => {
         this.info = {
           ...this.info,
           count,
         };
       });
+    },
+
+    toPayment() {
+      const payment = {
+        imgSrc: this.info.imgSrc,
+        title: this.info.title,
+        desc: this.info.desc,
+        amount: this.amount,
+        attrName: this.selectAttr.attrName,
+        price: this.selectAttr.attrPrice,
+      };
+      localStorage.setItem('payment', JSON.stringify(payment));
+      this.$router.push('/tools/payment');
     },
 
     back() {
@@ -372,428 +496,638 @@ export default {
 
 <style lang="scss" scoped>
   .tools-page {
-    .tools-top {
-      padding: 50px 0 30px;
-      background-color: #FCFCFC;
-      .max-width {
-        padding: 40px 90px 50px;
-        background-color: #fff;
-        box-sizing: border-box;
-        .media {
-          display: flex;
-          align-items: top;
-          width: 100%;
-          height: 160px;
-          overflow: hidden;
-          .media-left {
-            width: 160px;
-            height: 100%;
-            background-color: #fff;
-            border-radius: 10px;
-            .img {
-              width: 100%;
-              height: 100%;
-              background-position: 50%;
-              background-size: cover;
-              border: 1px solid #D8D8D8;
-              box-sizing: border-box;
-              border-radius: 2px;
-              overflow: hidden;
-            }
-          }
-          .media-right {
-            flex: 1;
-            height: 100%;
-            box-sizing: border-box;
-            padding-left: 30px;
-            .media-info {
-              position: relative;
-              padding-top: 10px;
-              height: 100%;
-              background-color: #fff;
-              border-radius: 10px;
-              box-sizing: border-box;
-              .title {
-                font-size: 20px;
-                font-family: PingFang SC Regular;
-                color: #262626;
-                line-height: 32px;
-                font-weight: bold;
-                span {
-                  display: inline-block;
-                  margin-right: 10px;
-                  width: 56px;
-                  height: 20px;
-                  font-size: 12px;
-                  line-height: 20px;
-                  border: 1px solid #FF5D01;
-                  border-radius: 2px;
-                  text-align: center;
-                  color: #FF5D01;
-                }
-              }
-              .sub-title {
-                margin-top: 10px;
-                font-size: 14px;
-                font-family: PingFang SC Regular;
-                color: #888;
-                line-height: 24px;
-              }
-              .info-btm {
-                position: absolute;
-                left: 0;
-                bottom: 0;
-                width: 100%;
-                font-size: 12px;
-                line-height: 17px;
-                color: #888;
-                .sell {
-                  display: inline-block;
-                  vertical-align: middle;
-                  margin-right: 70px;
-                }
-                .url {
-                  display: inline-block;
-                  vertical-align: middle;
-                  max-width: 490px;
-                  overflow: hidden;
-                  text-overflow: ellipsis;
-                  white-space: nowrap;
-                }
-                a {
-                  display: inline-block;
-                  vertical-align: middle;
-                  margin-left: 10px;
-                  color: #888;
-                }
-              }
-            }
-          }
-        }
-
-        .price-bar {
-          margin-top: 50px;
-          padding: 17px 24px;
-          width: 100%;
-          background-color: #FCFCFC;
-          box-sizing: border-box;
-          .btn {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 40px;
-            width: 112px;
-            height: 36px;
-            font-size: 14px;
-            line-height: 34px;
-            border: 1px solid #DCDCDC;
-            color: #262626;
-            text-align: center;
-            border-radius: 2px;
-            font-weight: bold;
-            box-sizing: border-box;
-            cursor: pointer;
-            &.active {
-              border-color: #F4751D;
-              color: #F4751D;
-            }
-          }
-          input {
-            display: inline-block;
-            vertical-align: middle;
-            padding: 0 15px;
-            height: 36px;
-            box-sizing: border-box;
-            outline: none;
-            border: 1px solid #DCDCDC;
-            text-align: center;
+    .tool-detail {
+      padding: 50px 100px;
+      background-color: #fff;
+      box-sizing: border-box;
+      .tool-info {
+        display: flex;
+        margin-bottom: 40px;
+        .info-left {
+          width: 300px;
+          .info-img {
+            width: 300px;
+            height: 300px;
+            background-position: 50%;
+            background-size: contain;
+            border: 1px solid #eee;
             box-sizing: border-box;
           }
-
-          .bar-right {
-            float: right;
-            display: flex;
-            color: #262626;
-            font-size: 12px;
-            line-height: 36px;
-            height: 36px;
+          .the-info {
+            padding: 20px;
+            width: 300px;
+            border: 1px solid #eee;
+            border-top: none;
+            box-sizing: border-box;
             .t {
-              line-height: 36px;
-            }
-            .price{
-              margin-left: 10px;
-              span {
-                margin: 0 5px;
-                font-size: 18px;
-              }
-            }
-            .btn {
-              margin-left: 50px;
-              &.btn-buy {
-                margin-right: 0;
-                background-color: rgba(244,117,29,0.3);
-              }
-            }
-            
-          }
-        }
-
-        .tips {
-          display: flex;
-          margin-top: 30px;
-          padding: 0 24px;
-          width: 100%;
-          box-sizing: border-box;
-          .tips-left {
-            flex: 1;
-            padding-right: 10px;
-            box-sizing: border-box;
-            .title {
-              color: #262626;
+              margin-bottom: 10px;
               font-size: 14px;
-              line-height: 32px;
+              font-weight: bold;
+              color: #666;
             }
-            .text {
-              color: #888888;
-              font-size: 14px;
-              line-height: 24px;
-            }
-          }
-          .tips-right {
-            width: 90px;
-            img {
-              width: 90px;
-            }
-          }
-        }
-
-        .buy-layer {
-          position: relative;
-          margin-top: 50px;
-          padding: 25px 0 63px 0;
-          border-top: 1px solid #F2F2F2;
-          box-sizing: border-box;
-          .back {
-            position: absolute;
-            left: 80px;
-            top:25px;
-            cursor: pointer;
-            .back-icon {
-              display: inline-block;
-              width: 20px;
-              height: 28px;
-              line-height: 28px;
-              border: 1px solid #F2F2F2;
-              border-radius: 2px;
-              color: #F4C51D;
+            .url {
+              margin-bottom: 20px;
               font-size: 12px;
-              text-align: center;
+              color: #888;
+              word-break: break-all;
             }
-            .t {
-              margin-left: 10px;
-              line-height: 28px;
-              font-size: 12px;
-              color: #262626;
-            }
-          }
-
-          .buy-steps {
-            width: 100%;
-            text-align: center;
-            .step {
-              display: inline-block;
-              vertical-align: middle;
-              padding: 0 16px;
-              .count {
-                margin: auto;
-                width: 38px;
-                height: 38px;
-                line-height: 38px;
-                text-align: center;
-                border-radius: 50%;
-                border: 1px solid #979797;
-                font-size: 16px;
-                color: #262626;
-                &.active {
-                  background-color: #FF5D01;
-                  border: 1px solid #FF5D01;
-                  color: #fff;
-                }
-              }
-              .step-t {
-                margin-top: 13px;
-                font-size: 12px;
-                line-height: 17px;
-                text-align: center;
-                color: #262626;
-              }
-            }
-            .line {
-              display: inline-block;
-              vertical-align: top;
-              margin-top: 19px;
-              width: 52px;
-              height: 1px;
-              background-color: #979797;
-            }
-          }
-
-          .buy-box {
-            padding-top: 50px;
-            .box-form {
-              margin: auto;
-              width: 320px;
-              .input-group {
-                display: flex;
-                margin-bottom: 20px;
-                padding: 0px 10px;
-                width: 320px;
-                height: 36px;
-                line-height: 34px;
-                border: 1px solid #979797;
-                font-size: 12px;
-                box-sizing: border-box;
-                &:last-child {
-                  margin-bottom: 0;
-                }
-                span {
-                  color: #888;
-                  width: 70px;
-                }
-                input {
-                  padding: 0;
-                  height: 34px;
-                  border: none;
-                  outline: none;
-                  box-sizing: border-box;
-                }
-              }
-              .error {
-                margin: 10px 0 30px 0;
-                font-size: 12px;
-                height: 17px;
-                color: #E55D5D;
-              }
-              .text {
-                margin-bottom: 17px;
-                text-align: center;
-                color: #262626;
-                font-size: 14px;
+            .tag-list {
+              display: flex;
+              margin-bottom: 25px;
+              .tag {
+                margin-right: 10px;
+                width: 50px;
+                height: 20px;
                 line-height: 20px;
-                span {
-                  margin: 0 10px;
-                  font-size: 24px;
-                  color: #FF5D01;
-                }
-              }
-              .btn {
-                width: 320px;
-                height: 40px;
-                line-height: 40px;
                 text-align: center;
-                border: 1px solid #6BCC03;
-                border-radius: 2px;
-                font-size: 14px;
-                color: #333333;
-                cursor: pointer;
-                i {
-                  color: #09BB07;
-                  margin-right: 10px;
-                }
+                background-color: #f5f5f5;
+                color: #999;
+                font-size: 10px;
               }
             }
-          }
-
-          .select-price {
-            margin-top: 50px;
-            margin-bottom: 11px;
-            text-align: center;
-            color: #262626;
-            font-size: 14px;
-            line-height: 20px;
-            span {
-              margin: 0 10px;
-              font-size: 24px;
-              color: #FF5D01;
-            }
-          }
-          .qrcode-box {
-            margin:auto;
-            // width:300px;
-            // height:300px;
-          }
-          .wechat-text {
-            margin-top: 15px;
-            font-size:16px;
-            line-height: 22px;
-            text-align: center;
-            color: #262626;
-          }
-          .pay-result {
-            padding: 50px 0;
-            text-align: center;
-            i {
-              color: #00c250;
-              font-size:48px;
-            }
-            .t {
-              margin-top: 30px;
-              color: #FF5D01;
-              font-size: 16px;
-              line-height: 22px;
-            }
-            &.fail {
-              i {
-                color: #262626;
-              }
-              .t {
-                color: #262626;
-              }
+            .sell {
+              font-size: 12px;
+              color: #888;
             }
           }
         }
-
-        .buy-tips {
-          padding: 50px 80px 0px;
+        .info-right {
+          flex: 1;
+          padding-left: 40px;
+          box-sizing: border-box;
           .title {
-            font-size: 14px;
+            margin-bottom: 10px;
+            font-size: 20px;
             line-height: 32px;
             color: #262626;
-            font-weight: bold;
+            font-weight: 600;
           }
-          .text {
+          .desc {
+            margin-bottom: 10px;
             font-size: 14px;
             line-height: 24px;
             color: #888;
           }
-        }
-      }
-    }
-
-    .tools-detail {
-      margin-bottom: 20px;
-      padding-top: 60px;
-      min-height: calc(100vh - 50px - 574px - 311px - 20px);
-      width: 100%;
-      background-color: #fff;
-      border-radius: 10px;
-      box-sizing: border-box;
-      .max-width {
-        max-width: 900px;
-        article {
-          width: 100%;
-          line-height: 28px;
-          box-sizing: border-box;
-          img {
-            max-width: 100%;
-          }
-          p {
+          .price-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0 20px;
             width: 100%;
-            img {
-              max-width: 100%;
+            height: 60px;
+            background-color: #FBFBFB;
+            box-sizing: border-box;
+            .the-price {
+              font-size: 14px;
+              line-height: 20px;
+              color: #F4751D;
+              .val {
+                font-size: 20px;
+              }
+            }
+            .like {
+              width: 66px;
+              height: 26px;
+              background-color: #fff;
+              border-radius: 2px;
+              border:1px solid #F4751D;
+              font-size: 10px;
+              line-height: 26px;
+              text-align: center;
+              color: #F4751D;
+              cursor: pointer;
+              i {
+                font-size: 10px;
+              }
+            }
+          }
+
+          .edit-sku {
+            .title {
+              margin-bottom: 10px;
+              font-size: 14px;
+              line-height: 20px;
+              color: #333;
+              font-weight: bold;
+            }
+            .attrs {
+              display: flex;
+              padding-bottom: 20px;
+              flex-wrap: wrap;
+              border-bottom: 1px solid #eee;
+              .attr {
+                margin-right: 30px;
+                margin-bottom: 10px;
+                width: 240px;
+                height: 40px;
+                line-height: 40px;
+                border: 1px solid #eee;
+                color: #333;
+                text-align: center;
+                font-size: 14px;
+                cursor: pointer;
+                &:hover, &.active {
+                  border-color: #F47A25;
+                  color: #F47A25;
+                }
+              }
+            }
+            .sell-tips {
+              margin-top: 20px;
+              .tips-left {
+                font-size: 14px;
+                line-height: 20px;
+                color: #262626;
+                font-weight: bold;
+                .count {
+                  color: #F47A25;
+                }
+              }
+              .tips-right {
+                margin-left: 30px;
+                font-size: 12px;
+                color: #262626;
+              }
+            }
+            .sell-func {
+              display: flex;
+              margin-top: 20px;
+              .btn {
+                margin-right: 40px;
+                width: 170px;
+                height: 40px;
+                line-height: 40px;
+                text-align: center;
+                background-color: #F4751D;
+                color: #fff;
+                cursor: pointer;
+              }
+              .count-control {
+                display: flex;
+                width: 100px;
+                height: 40px;
+                border: 1px solid #eee;
+                input {
+                  width: 80px;
+                  height: 100%;
+                  border: none;
+                  padding: 0;
+                  box-sizing: border-box;
+                  outline: none;
+                  text-align: center;
+                }
+                .control {
+                  width: 20px;
+                  border-left: 1px solid #eee;
+                  span {
+                    display: block;
+                    line-height: 20px;
+                    text-align: center;
+                    color: #333;
+                    cursor: pointer;
+                    box-sizing: border-box;
+                    &:first-child {
+                      border-bottom: 1px solid #eee;
+                    }
+                  }
+                }
+              }
             }
           }
         }
       }
+      .tool-content {
+        .title {
+          margin-bottom: 20px;
+          font-size: 20px;
+          color: #262626;
+          font-weight: bold;
+        }
+      }
     }
+    // .tools-top {
+    //   padding: 50px 0 30px;
+    //   background-color: #FCFCFC;
+    //   .max-width {
+    //     padding: 40px 90px 50px;
+    //     background-color: #fff;
+    //     box-sizing: border-box;
+    //     .media {
+    //       display: flex;
+    //       align-items: top;
+    //       width: 100%;
+    //       height: 160px;
+    //       overflow: hidden;
+    //       .media-left {
+    //         width: 160px;
+    //         height: 100%;
+    //         background-color: #fff;
+    //         border-radius: 10px;
+    //         .img {
+    //           width: 100%;
+    //           height: 100%;
+    //           background-position: 50%;
+    //           background-size: cover;
+    //           border: 1px solid #D8D8D8;
+    //           box-sizing: border-box;
+    //           border-radius: 2px;
+    //           overflow: hidden;
+    //         }
+    //       }
+    //       .media-right {
+    //         flex: 1;
+    //         height: 100%;
+    //         box-sizing: border-box;
+    //         padding-left: 30px;
+    //         .media-info {
+    //           position: relative;
+    //           padding-top: 10px;
+    //           height: 100%;
+    //           background-color: #fff;
+    //           border-radius: 10px;
+    //           box-sizing: border-box;
+    //           .title {
+    //             font-size: 20px;
+    //             font-family: PingFang SC Regular;
+    //             color: #262626;
+    //             line-height: 32px;
+    //             font-weight: bold;
+    //             span {
+    //               display: inline-block;
+    //               margin-right: 10px;
+    //               width: 56px;
+    //               height: 20px;
+    //               font-size: 12px;
+    //               line-height: 20px;
+    //               border: 1px solid #FF5D01;
+    //               border-radius: 2px;
+    //               text-align: center;
+    //               color: #FF5D01;
+    //             }
+    //           }
+    //           .sub-title {
+    //             margin-top: 10px;
+    //             font-size: 14px;
+    //             font-family: PingFang SC Regular;
+    //             color: #888;
+    //             line-height: 24px;
+    //           }
+    //           .info-btm {
+    //             position: absolute;
+    //             left: 0;
+    //             bottom: 0;
+    //             width: 100%;
+    //             font-size: 12px;
+    //             line-height: 17px;
+    //             color: #888;
+    //             .sell {
+    //               display: inline-block;
+    //               vertical-align: middle;
+    //               margin-right: 70px;
+    //             }
+    //             .url {
+    //               display: inline-block;
+    //               vertical-align: middle;
+    //               max-width: 490px;
+    //               overflow: hidden;
+    //               text-overflow: ellipsis;
+    //               white-space: nowrap;
+    //             }
+    //             a {
+    //               display: inline-block;
+    //               vertical-align: middle;
+    //               margin-left: 10px;
+    //               color: #888;
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+
+    //     .price-bar {
+    //       margin-top: 50px;
+    //       padding: 17px 24px;
+    //       width: 100%;
+    //       background-color: #FCFCFC;
+    //       box-sizing: border-box;
+    //       .btn {
+    //         display: inline-block;
+    //         vertical-align: middle;
+    //         margin-right: 40px;
+    //         width: 112px;
+    //         height: 36px;
+    //         font-size: 14px;
+    //         line-height: 34px;
+    //         border: 1px solid #DCDCDC;
+    //         color: #262626;
+    //         text-align: center;
+    //         border-radius: 2px;
+    //         font-weight: bold;
+    //         box-sizing: border-box;
+    //         cursor: pointer;
+    //         &.active {
+    //           border-color: #F4751D;
+    //           color: #F4751D;
+    //         }
+    //       }
+    //       input {
+    //         display: inline-block;
+    //         vertical-align: middle;
+    //         padding: 0 15px;
+    //         height: 36px;
+    //         box-sizing: border-box;
+    //         outline: none;
+    //         border: 1px solid #DCDCDC;
+    //         text-align: center;
+    //         box-sizing: border-box;
+    //       }
+
+    //       .bar-right {
+    //         float: right;
+    //         display: flex;
+    //         color: #262626;
+    //         font-size: 12px;
+    //         line-height: 36px;
+    //         height: 36px;
+    //         .t {
+    //           line-height: 36px;
+    //         }
+    //         .price{
+    //           margin-left: 10px;
+    //           span {
+    //             margin: 0 5px;
+    //             font-size: 18px;
+    //           }
+    //         }
+    //         .btn {
+    //           margin-left: 50px;
+    //           &.btn-buy {
+    //             margin-right: 0;
+    //             background-color: rgba(244,117,29,0.3);
+    //           }
+    //         }
+            
+    //       }
+    //     }
+
+    //     .tips {
+    //       display: flex;
+    //       margin-top: 30px;
+    //       padding: 0 24px;
+    //       width: 100%;
+    //       box-sizing: border-box;
+    //       .tips-left {
+    //         flex: 1;
+    //         padding-right: 10px;
+    //         box-sizing: border-box;
+    //         .title {
+    //           color: #262626;
+    //           font-size: 14px;
+    //           line-height: 32px;
+    //         }
+    //         .text {
+    //           color: #888888;
+    //           font-size: 14px;
+    //           line-height: 24px;
+    //         }
+    //       }
+    //       .tips-right {
+    //         width: 90px;
+    //         img {
+    //           width: 90px;
+    //         }
+    //       }
+    //     }
+
+    //     .buy-layer {
+    //       position: relative;
+    //       margin-top: 50px;
+    //       padding: 25px 0 63px 0;
+    //       border-top: 1px solid #F2F2F2;
+    //       box-sizing: border-box;
+    //       .back {
+    //         position: absolute;
+    //         left: 80px;
+    //         top:25px;
+    //         cursor: pointer;
+    //         .back-icon {
+    //           display: inline-block;
+    //           width: 20px;
+    //           height: 28px;
+    //           line-height: 28px;
+    //           border: 1px solid #F2F2F2;
+    //           border-radius: 2px;
+    //           color: #F4C51D;
+    //           font-size: 12px;
+    //           text-align: center;
+    //         }
+    //         .t {
+    //           margin-left: 10px;
+    //           line-height: 28px;
+    //           font-size: 12px;
+    //           color: #262626;
+    //         }
+    //       }
+
+    //       .buy-steps {
+    //         width: 100%;
+    //         text-align: center;
+    //         .step {
+    //           display: inline-block;
+    //           vertical-align: middle;
+    //           padding: 0 16px;
+    //           .count {
+    //             margin: auto;
+    //             width: 38px;
+    //             height: 38px;
+    //             line-height: 38px;
+    //             text-align: center;
+    //             border-radius: 50%;
+    //             border: 1px solid #979797;
+    //             font-size: 16px;
+    //             color: #262626;
+    //             &.active {
+    //               background-color: #FF5D01;
+    //               border: 1px solid #FF5D01;
+    //               color: #fff;
+    //             }
+    //           }
+    //           .step-t {
+    //             margin-top: 13px;
+    //             font-size: 12px;
+    //             line-height: 17px;
+    //             text-align: center;
+    //             color: #262626;
+    //           }
+    //         }
+    //         .line {
+    //           display: inline-block;
+    //           vertical-align: top;
+    //           margin-top: 19px;
+    //           width: 52px;
+    //           height: 1px;
+    //           background-color: #979797;
+    //         }
+    //       }
+
+    //       .buy-box {
+    //         padding-top: 50px;
+    //         .box-form {
+    //           margin: auto;
+    //           width: 320px;
+    //           .input-group {
+    //             display: flex;
+    //             margin-bottom: 20px;
+    //             padding: 0px 10px;
+    //             width: 320px;
+    //             height: 36px;
+    //             line-height: 34px;
+    //             border: 1px solid #979797;
+    //             font-size: 12px;
+    //             box-sizing: border-box;
+    //             &:last-child {
+    //               margin-bottom: 0;
+    //             }
+    //             span {
+    //               color: #888;
+    //               width: 70px;
+    //             }
+    //             input {
+    //               padding: 0;
+    //               height: 34px;
+    //               border: none;
+    //               outline: none;
+    //               box-sizing: border-box;
+    //             }
+    //           }
+    //           .error {
+    //             margin: 10px 0 30px 0;
+    //             font-size: 12px;
+    //             height: 17px;
+    //             color: #E55D5D;
+    //           }
+    //           .text {
+    //             margin-bottom: 17px;
+    //             text-align: center;
+    //             color: #262626;
+    //             font-size: 14px;
+    //             line-height: 20px;
+    //             span {
+    //               margin: 0 10px;
+    //               font-size: 24px;
+    //               color: #FF5D01;
+    //             }
+    //           }
+    //           .btn {
+    //             width: 320px;
+    //             height: 40px;
+    //             line-height: 40px;
+    //             text-align: center;
+    //             border: 1px solid #6BCC03;
+    //             border-radius: 2px;
+    //             font-size: 14px;
+    //             color: #333333;
+    //             cursor: pointer;
+    //             i {
+    //               color: #09BB07;
+    //               margin-right: 10px;
+    //             }
+    //           }
+    //         }
+    //       }
+
+    //       .select-price {
+    //         margin-top: 50px;
+    //         margin-bottom: 11px;
+    //         text-align: center;
+    //         color: #262626;
+    //         font-size: 14px;
+    //         line-height: 20px;
+    //         span {
+    //           margin: 0 10px;
+    //           font-size: 24px;
+    //           color: #FF5D01;
+    //         }
+    //       }
+    //       .qrcode-box {
+    //         margin:auto;
+    //         // width:300px;
+    //         // height:300px;
+    //       }
+    //       .wechat-text {
+    //         margin-top: 15px;
+    //         font-size:16px;
+    //         line-height: 22px;
+    //         text-align: center;
+    //         color: #262626;
+    //       }
+    //       .pay-result {
+    //         padding: 50px 0;
+    //         text-align: center;
+    //         i {
+    //           color: #00c250;
+    //           font-size:48px;
+    //         }
+    //         .t {
+    //           margin-top: 30px;
+    //           color: #FF5D01;
+    //           font-size: 16px;
+    //           line-height: 22px;
+    //         }
+    //         &.fail {
+    //           i {
+    //             color: #262626;
+    //           }
+    //           .t {
+    //             color: #262626;
+    //           }
+    //         }
+    //       }
+    //     }
+
+    //     .buy-tips {
+    //       padding: 50px 80px 0px;
+    //       .title {
+    //         font-size: 14px;
+    //         line-height: 32px;
+    //         color: #262626;
+    //         font-weight: bold;
+    //       }
+    //       .text {
+    //         font-size: 14px;
+    //         line-height: 24px;
+    //         color: #888;
+    //       }
+    //     }
+    //   }
+    // }
+
+    // .tools-detail {
+    //   margin-bottom: 20px;
+    //   padding-top: 60px;
+    //   min-height: calc(100vh - 50px - 574px - 311px - 20px);
+    //   width: 100%;
+    //   background-color: #fff;
+    //   border-radius: 10px;
+    //   box-sizing: border-box;
+    //   .max-width {
+    //     max-width: 900px;
+    //     article {
+    //       width: 100%;
+    //       line-height: 28px;
+    //       box-sizing: border-box;
+    //       img {
+    //         max-width: 100%;
+    //       }
+    //       p {
+    //         width: 100%;
+    //         img {
+    //           max-width: 100%;
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
   }
 </style>

@@ -17,7 +17,7 @@ body {
   padding: 0;
   padding-top: 50px;
   font-family: PingFang SC Regular;
-  background-color: #FCFCFC;
+  background-color: rgb(246, 247, 248);
   overflow-y: scroll;
 }
 
@@ -68,3 +68,107 @@ input:focus:-ms-input-placeholder { color:transparent; }
 
 ::selection{color:#000;background-color:rgba(244, 197, 29, 0.3);}
 ::-moz-selection{color:#000;background-color:rgba(244, 197, 29, 0.3);}
+
+.swiper-left {
+  text-align: center;
+  background-image: none!important;
+  background-color: rgba(0, 0, 0, 0.2);
+  outline: none;
+}
+.swiper-left i {
+  display: block;
+  width: 100%;
+  font-size: 24px;
+  line-height: 44px;
+  text-align: center;
+  color: #fff;
+}
+
+.swiper-left-prev{
+  left: 0!important;
+}
+.swiper-left-next {
+  right: 0!important;
+}
+
+
+
+
+.swiper-people {
+  top: initial!important;
+  bottom: 110px;
+  width: 30px!important;
+  height: 145px!important;
+  text-align: center;
+  background-image: none!important;
+  background-color: #F4C51D;
+  outline: none;
+}
+.swiper-people i {
+  display: block;
+  width: 100%;
+  font-size: 24px;
+  line-height: 145px;
+  text-align: center;
+  color: #fff;
+}
+.swiper-people.swiper-button-disabled {
+  opacity: 1!important;
+  background-color: #B3B3B3;
+}
+.swiper-people.swiper-button-disabled i{
+  color: #383838;
+}
+.swiper-people:hover {
+  background: linear-gradient(rgba(250,228,62,0.2), rgba(244,197,29,0.2))!important;
+}
+.swiper-people:hover i {
+  color: #F4C51D!important;
+}
+
+.swiper-people-prev{
+  left: 0!important;
+}
+.swiper-people-next {
+  right: 0!important;
+}
+
+
+
+
+.swiper-agenda {
+  width: 44px!important;
+  height: 44px!important;
+  text-align: center;
+  background-image: none!important;
+  background-color: #F4C51D;
+  border-radius: 50%;
+  outline: none;
+}
+.swiper-agenda i {
+  display: block;
+  width: 100%;
+  font-size: 24px;
+  line-height: 44px;
+  text-align: center;
+  color: #fff;
+}
+
+.swiper-agenda-prev{
+  left: 10px!important;
+}
+.swiper-agenda-next {
+  right: 10px!important;
+}
+.swiper-agenda.swiper-button-disabled {
+  opacity: 1!important;
+  background-color: #B3B3B3;
+}
+.swiper-agenda.swiper-button-disabled i{
+  color: #383838;
+}
+
+
+.swiper-pagination-bullets {
+  bottom: 0px!important;
+}
