@@ -97,9 +97,12 @@
                 <span>电话</span>
                 <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" :disabled="$store.state.user.mobilePhoneNumber" />
               </div>
-              <div class="input-group" style="margin: 0;">
+              <div class="input-group">
                 <span>邮箱</span>
                 <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
+              </div>
+              <div class="input-group" style="margin: 0;padding:0px;height: auto;">
+                <textarea v-model="dialog.remark" placeholder="有需要可以留下你的备注" rows="4" style="padding:10px;width:100%;border:0;outline:none;resize:none;"></textarea>
               </div>
               <div class="error">{{dialogError}}</div>
 
@@ -330,29 +333,37 @@ export default {
         body: this.info.title,
       };
 
-      const query = this.$Bmob.Query('_User');
-      query.get(this.$store.state.user.objectId).then(user => {
-        user.set('name', this.dialog.name);
-        user.set('mobilePhoneNumber', this.dialog.phone);
-        user.set('email', this.dialog.email);
-        user.set('wechatId', this.dialog.wechat);
-        user.save().then(() => {
-          if ((this.activePrice === 1 && this.info.price > 0) || (this.activePrice === 2 && this.info.birdPrice > 0)) {
-            this.step = 3;
-          } else {
-            this.step = 4;
-            this.getReslut({});
-          }
-        }).catch(err => {
-          console.log(err);
-          if (err.code === 209) {
-            this.dialogError = '该手机号码已经存在';
-          }
-          if (err.code === 301) {
-            this.dialogError = '邮箱格式不正确';
-          }
-        });
-      })
+
+      if ((this.activePrice === 1 && this.info.price > 0) || (this.activePrice === 2 && this.info.birdPrice > 0)) {
+        this.step = 3;
+      } else {
+        // this.step = 4;
+        this.getReslut({});
+      }
+      // const userquery = this.$Bmob.Query('_User');
+      // userquery.get(this.$store.state.user.objectId).then((user) => {
+      //   console.log(this.dialog);
+      //   user.set('name', this.dialog.name ? this.dialog.name : '');
+      //   user.set('mobilePhoneNumber', this.dialog.phone ? this.dialog.phone : '')
+      //   user.set('email', this.dialog.email ? this.dialog.email : '');
+      //   user.set('wechatId', this.dialog.wechat ? this.dialog.wechat : '');
+      //   user.save().then(() => {
+      //     if ((this.activePrice === 1 && this.info.price > 0) || (this.activePrice === 2 && this.info.birdPrice > 0)) {
+      //       this.step = 3;
+      //     } else {
+      //       // this.step = 4;
+      //       this.getReslut({});
+      //     }
+      //   }).catch(err => {
+      //     console.log(err);
+      //     if (err.code === 209) {
+      //       this.dialogError = '该手机号码已经存在';
+      //     }
+      //     if (err.code === 301) {
+      //       this.dialogError = '邮箱格式不正确';
+      //     }
+      //   });
+      // })
     },
 
     getReslut(item) {
@@ -365,6 +376,15 @@ export default {
       const userPointer = this.$Bmob.Pointer('_User');
       const userID = userPointer.set(this.$store.state.user.objectId);
       query.set('user', userID);
+
+      query.set('name', this.dialog.name);
+      query.set('phone', this.dialog.phone);
+      query.set('email', this.dialog.email);
+      query.set('wechatId', this.dialog.wechat);
+      if (this.dialog.remark) {
+        query.set('remark', this.dialog.remark);
+      }
+
       query.set('delivery', false);
       query.save().then(res => {
         console.log(res);
@@ -375,6 +395,9 @@ export default {
         const activityPointer = this.$Bmob.Pointer('activity')
         const activityID = activityPointer.set(this.$route.params.id)
         apquery.set('activity', activityID);
+        const orderPointer = this.$Bmob.Pointer('order_list')
+        const orderID = orderPointer.set(res.objectId);
+        apquery.set('order', orderID);
         apquery.set('isApply', true);
         apquery.save().then(() => {
           this.step = 4;
