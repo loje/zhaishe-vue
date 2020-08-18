@@ -1,16 +1,7 @@
 <template>
   <div class="max-width">
     <div class="the-layer">
-      <div class="layer-left">
-        <div class="img" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');"></div>
-        
-        <div class="btn" @click="$router.push('/tools/item/b736ede69b')">我还没有Eagle</div>
-        <div class="btn" @click="showContact = true">联系小编上素材</div>
 
-        <div class="tab-list">
-          <div v-for="(item, $index) in tabList" :key="$index" :class="activeTab === item.value ? 'active tab' : 'tab'" @click="toggle(item.value)">{{item.label}}</div>
-        </div>
-      </div>
       <div class="layer-right">
         <div class="recommend">
           <loading v-if="downloadBannerLoading"></loading>
@@ -22,7 +13,12 @@
               </div>
             </swiper-slide>
             </template>
+            <div class="swiper-pagination" slot="pagination"></div>
           </swiper>
+        </div>
+
+        <div class="tab-list">
+          <div v-for="(item, $index) in tabList" :key="$index" :class="activeTab === item.value ? 'active tab' : 'tab'" @click="toggle(item.value)">{{item.label}}</div>
         </div>
 
         <div class="download-list">
@@ -36,7 +32,7 @@
               <div class="title">{{item.title}}</div>
               <div class="info">
                 <span>上传人：{{item.author}}</span>
-                <!-- <span>微信：{{item.wechat}}</span> -->
+                <span v-if="item.wechat">微信：{{item.wechat}}</span>
               </div>
             </div>
             <div class="download-right">
@@ -48,12 +44,12 @@
         </div>
 
         <div class="pages" v-if="downloadList.length > 0">
-          <div class="prev">上一页</div>
+          <div class="prev" @click="getDownloadList(1)">首页</div>
           <div class="page-list">
             <div :class="pageDownload === item ? 'page active' : 'page'" v-for="item in downloadPages" :key="item" @click="getDownloadList(item)">{{item > 3 ? '···' : item}}</div>
           </div>
-          <div class="next">下一页</div>
-          <div class="last">尾页</div>
+          <div class="next" @click="getDownloadList(pageDownload + 1)">下一页</div>
+          <div class="last" @click="getDownloadList(downloadPages)">尾页</div>
         </div>
       </div>
     </div>
@@ -122,6 +118,7 @@ export default {
         delay: 1000,
         pagination: {
           el: '.swiper-pagination',
+          clickable :true,
         }
       },
       downloadBanner: [],
@@ -161,7 +158,7 @@ export default {
       downloadList: [],
       downloadTotal: 0, // 总条数
       downloadPages: 2, // 总页数
-      downloadLimit: 10, // 每页条数
+      downloadLimit: 14, // 每页条数
       downloadLoading: false,
       skipDownload: 0, // 跳过数量
       pageDownload: 1, // 当前页数
@@ -342,61 +339,25 @@ export default {
   },
 };
 </script>
+<style>
+  .recommend .swiper-pagination-bullet {
+    border: 1px solid #fff;
+    background: transparent;
+    opacity: 1;
+    box-sizing: border-box;
+  }
+  .recommend .swiper-pagination-bullet-active {
+    background: #ffffff;
+  }
+</style>
 <style lang="scss" scoped>
+
   .the-layer {
-    display: flex;
     padding: 30px 0;
     width: 100%;
-    .layer-left {
-      flex: 1;
-      padding-top:30px;
-      box-sizing: border-box;
-      background-color: #fff;
-      .img {
-        margin: auto;
-        margin-bottom: 30px;
-        width: 90px;
-        height: 90px;
-        border-radius: 50%;
-        background-size: cover;
-      }
-      .btn {
-        margin: auto;
-        margin-bottom: 15px;
-        width: 110px;
-        height: 28px;
-        line-height: 28px;
-        text-align: center;
-        color: #8F8F8F;
-        font-size: 12px;
-        border: 1px solid #979797;
-        border-radius: 2px;
-        cursor: pointer;
-        &:last-child {
-          margin-bottom: 0;
-        }
-      }
-      .tab-list {
-        margin-top: 50px;
-        width: 100%;
-        .tab {
-          margin-bottom: 20px;
-          width: 100%;
-          height: 30px;
-          line-height: 30px;
-          font-size: 12px;
-          text-align: center;
-          cursor: pointer;
-          &:hover, &.active {
-            background-color: #F4C51D;
-          }
-        }
-      }
-    }
     .layer-right {
-      margin-left: 30px;
-      width: 870px;
-      background-color: #fff;
+      width: 100%;
+      
       .recommend {
         width: 100%;
 
@@ -419,17 +380,36 @@ export default {
         }
       }
 
+      .tab-list {
+        display: flex;
+        margin-top: 20px;
+        width: 100%;
+        .tab {
+          width: 100px;
+          height: 40px;
+          line-height: 40px;
+          font-size: 12px;
+          text-align: center;
+          border-bottom: 5px solid transparent;
+          cursor: pointer;
+          &:hover, &.active {
+            color: #F4C51D;
+            border-color: #F4C51D;
+          }
+        }
+      }
+
       .download-list {
         display: flex;
-        margin-top: 50px;
-        padding: 0 30px;
+        padding: 30px;
         width: 100%;
         flex-wrap: wrap;
         box-sizing: border-box;
+        background-color: #fff;
         .the-download {
           display: flex;
-          margin-bottom: 20px;
-          padding: 0 15px;
+          margin-bottom: 25px;
+          padding: 0 50px;
           width: 50%;
           box-sizing: border-box;
           .download-left {
@@ -453,10 +433,10 @@ export default {
               font-weight: bold;
             }
             .info {
-              margin-top: 10px;
+              margin-top: 5px;
               color: #888;
               span {
-                margin-right: 5px;
+                margin-right: 32px;
                 font-size: 12px;
               }
             }
@@ -478,25 +458,30 @@ export default {
               margin-top: 10px;
               font-size: 12px;
               line-height: 17px;
+              text-align: center;
+              color: #888;
             }
           }
         }
       }
       .pages {
         position: relative;
+        margin-top: 30px;
         margin-bottom: 20px;
         padding-right:45px;
         width: 100%;
-        height: 50px;
-        border-top: 1px solid #F2F2F2;
+        height: 32px;
         text-align: right;
         box-sizing: border-box;
         .prev, .next, .last {
           display: inline-block;
+          padding: 0 10px;
           vertical-align: middle;
-          line-height: 50px;
-          color: #888;
-          font-size: 12px;
+          line-height: 32px;
+          color: #333;
+          font-size: 14px;
+          border-radius: 2px;
+          background: #e2e2e2;
         }
         .last {
           margin-left: 25px;
@@ -505,19 +490,20 @@ export default {
         .page-list {
           display: inline-flex;
           margin: 0 15px;
-          line-height: 50px;
+          line-height: 32px;
           vertical-align: middle;
           .page {
-            width: 34px;
-            height: 50px;
-            line-height: 50px;
-            font-size: 16px;
-            font-weight: bold;
-            color: #000;
+            margin: 0 5px;
+            width: 32px;
+            height: 32px;
+            line-height: 32px;
+            font-size: 14px;
+            color: #333;
             text-align: center;
+            border-radius: 2px;
+            background: #e2e2e2;
             cursor: pointer;
             &:hover, &.active {
-              color: #fff;
               background-color: #F4C51D;
             }
           }

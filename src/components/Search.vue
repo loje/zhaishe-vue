@@ -3,7 +3,7 @@
 		<div class="max-width">
 			<div class="search-bar">
 				<input type="text" v-model="keyword" />
-				<i class="iconfont">&#xe652;</i>
+				<i class="iconfont" @click="search">&#xe652;</i>
 			</div>
 
 			<div class="cooperation-layer">
@@ -12,7 +12,7 @@
 				</div>
 				<div class="cooperation-right">
 					<div class="title">欢迎合作</div>
-					<div class="email">zoupengyu@zdesiger.cn</div>
+					<div class="email">business@zdesiger.cn</div>
 				</div>
 			</div>
 
@@ -28,12 +28,22 @@
 
 <script>
 export default {
-  props: {
-    keyword: {
-      type: String,
-      default() {
-        return ''
-      },
+  // props: {
+  //   keyword: {
+  //     type: String,
+  //     default() {
+  //       return ''
+  //     },
+  //   },
+  // },
+  data() {
+    return {
+      keyword: '',
+    }
+  },
+  methods: {
+    search() {
+      this.$emit('search', this.keyword);
     },
   },
 }

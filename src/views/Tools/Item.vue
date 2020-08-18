@@ -9,13 +9,10 @@
             <div class="info-img" :style="{backgroundImage: `url(${info.imgSrc})`}"></div>
             <div class="the-info">
               <div class="t">官方信息</div>
-              <div class="url">{{info.website}}</div>
+              <a class="url" :href="info.website" target="blank">{{info.website}}</a>
               <div class="t">支持系统</div>
               <div class="tag-list">
-                <div class="tag">MAC</div>
-                <div class="tag">WIN</div>
-                <div class="tag">IOS</div>
-                <div class="tag">LINUX</div>
+                <div class="tag" v-for="(item, $index) in info.system" :key="$index">{{item}}</div>
               </div>
               <div class="sell">已销售 {{info.count}} 份</div>
             </div>
@@ -25,9 +22,19 @@
             <div class="desc">{{info.desc}}</div>
 
             <div class="price-bar">
-              <div class="the-price">价格 <span class="val">140元</span></div>
-              <div class="like">
-                <i class="iconfont">&#xe602;</i> 1020
+              <div class="the-price">
+                价格
+                <template v-if="!selectAttr">
+                  <span class="val" v-if="info.maxPrice === info.minPrice">{{info.minPrice}}元</span>
+                  <span class="val" v-else>{{info.minPrice}} ~ {{info.maxPrice}}元</span>
+                </template>
+                <template v-else>
+                  <span class="val">{{selectAttr.attrPrice}}元</span>
+                </template>
+              </div>
+              <div :class="info.isliked ? 'like isliked' : 'like'" @click="bindlike(info)">
+                <i class="iconfont">&#xe602;</i>
+                {{info.likes}}
               </div>
             </div>
 
@@ -35,17 +42,24 @@
               <div class="title">选择购买套餐</div>
               <div class="attrs">
                 <template v-for="(item, $index) in attrs">
-                <div :class="selectAttr.objectId === item.objectId ? 'attr active':'attr'" :key="$index" @click="selSku(item)">{{item.attrName}}-{{item.attrPrice}}元</div>
+                  <div
+                    :class="selectAttr.objectId === item.objectId ? 'attr active':'attr'"
+                    :key="$index"
+                    @click="selSku(item)"
+                  >{{item.attrName}}-{{item.attrPrice}}元</div>
                 </template>
               </div>
 
-              <div class="sell-tips">
-                <span class="tips-left">今日团购：<span class="count">{{info.count}}人</span></span>
+              <div class="sell-tips" v-if="info.groupCount === 1">
+                <span class="tips-left">
+                  今日团购：
+                  <span class="count">{{info.count}}人</span>
+                </span>
                 <span class="tips-right">每日18:00左右发码</span>
               </div>
 
               <div class="sell-func">
-                <div class="btn" @click="toPayment">确定</div>
+                <div :class="amount > 0 ? 'btn':'btn disabled'" @click="toPayment">确定</div>
                 <div class="count-control">
                   <input type="text" v-model="amount" @change="changeAmount" />
                   <div class="control">
@@ -64,183 +78,19 @@
         </div>
       </div>
     </div>
-    <!-- <div class="tools-top">
-      <div class="max-width">
-        <div class="media">
-          <div class="media-left">
-            <loading class="img" v-if="loading === true"></loading>
-            <div v-else class="img" :style="{backgroundImage: `url(${info.imgSrc})`}"></div>
-          </div>
-          <loading v-if="loading === true"></loading>
-          <template v-else>
-          <div class="media-right">
-            <div class="media-info">
-              <div class="title">
-                <span v-if="info.isHot === 1">热门软件</span>
-                {{info.title}}
-              </div>
-              <div class="sub-title">{{info.desc}}</div>
 
-              <div class="info-btm">
-                <span class="sell">已销售{{info.count}}份</span>
-                <span class="url" :title="info.website">{{info.website}}</span>
-                <a :href="info.website" target="blank">跳转官网查看</a>
-              </div>
-            </div>
-          </div>
-          </template>
-        </div>
-
-        <template v-if="step === 1">
-        <div class="price-bar">
-          <div :class="activePrice === 2 ? 'btn active' : 'btn'" v-if="info.groupPrice" @click="selectPrice(2)">团购：{{info.groupPrice}}元</div>
-          <div :class="activePrice === 1 ? 'btn active' : 'btn'" @click="selectPrice(1)">正常购：{{info.price}}元</div>
-
-          <input type="text" v-model="couponCode" placeholder="请输入推荐微信号" />
-
-          <div class="bar-right">
-            <span class="t" v-if="activePrice === 1">你选择是正常购</span>
-            <span class="t" v-if="activePrice === 2">你选择是团购</span>
-            <span class="price">价格
-              <span v-if="activePrice === 1">{{info.price}}</span>
-              <span v-if="activePrice === 2">{{info.groupPrice}}</span>
-            元</span>
-            <div class="btn active btn-buy" @click="buy">购买</div>
-          </div>
-        </div>
-
-        <div class="tips">
-          <div class="tips-left">
-            <div class="title">购买需知</div>
-            <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
-          </div>
-          <div class="tips-right">
-            <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png" />
-          </div>
-        </div>
-        </template>
-
-        <template v-if="step !== 1">
-        <div class="buy-layer">
-          <div class="back" @click="back">
-            <span class="back-icon">
-              <i class="iconfont">&#xe693;</i>
-            </span>
-            <span class="t">返回</span>
-          </div>
-
-          <div class="buy-steps">
-            <div class="step">
-              <div :class="step === 1 ? 'count active' : 'count'">1</div>
-              <div class="step-t">拍下商品</div>
-            </div>
-            <div class="line"></div>
-            <div class="step">
-              <div :class="step === 2 ? 'count active' : 'count'">2</div>
-              <div class="step-t">支付信息</div>
-            </div>
-            <div class="line"></div>
-            <div class="step">
-              <div :class="step === 3 ? 'count active' : 'count'">3</div>
-              <div class="step-t">确认扫码</div>
-            </div>
-            <div class="line"></div>
-            <div class="step">
-              <div :class="step === 4 ? 'count active' : 'count'">4</div>
-              <div class="step-t">支付反馈</div>
-            </div>
-          </div>
-
-          <div class="buy-box" v-if="step === 2">
-            <div class="box-form">
-              <div class="input-group">
-                <span>姓名</span>
-                <input type="text" v-model="dialog.name" placeholder="请填写姓名" />
-              </div>
-              <div class="input-group">
-                <span>可添加微信</span>
-                <input type="text" v-model="dialog.wechat" placeholder="请填写微信" />
-              </div>
-              <div class="input-group">
-                <span>电话</span>
-                <input type="text" v-model="dialog.phone" placeholder="留下您电话方便联系" maxlength="11" />
-              </div>
-              <div class="input-group">
-                <span>邮箱</span>
-                <input type="text" v-model="dialog.email" placeholder="您的收件邮箱" />
-              </div>
-              <div class="input-group" style="margin: 0;padding:0px;height: auto;">
-                <textarea v-model="dialog.remark" placeholder="有需要可以留下你的备注" rows="4" style="padding:10px;width:100%;border:0;outline:none;resize:none;"></textarea>
-              </div>
-              <div class="error">{{dialogError}}</div>
-
-              <div class="text" v-if="activePrice === 1">您选择的是正常购 价格<span>{{info.price}}</span>元</div>
-              <div class="text" v-if="activePrice === 2">您选择的是团购 价格<span>{{info.groupPrice}}</span>元</div>
-
-              <div class="btn" @click="payit">
-                <i class="iconfont">&#xe629;</i>
-                <span>微信支付</span>
-              </div>
-            </div>
-          </div>
-
-          <template v-if="step === 3">
-          <div class="select-price" v-if="activePrice === 1">实付<span>{{info.price}}</span>元</div>
-          <div class="select-price" v-if="activePrice === 2">实付<span>{{info.groupPrice}}</span>元</div>
-          <div class="qrcode-box">
-            <wechatPay :out_trade_no="payForm.out_trade_no" :total_fee="payForm.total_fee" :body="payForm.body" @order-success="getReslut" :size="280"></wechatPay>
-          </div>
-          <div class="wechat-text">微信扫码支付</div>
-          </template>
-
-          <template v-if="step === 4">
-          <div :class="payReslut.trade_state !== 'SUCCESS' ? 'pay-result fail' : 'pay-result'">
-            <i class="iconfont" v-if="payReslut.trade_state === 'SUCCESS'">&#xe607;</i>
-            <i class="iconfont" v-else>&#xea13;</i>
-
-            <template v-if="payReslut.trade_state === 'SUCCESS'">
-              <div class="t" @click="this.$router.push({
-        path: '/user/product',
-        query: {
-          code: JSON.parse(localStorage.getItem('memberInfo')).objectId,
-        },
-      })">{{payReslut.trade_state_desc}}</div>
-            </template>
-            <template v-else>
-              <div class="t">{{payReslut.trade_state_desc}}</div>
-            </template>
-          </div>
-          </template>
-        </div>
-        <div class="buy-tips">
-          <div class="title">购买需知</div>
-          <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
-        </div>
-        </template>
-      </div>
-    </div> -->
-
-    <!-- <div class="tools-detail" v-if="step === 1">
-      <div class="max-width">
-        <loading v-if="loading === true"></loading>
-        <article v-else v-html="info.content"></article>
-      </div>
-    </div> -->
+    <Tips :tips="tipsText" :tipsType="tipsType"></Tips>
   </div>
 </template>
 
 <script>
-// import loading from '@/components/Loading';
-// import wechatPay from '@/components/WechatPay';
-
-import Search from '@/components/Search';
-
+import Search from "@/components/Search";
+import Tips from "@/components/Tips";
 
 export default {
   components: {
-    // loading,
-    // wechatPay,
     Search,
+    Tips
   },
   data() {
     return {
@@ -248,24 +98,26 @@ export default {
       info: {},
 
       attrs: [],
-      selectAttr: '',
-      amount: 0,
+      selectAttr: "",
+      amount: 1,
 
       activePrice: 1,
       dialog: {},
-      dialogError: '',
+      dialogError: "",
 
       step: 1,
       payForm: {
-        out_trade_no: '',
-        total_fee: '',
-        body: '',
+        out_trade_no: "",
+        total_fee: "",
+        body: ""
       },
 
-      payReslut: '',
+      payReslut: "",
 
-      couponCode: '',
-    }
+      couponCode: "",
+      tipsText: "",
+      tipsType: ""
+    };
   },
   mounted() {
     this.getinfo();
@@ -276,19 +128,26 @@ export default {
     },
     selSku(item) {
       this.selectAttr = item;
+      if (this.amount > item.attrNum) {
+        this.amount = item.attrNum;
+      }
     },
     addAmount() {
-      if (this.attrs.length > 0 && this.selectAttr === '') {
-        alert('请选择套餐')
+      if (this.attrs.length > 0 && this.selectAttr === "") {
+        alert("请选择套餐");
         return false;
       }
       if (this.amount < this.selectAttr.attrNum) {
-        this.amount += 1
+        this.amount += 1;
       }
     },
     minus() {
+      if (this.attrs.length > 0 && this.selectAttr === "") {
+        alert("请选择套餐");
+        return false;
+      }
       if (this.amount > 0) {
-        this.amount -= 1
+        this.amount -= 1;
       }
     },
     changeAmount() {
@@ -296,13 +155,13 @@ export default {
         this.amount = this.selectAttr.attrNum;
       }
       if (this.amount < 0) {
-        this.amount = 1
+        this.amount = 1;
       }
     },
     getinfo() {
       this.loading = true;
-      var query = this.$Bmob.Query('product');
-      query.get(this.$route.params.id).then((res) => {
+      var query = this.$Bmob.Query("product");
+      query.get(this.$route.params.id).then(res => {
         this.loading = false;
         this.info = {
           ...this.info,
@@ -310,89 +169,133 @@ export default {
           isHot: res.isHot ? res.isHot : 0,
           title: res.title,
           desc: res.desc,
-          website: res.website ? res.website : '',
-
-          price: res.price || 0,
-          inventory: res.inventory || 0,
-          groupPrice: res.groupPrice || 0,
-          groupInventory: res.groupInventory || 0,
-          content: res.content,
+          system: res.system,
+          website: res.website ? res.website : "",
+          groupCount: res.groupCount || -1,
+          content: res.content
         };
-        let skuquery = this.$Bmob.Query('skus');
-        skuquery.equalTo('productId', '===', this.$route.params.id);
-        skuquery.find().then((r) => {
+        let skuquery = this.$Bmob.Query("skus");
+        skuquery.equalTo("productId", "===", this.$route.params.id);
+        skuquery.find().then(r => {
           this.attrs = r;
+          let ar = [];
+          for (let o = 0; o < r.length; o += 1) {
+            ar.push(r[o].attrPrice);
+          }
+          this.info = {
+            ...this.info,
+            maxPrice: ar.sort(function(a, b) {
+              return a - b;
+            })[ar.length - 1],
+            minPrice: ar.sort(function(a, b) {
+              return a - b;
+            })[0]
+          };
+        });
+
+        let likeCountQuery = this.$Bmob.Query("like_list");
+        likeCountQuery.equalTo("product", "==", this.$route.params.id);
+        likeCountQuery.find().then(likesCount => {
+          this.$set(this.info, "likes", likesCount.length);
+
+          if (likesCount.length > 0 && localStorage.getItem("memberInfo")) {
+            let likeQuery = this.$Bmob.Query("like_list");
+            likeQuery.equalTo("product", "==", this.id);
+            likeQuery.equalTo(
+              "user",
+              "==",
+              JSON.parse(localStorage.getItem("memberInfo")).objectId
+            );
+            likeQuery.find().then(like => {
+              if (like && like.length > 0) {
+                this.$set(this.info, "isliked", like[0].objectId);
+              }
+            });
+          }
         });
       });
 
-      const pointer = this.$Bmob.Pointer('product')
+      const pointer = this.$Bmob.Pointer("product");
       const poiID = pointer.set(this.$route.params.id);
 
-
-      // let aDay = {
-      //     "__type": "Date",
-      //     "iso": `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 00:00:00`
-      // };
-      // let bDay = {
-      //     "__type": "Date",
-      //     "iso": `${new Date().getFullYear()}-${new Date().getMonth() + 1}-${new Date().getDate()} 23:59:59`
-      // };
-      let orderQuery = this.$Bmob.Query('order_list');
-      orderQuery.equalTo("product","==", poiID);
-      // orderQuery.equalTo("createdAt", ">", aDay);
-      // orderQuery.equalTo("createdAt", "<", bDay);
-      orderQuery.count().then((count) => {
+      let orderQuery = this.$Bmob.Query("order_list");
+      orderQuery.equalTo("product", "==", poiID);
+      orderQuery.count().then(count => {
         this.info = {
           ...this.info,
-          count,
+          count
         };
       });
     },
 
     toPayment() {
+      if (!localStorage.getItem("memberInfo")) {
+        this.tipsText = "请先点击右上角登录";
+        this.tipsType = "error";
+        let t = setTimeout(() => {
+          this.tipsText = "";
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
+      if (this.selectAttr === "") {
+        this.tipsText = "请选择购买套餐";
+        this.tipsType = "error";
+        let t = setTimeout(() => {
+          this.tipsText = "";
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
+      if (this.amount < 1) {
+        this.tipsText = "购买件数不能低于1哦";
+        this.tipsType = "error";
+        let t = setTimeout(() => {
+          this.tipsText = "";
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
       const payment = {
+        id: this.$route.params.id,
         imgSrc: this.info.imgSrc,
         title: this.info.title,
         desc: this.info.desc,
+        likes: this.info.likes,
+        isliked: this.info.isliked,
         amount: this.amount,
         attrName: this.selectAttr.attrName,
-        price: this.selectAttr.attrPrice,
+        price: this.selectAttr.attrPrice
       };
-      localStorage.setItem('payment', JSON.stringify(payment));
-      this.$router.push('/tools/payment');
+      localStorage.setItem("payment", JSON.stringify(payment));
+      this.$router.push("/tools/payment");
     },
 
     back() {
       this.step = 1;
     },
     buy() {
-      if (!localStorage.getItem('memberInfo')) {
-        alert('请先点右上角登录');
+      if (!localStorage.getItem("memberInfo")) {
+        alert("请先点右上角登录");
         return false;
       }
       this.step = 2;
-      // this.dialog = {
-      //   name: this.$store.state.user.name,
-      //   wechat: this.$store.state.user.wechatId,
-      //   phone: this.$store.state.user.mobilePhoneNumber,
-      //   email: this.$store.state.user.email.indexOf('@bmob.cn') !== -1 ? undefined : this.$store.state.user.email,
-      // };
     },
     payit() {
       if (!this.dialog.name) {
-        this.dialogError = '请填写名字';
+        this.dialogError = "请填写名字";
         return false;
       }
       if (!this.dialog.wechat) {
-        this.dialogError = '请填写微信';
+        this.dialogError = "请填写微信";
         return false;
       }
       if (!this.dialog.phone) {
-        this.dialogError = '请填写电话';
+        this.dialogError = "请填写电话";
         return false;
       }
       if (!this.dialog.email) {
-        this.dialogError = '请填写邮箱';
+        this.dialogError = "请填写邮箱";
         return false;
       }
 
@@ -400,296 +303,312 @@ export default {
       // eslint-disable-next-line no-useless-escape
       const reg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
       if (!reg.test(this.dialog.email)) {
-        this.dialogError = '邮箱格式不正确';
+        this.dialogError = "邮箱格式不正确";
         return false;
       }
 
       this.payForm = {
         out_trade_no: `zdesigner${new Date().getTime()}`,
-        total_fee: this.activePrice === 2 ? this.info.groupPrice : this.info.price,
-        body: this.info.title,
+        total_fee:
+          this.activePrice === 2 ? this.info.groupPrice : this.info.price,
+        body: this.info.title
       };
 
       this.step = 3;
-
-      // const query = this.$Bmob.Query('_User');
-      // query.get(this.$store.state.user.objectId).then(user => {
-      //   if (this.dialog.name) {
-      //     user.set('name', this.dialog.name);
-      //   }
-      //   if (this.dialog.phone) {
-      //     user.set('mobilePhoneNumber', this.dialog.phone);
-      //   }
-      //   if (this.dialog.email) {
-      //     user.set('email', this.dialog.email);
-      //   }
-      //   if (this.dialog.wechat) {
-      //     user.set('wechatId', this.dialog.wechat);
-      //   }
-      //   user.save().then(() => {
-      //     this.step = 3;
-      //   }).catch(err => {
-      //     console.log(err);
-      //     if (err.code === 209) {
-      //       this.dialogError = '该手机号码已经存在';
-      //     } else if (err.code === 301) {
-      //       this.dialogError = '邮箱格式不正确';
-      //     } else {
-      //       this.step = 3;
-      //     }
-      //   });
-      // });
     },
 
     getReslut(item) {
-      const query = this.$Bmob.Query('order_list');
+      const query = this.$Bmob.Query("order_list");
       query.set("payReslut", item);
-      query.set("sort", 'product');
-      const productPointer = this.$Bmob.Pointer('product');
+      query.set("sort", "product");
+      const productPointer = this.$Bmob.Pointer("product");
       const productID = productPointer.set(this.$route.params.id);
-      query.set('product', productID);
-      const userPointer = this.$Bmob.Pointer('_User');
+      query.set("product", productID);
+      const userPointer = this.$Bmob.Pointer("_User");
       const userID = userPointer.set(this.$store.state.user.objectId);
-      query.set('user', userID);
-      query.set('couponCode', this.couponCode);
-      query.set('trade_state', item.trade_state);
+      query.set("user", userID);
+      query.set("couponCode", this.couponCode);
+      query.set("trade_state", item.trade_state);
 
-      query.set('name', this.dialog.name);
-      query.set('phone', this.dialog.phone);
-      query.set('email', this.dialog.email);
-      query.set('wechatId', this.dialog.wechat);
+      query.set("name", this.dialog.name);
+      query.set("phone", this.dialog.phone);
+      query.set("email", this.dialog.email);
+      query.set("wechatId", this.dialog.wechat);
       if (this.dialog.remark) {
-        query.set('remark', this.dialog.remark);
+        query.set("remark", this.dialog.remark);
       }
-      query.set('delivery', false);
+      query.set("delivery", false);
 
-      query.save().then((res) => {
-        const proquery = this.$Bmob.Query('product_person');
-        const userPointer = this.$Bmob.Pointer('_User')
-        const userID = userPointer.set(this.$store.state.user.objectId)
-        proquery.set('user', userID);
-        const productPointer = this.$Bmob.Pointer('product')
-        const productID = productPointer.set(this.$route.params.id);
-        proquery.set('product', productID);
-        const orderPointer = this.$Bmob.Pointer('order_list')
-        const orderID = orderPointer.set(res.objectId);
-        proquery.set('order', orderID);
-        proquery.set('couponCode', this.couponCode);
-        // proquery.set('isBuyed', true);
-        // proquery.set('trade_state', item.trade_state);
-        // proquery.set('name', this.dialog.name);
-        // proquery.set('phone', this.dialog.phone);
-        // proquery.set('email', this.dialog.email);
-        // proquery.set('wechatId', this.dialog.wechat);
+      query
+        .save()
+        .then(res => {
+          const proquery = this.$Bmob.Query("product_person");
+          const userPointer = this.$Bmob.Pointer("_User");
+          const userID = userPointer.set(this.$store.state.user.objectId);
+          proquery.set("user", userID);
+          const productPointer = this.$Bmob.Pointer("product");
+          const productID = productPointer.set(this.$route.params.id);
+          proquery.set("product", productID);
+          const orderPointer = this.$Bmob.Pointer("order_list");
+          const orderID = orderPointer.set(res.objectId);
+          proquery.set("order", orderID);
+          proquery.set("couponCode", this.couponCode);
 
-        proquery.save().then(() => {
-          this.step = 4;
-          this.payReslut = item;
+          proquery.save().then(() => {
+            this.step = 4;
+            this.payReslut = item;
+          });
+        })
+        .catch(err => {
+          console.log(err);
         });
-      }).catch(err => {
-        console.log(err);
-      });
     },
-  },
+
+    bindlike(item) {
+      const that = this;
+      if (!localStorage.getItem("memberInfo")) {
+        this.tipsText = "请先点击右上角登录";
+        this.tipsType = "error";
+        let t = setTimeout(() => {
+          this.tipsText = "";
+          clearTimeout(t);
+        }, 1500);
+        return false;
+      }
+      let likeQuery = this.$Bmob.Query("like_list");
+
+      if (item.isliked) {
+        likeQuery.destroy(item.isliked).then(() => {
+          that.$set(that.info, "isliked", "");
+          that.$set(that.info, "likes", item.likes - 1);
+        });
+      } else {
+        let productPointer = this.$Bmob.Pointer("product");
+        const productID = productPointer.set(this.$route.params.id);
+
+        const userPointer = this.$Bmob.Pointer("_User");
+        const userID = userPointer.set(
+          JSON.parse(localStorage.getItem("memberInfo")).objectId
+        );
+        likeQuery.set("product", productID);
+        likeQuery.set("user", userID);
+        likeQuery.save().then(res => {
+          that.$set(this.info, "isliked", res.objectId);
+          that.$set(this.info, "likes", item.likes + 1);
+        });
+      }
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-  .tools-page {
-    .tool-detail {
-      padding: 50px 100px;
-      background-color: #fff;
-      box-sizing: border-box;
-      .tool-info {
-        display: flex;
-        margin-bottom: 40px;
-        .info-left {
+.tools-page {
+  .tool-detail {
+    margin-bottom: 50px;
+    padding: 50px 100px;
+    background-color: #fff;
+    box-sizing: border-box;
+    .tool-info {
+      display: flex;
+      margin-bottom: 40px;
+      .info-left {
+        width: 300px;
+        .info-img {
           width: 300px;
-          .info-img {
-            width: 300px;
-            height: 300px;
-            background-position: 50%;
-            background-size: contain;
-            border: 1px solid #eee;
-            box-sizing: border-box;
+          height: 300px;
+          background-position: 50%;
+          background-size: contain;
+          border: 1px solid #eee;
+          box-sizing: border-box;
+        }
+        .the-info {
+          padding: 20px;
+          width: 300px;
+          border: 1px solid #eee;
+          border-top: none;
+          box-sizing: border-box;
+          .t {
+            margin-bottom: 10px;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
           }
-          .the-info {
-            padding: 20px;
-            width: 300px;
-            border: 1px solid #eee;
-            border-top: none;
-            box-sizing: border-box;
-            .t {
-              margin-bottom: 10px;
-              font-size: 14px;
-              font-weight: bold;
-              color: #666;
+          .url {
+            display: inline-block;
+            margin-bottom: 20px;
+            font-size: 12px;
+            color: #888;
+            word-break: break-all;
+          }
+          .tag-list {
+            display: flex;
+            margin-bottom: 25px;
+            .tag {
+              margin-right: 10px;
+              padding: 0 10px;
+              height: 20px;
+              line-height: 20px;
+              text-align: center;
+              background-color: #f5f5f5;
+              color: #999;
+              font-size: 10px;
             }
-            .url {
-              margin-bottom: 20px;
-              font-size: 12px;
-              color: #888;
-              word-break: break-all;
+          }
+          .sell {
+            font-size: 12px;
+            color: #888;
+          }
+        }
+      }
+      .info-right {
+        flex: 1;
+        padding-left: 40px;
+        box-sizing: border-box;
+        .title {
+          margin-bottom: 10px;
+          font-size: 20px;
+          line-height: 32px;
+          color: #262626;
+          font-weight: 600;
+        }
+        .desc {
+          margin-bottom: 10px;
+          font-size: 14px;
+          line-height: 24px;
+          color: #888;
+        }
+        .price-bar {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding: 0 20px;
+          width: 100%;
+          height: 60px;
+          background-color: #fbfbfb;
+          box-sizing: border-box;
+          .the-price {
+            font-size: 14px;
+            line-height: 20px;
+            color: #f4751d;
+            .val {
+              font-size: 20px;
             }
-            .tag-list {
-              display: flex;
-              margin-bottom: 25px;
-              .tag {
-                margin-right: 10px;
-                width: 50px;
-                height: 20px;
-                line-height: 20px;
-                text-align: center;
-                background-color: #f5f5f5;
-                color: #999;
-                font-size: 10px;
-              }
+          }
+          .like {
+            width: 66px;
+            height: 26px;
+            background-color: #fff;
+            border-radius: 2px;
+            border: 1px solid #d8d8d8;
+            color: #888888;
+            font-size: 10px;
+            line-height: 26px;
+            text-align: center;
+            cursor: pointer;
+            i {
+              font-size: 10px;
             }
-            .sell {
-              font-size: 12px;
-              color: #888;
+            &:hover,
+            &.isliked {
+              border-color: #f4751d;
+              color: #f4751d;
             }
           }
         }
-        .info-right {
-          flex: 1;
-          padding-left: 40px;
-          box-sizing: border-box;
+
+        .edit-sku {
           .title {
             margin-bottom: 10px;
-            font-size: 20px;
-            line-height: 32px;
-            color: #262626;
-            font-weight: 600;
-          }
-          .desc {
-            margin-bottom: 10px;
             font-size: 14px;
-            line-height: 24px;
-            color: #888;
+            line-height: 20px;
+            color: #333;
+            font-weight: bold;
           }
-          .price-bar {
+          .attrs {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 20px;
-            width: 100%;
-            height: 60px;
-            background-color: #FBFBFB;
-            box-sizing: border-box;
-            .the-price {
-              font-size: 14px;
-              line-height: 20px;
-              color: #F4751D;
-              .val {
-                font-size: 20px;
-              }
-            }
-            .like {
-              width: 66px;
-              height: 26px;
-              background-color: #fff;
-              border-radius: 2px;
-              border:1px solid #F4751D;
-              font-size: 10px;
-              line-height: 26px;
+            padding-bottom: 20px;
+            flex-wrap: wrap;
+            border-bottom: 1px solid #eee;
+            .attr {
+              margin-right: 30px;
+              margin-bottom: 10px;
+              width: 240px;
+              height: 40px;
+              line-height: 40px;
+              border: 1px solid #eee;
+              color: #333;
               text-align: center;
-              color: #F4751D;
+              font-size: 14px;
               cursor: pointer;
-              i {
-                font-size: 10px;
+              &:hover,
+              &.active {
+                border-color: #f47a25;
+                color: #f47a25;
               }
             }
           }
-
-          .edit-sku {
-            .title {
-              margin-bottom: 10px;
+          .sell-tips {
+            margin-top: 20px;
+            .tips-left {
               font-size: 14px;
               line-height: 20px;
-              color: #333;
+              color: #262626;
               font-weight: bold;
+              .count {
+                color: #f47a25;
+              }
             }
-            .attrs {
+            .tips-right {
+              margin-left: 30px;
+              font-size: 12px;
+              color: #262626;
+            }
+          }
+          .sell-func {
+            display: flex;
+            margin-top: 20px;
+            .btn {
+              margin-right: 40px;
+              width: 170px;
+              height: 40px;
+              line-height: 40px;
+              text-align: center;
+              background-color: #f4751d;
+              color: #fff;
+              cursor: pointer;
+              transition: background-color 250ms ease;
+              &.disabled {
+                background-color: #999;
+              }
+            }
+            .count-control {
               display: flex;
-              padding-bottom: 20px;
-              flex-wrap: wrap;
-              border-bottom: 1px solid #eee;
-              .attr {
-                margin-right: 30px;
-                margin-bottom: 10px;
-                width: 240px;
-                height: 40px;
-                line-height: 40px;
-                border: 1px solid #eee;
-                color: #333;
+              width: 100px;
+              height: 40px;
+              border: 1px solid #eee;
+              input {
+                width: 80px;
+                height: 100%;
+                border: none;
+                padding: 0;
+                box-sizing: border-box;
+                outline: none;
                 text-align: center;
-                font-size: 14px;
-                cursor: pointer;
-                &:hover, &.active {
-                  border-color: #F47A25;
-                  color: #F47A25;
-                }
               }
-            }
-            .sell-tips {
-              margin-top: 20px;
-              .tips-left {
-                font-size: 14px;
-                line-height: 20px;
-                color: #262626;
-                font-weight: bold;
-                .count {
-                  color: #F47A25;
-                }
-              }
-              .tips-right {
-                margin-left: 30px;
-                font-size: 12px;
-                color: #262626;
-              }
-            }
-            .sell-func {
-              display: flex;
-              margin-top: 20px;
-              .btn {
-                margin-right: 40px;
-                width: 170px;
-                height: 40px;
-                line-height: 40px;
-                text-align: center;
-                background-color: #F4751D;
-                color: #fff;
-                cursor: pointer;
-              }
-              .count-control {
-                display: flex;
-                width: 100px;
-                height: 40px;
-                border: 1px solid #eee;
-                input {
-                  width: 80px;
-                  height: 100%;
-                  border: none;
-                  padding: 0;
-                  box-sizing: border-box;
-                  outline: none;
+              .control {
+                width: 20px;
+                border-left: 1px solid #eee;
+                span {
+                  display: block;
+                  line-height: 20px;
                   text-align: center;
-                }
-                .control {
-                  width: 20px;
-                  border-left: 1px solid #eee;
-                  span {
-                    display: block;
-                    line-height: 20px;
-                    text-align: center;
-                    color: #333;
-                    cursor: pointer;
-                    box-sizing: border-box;
-                    &:first-child {
-                      border-bottom: 1px solid #eee;
-                    }
+                  color: #333;
+                  cursor: pointer;
+                  box-sizing: border-box;
+                  &:first-child {
+                    border-bottom: 1px solid #eee;
                   }
                 }
               }
@@ -697,437 +616,15 @@ export default {
           }
         }
       }
-      .tool-content {
-        .title {
-          margin-bottom: 20px;
-          font-size: 20px;
-          color: #262626;
-          font-weight: bold;
-        }
+    }
+    .tool-content {
+      .title {
+        margin-bottom: 20px;
+        font-size: 20px;
+        color: #262626;
+        font-weight: bold;
       }
     }
-    // .tools-top {
-    //   padding: 50px 0 30px;
-    //   background-color: #FCFCFC;
-    //   .max-width {
-    //     padding: 40px 90px 50px;
-    //     background-color: #fff;
-    //     box-sizing: border-box;
-    //     .media {
-    //       display: flex;
-    //       align-items: top;
-    //       width: 100%;
-    //       height: 160px;
-    //       overflow: hidden;
-    //       .media-left {
-    //         width: 160px;
-    //         height: 100%;
-    //         background-color: #fff;
-    //         border-radius: 10px;
-    //         .img {
-    //           width: 100%;
-    //           height: 100%;
-    //           background-position: 50%;
-    //           background-size: cover;
-    //           border: 1px solid #D8D8D8;
-    //           box-sizing: border-box;
-    //           border-radius: 2px;
-    //           overflow: hidden;
-    //         }
-    //       }
-    //       .media-right {
-    //         flex: 1;
-    //         height: 100%;
-    //         box-sizing: border-box;
-    //         padding-left: 30px;
-    //         .media-info {
-    //           position: relative;
-    //           padding-top: 10px;
-    //           height: 100%;
-    //           background-color: #fff;
-    //           border-radius: 10px;
-    //           box-sizing: border-box;
-    //           .title {
-    //             font-size: 20px;
-    //             font-family: PingFang SC Regular;
-    //             color: #262626;
-    //             line-height: 32px;
-    //             font-weight: bold;
-    //             span {
-    //               display: inline-block;
-    //               margin-right: 10px;
-    //               width: 56px;
-    //               height: 20px;
-    //               font-size: 12px;
-    //               line-height: 20px;
-    //               border: 1px solid #FF5D01;
-    //               border-radius: 2px;
-    //               text-align: center;
-    //               color: #FF5D01;
-    //             }
-    //           }
-    //           .sub-title {
-    //             margin-top: 10px;
-    //             font-size: 14px;
-    //             font-family: PingFang SC Regular;
-    //             color: #888;
-    //             line-height: 24px;
-    //           }
-    //           .info-btm {
-    //             position: absolute;
-    //             left: 0;
-    //             bottom: 0;
-    //             width: 100%;
-    //             font-size: 12px;
-    //             line-height: 17px;
-    //             color: #888;
-    //             .sell {
-    //               display: inline-block;
-    //               vertical-align: middle;
-    //               margin-right: 70px;
-    //             }
-    //             .url {
-    //               display: inline-block;
-    //               vertical-align: middle;
-    //               max-width: 490px;
-    //               overflow: hidden;
-    //               text-overflow: ellipsis;
-    //               white-space: nowrap;
-    //             }
-    //             a {
-    //               display: inline-block;
-    //               vertical-align: middle;
-    //               margin-left: 10px;
-    //               color: #888;
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-
-    //     .price-bar {
-    //       margin-top: 50px;
-    //       padding: 17px 24px;
-    //       width: 100%;
-    //       background-color: #FCFCFC;
-    //       box-sizing: border-box;
-    //       .btn {
-    //         display: inline-block;
-    //         vertical-align: middle;
-    //         margin-right: 40px;
-    //         width: 112px;
-    //         height: 36px;
-    //         font-size: 14px;
-    //         line-height: 34px;
-    //         border: 1px solid #DCDCDC;
-    //         color: #262626;
-    //         text-align: center;
-    //         border-radius: 2px;
-    //         font-weight: bold;
-    //         box-sizing: border-box;
-    //         cursor: pointer;
-    //         &.active {
-    //           border-color: #F4751D;
-    //           color: #F4751D;
-    //         }
-    //       }
-    //       input {
-    //         display: inline-block;
-    //         vertical-align: middle;
-    //         padding: 0 15px;
-    //         height: 36px;
-    //         box-sizing: border-box;
-    //         outline: none;
-    //         border: 1px solid #DCDCDC;
-    //         text-align: center;
-    //         box-sizing: border-box;
-    //       }
-
-    //       .bar-right {
-    //         float: right;
-    //         display: flex;
-    //         color: #262626;
-    //         font-size: 12px;
-    //         line-height: 36px;
-    //         height: 36px;
-    //         .t {
-    //           line-height: 36px;
-    //         }
-    //         .price{
-    //           margin-left: 10px;
-    //           span {
-    //             margin: 0 5px;
-    //             font-size: 18px;
-    //           }
-    //         }
-    //         .btn {
-    //           margin-left: 50px;
-    //           &.btn-buy {
-    //             margin-right: 0;
-    //             background-color: rgba(244,117,29,0.3);
-    //           }
-    //         }
-            
-    //       }
-    //     }
-
-    //     .tips {
-    //       display: flex;
-    //       margin-top: 30px;
-    //       padding: 0 24px;
-    //       width: 100%;
-    //       box-sizing: border-box;
-    //       .tips-left {
-    //         flex: 1;
-    //         padding-right: 10px;
-    //         box-sizing: border-box;
-    //         .title {
-    //           color: #262626;
-    //           font-size: 14px;
-    //           line-height: 32px;
-    //         }
-    //         .text {
-    //           color: #888888;
-    //           font-size: 14px;
-    //           line-height: 24px;
-    //         }
-    //       }
-    //       .tips-right {
-    //         width: 90px;
-    //         img {
-    //           width: 90px;
-    //         }
-    //       }
-    //     }
-
-    //     .buy-layer {
-    //       position: relative;
-    //       margin-top: 50px;
-    //       padding: 25px 0 63px 0;
-    //       border-top: 1px solid #F2F2F2;
-    //       box-sizing: border-box;
-    //       .back {
-    //         position: absolute;
-    //         left: 80px;
-    //         top:25px;
-    //         cursor: pointer;
-    //         .back-icon {
-    //           display: inline-block;
-    //           width: 20px;
-    //           height: 28px;
-    //           line-height: 28px;
-    //           border: 1px solid #F2F2F2;
-    //           border-radius: 2px;
-    //           color: #F4C51D;
-    //           font-size: 12px;
-    //           text-align: center;
-    //         }
-    //         .t {
-    //           margin-left: 10px;
-    //           line-height: 28px;
-    //           font-size: 12px;
-    //           color: #262626;
-    //         }
-    //       }
-
-    //       .buy-steps {
-    //         width: 100%;
-    //         text-align: center;
-    //         .step {
-    //           display: inline-block;
-    //           vertical-align: middle;
-    //           padding: 0 16px;
-    //           .count {
-    //             margin: auto;
-    //             width: 38px;
-    //             height: 38px;
-    //             line-height: 38px;
-    //             text-align: center;
-    //             border-radius: 50%;
-    //             border: 1px solid #979797;
-    //             font-size: 16px;
-    //             color: #262626;
-    //             &.active {
-    //               background-color: #FF5D01;
-    //               border: 1px solid #FF5D01;
-    //               color: #fff;
-    //             }
-    //           }
-    //           .step-t {
-    //             margin-top: 13px;
-    //             font-size: 12px;
-    //             line-height: 17px;
-    //             text-align: center;
-    //             color: #262626;
-    //           }
-    //         }
-    //         .line {
-    //           display: inline-block;
-    //           vertical-align: top;
-    //           margin-top: 19px;
-    //           width: 52px;
-    //           height: 1px;
-    //           background-color: #979797;
-    //         }
-    //       }
-
-    //       .buy-box {
-    //         padding-top: 50px;
-    //         .box-form {
-    //           margin: auto;
-    //           width: 320px;
-    //           .input-group {
-    //             display: flex;
-    //             margin-bottom: 20px;
-    //             padding: 0px 10px;
-    //             width: 320px;
-    //             height: 36px;
-    //             line-height: 34px;
-    //             border: 1px solid #979797;
-    //             font-size: 12px;
-    //             box-sizing: border-box;
-    //             &:last-child {
-    //               margin-bottom: 0;
-    //             }
-    //             span {
-    //               color: #888;
-    //               width: 70px;
-    //             }
-    //             input {
-    //               padding: 0;
-    //               height: 34px;
-    //               border: none;
-    //               outline: none;
-    //               box-sizing: border-box;
-    //             }
-    //           }
-    //           .error {
-    //             margin: 10px 0 30px 0;
-    //             font-size: 12px;
-    //             height: 17px;
-    //             color: #E55D5D;
-    //           }
-    //           .text {
-    //             margin-bottom: 17px;
-    //             text-align: center;
-    //             color: #262626;
-    //             font-size: 14px;
-    //             line-height: 20px;
-    //             span {
-    //               margin: 0 10px;
-    //               font-size: 24px;
-    //               color: #FF5D01;
-    //             }
-    //           }
-    //           .btn {
-    //             width: 320px;
-    //             height: 40px;
-    //             line-height: 40px;
-    //             text-align: center;
-    //             border: 1px solid #6BCC03;
-    //             border-radius: 2px;
-    //             font-size: 14px;
-    //             color: #333333;
-    //             cursor: pointer;
-    //             i {
-    //               color: #09BB07;
-    //               margin-right: 10px;
-    //             }
-    //           }
-    //         }
-    //       }
-
-    //       .select-price {
-    //         margin-top: 50px;
-    //         margin-bottom: 11px;
-    //         text-align: center;
-    //         color: #262626;
-    //         font-size: 14px;
-    //         line-height: 20px;
-    //         span {
-    //           margin: 0 10px;
-    //           font-size: 24px;
-    //           color: #FF5D01;
-    //         }
-    //       }
-    //       .qrcode-box {
-    //         margin:auto;
-    //         // width:300px;
-    //         // height:300px;
-    //       }
-    //       .wechat-text {
-    //         margin-top: 15px;
-    //         font-size:16px;
-    //         line-height: 22px;
-    //         text-align: center;
-    //         color: #262626;
-    //       }
-    //       .pay-result {
-    //         padding: 50px 0;
-    //         text-align: center;
-    //         i {
-    //           color: #00c250;
-    //           font-size:48px;
-    //         }
-    //         .t {
-    //           margin-top: 30px;
-    //           color: #FF5D01;
-    //           font-size: 16px;
-    //           line-height: 22px;
-    //         }
-    //         &.fail {
-    //           i {
-    //             color: #262626;
-    //           }
-    //           .t {
-    //             color: #262626;
-    //           }
-    //         }
-    //       }
-    //     }
-
-    //     .buy-tips {
-    //       padding: 50px 80px 0px;
-    //       .title {
-    //         font-size: 14px;
-    //         line-height: 32px;
-    //         color: #262626;
-    //         font-weight: bold;
-    //       }
-    //       .text {
-    //         font-size: 14px;
-    //         line-height: 24px;
-    //         color: #888;
-    //       }
-    //     }
-    //   }
-    // }
-
-    // .tools-detail {
-    //   margin-bottom: 20px;
-    //   padding-top: 60px;
-    //   min-height: calc(100vh - 50px - 574px - 311px - 20px);
-    //   width: 100%;
-    //   background-color: #fff;
-    //   border-radius: 10px;
-    //   box-sizing: border-box;
-    //   .max-width {
-    //     max-width: 900px;
-    //     article {
-    //       width: 100%;
-    //       line-height: 28px;
-    //       box-sizing: border-box;
-    //       img {
-    //         max-width: 100%;
-    //       }
-    //       p {
-    //         width: 100%;
-    //         img {
-    //           max-width: 100%;
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
   }
+}
 </style>

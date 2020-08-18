@@ -1,7 +1,7 @@
 <template>
   <transition name="fade">
   <div class="tips-layer" v-if="tips !==''">
-    <div class="tips" :style="{backgroundColor: tipsBackgroundColor ? tipsBackgroundColor : 'rgba(0,0,0,0.75)', color: tipsColor ? tipsColor : '#fff'}">{{tips}}</div>
+    <div :class="tipsType? `${tipsType} tips`:'tips' ">{{tips}}</div>
   </div>
   </transition>
 </template>
@@ -15,16 +15,10 @@ export default {
         return '';
       },
     },
-    tipsBackgroundColor: {
+    tipsType: {
       type: [String],
       default() {
-        return '';
-      },
-    },
-    tipsColor: {
-      type: [String],
-      default() {
-        return '';
+        return 'info';
       },
     },
   },
@@ -35,17 +29,26 @@ export default {
   .tips-layer {
     position: fixed;
     left: 0;
-    top: 0;
-    display: flex;
-    padding-top: 5%;
+    top: 50px;
     width: 100%;
-    align-items: center;
+    text-align: center;
     z-index: 10000;
     .tips {
-      margin :auto;
-      padding: 5px;
-      border-radius: 6px;
-      font-size: 12px;
+      padding: 15px 0;
+      font-size: 14px;
+      color: #fff;
+      &.info {
+        background-color: rgba(0,0,0,0.75);
+      }
+      &.warning {
+        background-color: rgba(0,0,0,0.75);
+      }
+      &.error {
+        background-color: rgba(255, 0, 24, 0.75);
+      }
+      &.success {
+        background-color: rgba(0, 194, 80,0.75);
+      }
     }
   }
 

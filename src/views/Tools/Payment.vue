@@ -10,8 +10,12 @@
           <div class="desc">{{paymentInfo.desc}}</div>
           <div class="info">
             <div class="info-left">您拍下了{{paymentInfo.amount}}份</div>
-            <div class="info-right">
-              <i class="iconfont">&#xe602;</i> 1020
+            <div
+              :class="paymentInfo.isliked ? 'info-right isliked' : 'info-right'"
+              @click="bindlike(paymentInfo)"
+            >
+              <i class="iconfont">&#xe602;</i>
+              {{paymentInfo.likes}}
             </div>
           </div>
           <div class="process">
@@ -22,17 +26,17 @@
                 <div class="text">拍下商品</div>
               </div>
               <div class="line"></div>
-              <div class="item ing">
+              <div :class="status === 'typein' ? 'item ing' : 'item'">
                 <div class="circle">2</div>
                 <div class="text">支付信息</div>
               </div>
               <div class="line"></div>
-              <div class="item">
+              <div :class="status === 'scan' ? 'item ing' : 'item'">
                 <div class="circle">3</div>
                 <div class="text">扫码支付</div>
               </div>
               <div class="line"></div>
-              <div class="item">
+              <div :class="status === 'complate' ? 'item ing' : 'item'">
                 <div class="circle">4</div>
                 <div class="text">支付反馈</div>
               </div>
@@ -41,95 +45,179 @@
         </div>
       </div>
 
-      <div class="payment-block">
-        <div class="block-top">
-          <div class="back" @click="back">
-            <span class="back-icon">
-              <i class="iconfont">&#xe693;</i>
-            </span>
-            <span class="t">返回</span>
+      <template v-if="status === 'typein'">
+        <div class="payment-block">
+          <div class="block-top">
+            <div class="back" @click="back">
+              <span class="back-icon">
+                <i class="iconfont">&#xe693;</i>
+              </span>
+              <span class="t">返回</span>
+            </div>
+            <span class="title">购买人信息</span>
           </div>
-          <span class="title">购买人信息</span>
-          <div class="add-btn" @click="add">
-            <i class="iconfont">&#xe610;</i>
-            <span>添加一个</span>
-          </div>
-        </div>
-        <div class="block-list">
-          <template v-for="(item, $index) in paymentInfo.amount">
-          <div class="the-block" :key="$index">
-            <div class="num">{{$index + 1}}</div>
-            <div class="name">
-              <div class="input-group">
-                <span>姓名</span>
-                <input type="text" v-model="buyerList[$index].name"/>
+          <div class="block-list">
+            <template v-for="(item, $index) in paymentInfo.amount">
+              <div class="the-block" :key="$index">
+                <div class="num">{{$index + 1}}</div>
+                <div class="block-group">
+                  <div :class="errorList[$index].name ? 'input-group error' : 'input-group'">
+                    <span>姓名</span>
+                    <input type="text" v-model="buyerList[$index].name" />
+                  </div>
+                </div>
+                <div class="block-group">
+                  <div :class="errorList[$index].email ? 'input-group error' : 'input-group'">
+                    <span>邮箱</span>
+                    <input type="text" v-model="buyerList[$index].email" />
+                  </div>
+                </div>
+                <div class="block-group">
+                  <div :class="errorList[$index].wechat ? 'input-group error' : 'input-group'">
+                    <span>微信</span>
+                    <input type="text" v-model="buyerList[$index].wechat" />
+                  </div>
+                </div>
+                <div class="block-group">
+                  <div :class="errorList[$index].phone ? 'input-group error' : 'input-group'">
+                    <span>电话</span>
+                    <input type="text" v-model="buyerList[$index].phone" maxlength="11" />
+                  </div>
+                </div>
+                <div class="control">
+                  <i class="iconfont" @click="del($index)">&#xe641;</i>
+                </div>
               </div>
-            </div>
-            <div class="email">
-              <div class="input-group">
-                <span>邮箱</span>
-                <input type="text" v-model="buyerList[$index].email"/>
-              </div>
-            </div>
-            <div class="wechat">
-              <div class="input-group">
-                <span>微信</span>
-                <input type="text" v-model="buyerList[$index].wechat"/>
-              </div>
-            </div>
-            <div class="phone">
-              <div class="input-group">
-                <span>电话</span>
-                <input type="text" v-model="buyerList[$index].phone"/>
-              </div>
-            </div>
-            <div class="control">
-              <i class="iconfont" @click="del($index)">&#xe641;</i>
+            </template>
+            <div class="add-btn" @click="add">
+              <i class="iconfont">&#xe610;</i>
+              <span>添加一个</span>
             </div>
           </div>
-          </template>
-        </div>
-        <div class="block-remark">
-          <textarea placeholder="备注"></textarea>
-        </div>
-        <div class="block-wechat">
-          <div class="input-group">
-            <span>推荐人微信</span>
-            <input type="text" v-model="referrer"/>
+          <div class="block-remark">
+            <textarea placeholder="备注" v-model="remark"></textarea>
+          </div>
+          <div class="block-wechat">
+            <div class="input-group">
+              <span>推荐人微信</span>
+              <input type="text" v-model="referrer" />
+            </div>
+          </div>
+          <div class="block-total">
+            一共需支付
+            <span>{{paymentInfo.price * paymentInfo.amount}}元</span>
+          </div>
+          <div class="block-wechatpay">
+            <div class="btn" @click="payit">
+              <i class="iconfont">&#xe629;</i>
+              <span>微信支付</span>
+            </div>
           </div>
         </div>
-        <div class="block-total">
-          一共需支付<span>{{paymentInfo.price * paymentInfo.amount}}元</span>
-        </div>
-        <div class="block-wechatpay">
-          <div class="btn">
-            <i class="iconfont">&#xe629;</i>
-            <span>微信支付</span>
+      </template>
+
+      <template v-else-if="status === 'scan'">
+        <div class="payment-block">
+          <div class="block-top">
+            <div class="back" @click="back">
+              <span class="back-icon">
+                <i class="iconfont">&#xe693;</i>
+              </span>
+              <span class="t">返回</span>
+            </div>
+            <span class="title">扫码支付</span>
+          </div>
+          <div class="block-qrcode">
+            <div class="money">
+              实付
+              <span>{{paymentInfo.price * paymentInfo.amount}}</span>元
+            </div>
+
+            <div class="qrcode">
+              <wechatPay
+                :out_trade_no="payForm.out_trade_no"
+                :total_fee="payForm.total_fee"
+                :body="payForm.body"
+                @order-success="getReslut"
+                :size="280"
+              ></wechatPay>
+            </div>
+
+            <div class="title">微信扫码支付</div>
+          </div>
+          <div class="block-tips">
+          <div class="qrcode">
+            <img src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png"/>
+          </div>
+          <div class="tips-right">
+            <div class="title">购买需知</div>
+            <div class="text">所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
           </div>
         </div>
-      </div>
+        </div>
+      </template>
+
+      <template v-else-if="status === 'complate'">
+        <div class="payment-block">
+          <div class="block-img"></div>
+          <div class="block-title">支付成功</div>
+          <div class="block-text">
+            跳转到个人中心查看
+            <span>支付记录</span>
+          </div>
+          <div class="block-tips">
+            <div class="qrcode">
+              <img
+                src="http://lc-vwzm34py.cn-n1.lcfile.com/2c6d13fd78972b42d924/%E5%BE%AE%E4%BF%A1%E6%88%AA%E5%9B%BE_20191112174429.png"
+              />
+            </div>
+            <div class="tips-right">
+              <div class="title">活动注意事项</div>
+              <div class="text">活动由宅设发布，真实有效，报名请仔细看清楚活动详情后报名，如有不理解请扫二维码咨询</div>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
 
 <script>
+import wechatPay from "@/components/WechatPay";
+
 export default {
   data() {
     return {
       paymentInfo: "",
       buyerList: [],
-      referrer: '',
+      remark: "",
+      referrer: "",
+
+      status: "typein",
+
+      payForm: {},
+
+      errorList: []
     };
   },
+  components: {
+    wechatPay
+  },
   mounted() {
-    this.paymentInfo = JSON.parse(localStorage.getItem('payment'));
+    this.paymentInfo = JSON.parse(localStorage.getItem("payment"));
     for (let i = 0; i < this.paymentInfo.amount; i += 1) {
       this.buyerList.push({
-        name: '',
-        email: '',
-        wechat: '',
-        phone: '',
-      })
+        name: "",
+        email: "",
+        wechat: "",
+        phone: ""
+      });
+      this.errorList.push({
+        name: undefined,
+        email: undefined,
+        wechat: undefined,
+        phone: undefined
+      });
     }
   },
   methods: {
@@ -139,549 +227,587 @@ export default {
     add() {
       this.paymentInfo.amount += 1;
       this.buyerList.push({
-        name: '',
-        email: '',
-        wechat: '',
-        phone: '',
-      })
+        name: "",
+        email: "",
+        wechat: "",
+        phone: ""
+      });
+      this.errorList.push({
+        name: undefined,
+        email: undefined,
+        wechat: undefined,
+        phone: undefined
+      });
     },
     del(i) {
       this.paymentInfo.amount -= 1;
-      this.buyerList.splice(i,1);
+      this.buyerList.splice(i, 1);
+      this.errorList.splice(i, 1);
     },
-  },
+
+    payit() {
+      if (this.buyerList.length === 0) {
+        alert("请添加购买人信息");
+        return false;
+      }
+      let i = 0;
+      this.buyerList.forEach((item, index) => {
+        if (item.name.length === 0) {
+          i = i + 1;
+          this.errorList[index].name = "名字不能为空";
+        } else {
+          this.errorList[index].name = undefined;
+        }
+        if (item.email.length === 0) {
+          i = i + 1;
+          this.errorList[index].email = "邮箱不能为空";
+        } else {
+          this.errorList[index].email = undefined;
+
+          // 邮箱验证正则
+          // eslint-disable-next-line no-useless-escape
+          const reg = /^[A-Za-z0-9]+([_\.][A-Za-z0-9]+)*@([A-Za-z0-9\-]+\.)+[A-Za-z]{2,6}$/;
+          if (!reg.test(item.email)) {
+            i = i + 1;
+            this.errorList[index].email = "邮箱格式不正确";
+          } else {
+            this.errorList[index].email = undefined;
+          }
+        }
+
+        if (item.wechat.length === 0) {
+          i = i + 1;
+          this.errorList[index].wechat = "微信不能为空";
+        } else {
+          this.errorList[index].wechat = undefined;
+        }
+        if (item.phone.length === 0) {
+          i = i + 1;
+          this.errorList[index].phone = "电话不能为空";
+        } else {
+          this.errorList[index].phone = undefined;
+        }
+      });
+
+      if (i == 0) {
+        this.payForm = {
+          out_trade_no: `zdesigner${new Date().getTime()}`,
+          total_fee: this.paymentInfo.price * this.paymentInfo.amount,
+          body: `${this.paymentInfo.title}-${this.paymentInfo.attrName}`
+        };
+
+        this.status = "scan";
+      }
+    },
+
+    getReslut(item) {
+      const queryArray = new Array();
+      // 构造含有50个对象的数组
+      for (var i = 0; i < this.buyerList.length; i++) {
+        var query = this.$Bmob.Query("order_list");
+        query.set("payReslut", item);
+        query.set("sort", "product");
+        query.set("buyerCount", this.buyerList.length);
+        const productPointer = this.$Bmob.Pointer("product");
+        const productID = productPointer.set(this.paymentInfo.id);
+        query.set("product", productID);
+
+        // 多订单批量保存
+        const userPointer = this.$Bmob.Pointer("_User");
+        const userID = userPointer.set(this.$store.state.user.objectId);
+        query.set("user", userID);
+        query.set("trade_state", item.trade_state);
+
+        query.set("name", this.buyerList[i].name);
+        query.set("phone", this.buyerList[i].phone);
+        query.set("email", this.buyerList[i].email);
+        query.set("wechatId", this.buyerList[i].wechat);
+        if (this.remark) {
+          query.set("remark", this.remark);
+        }
+        if (this.referrer) {
+          query.set("referrer", this.referrer);
+        }
+        query.set("delivery", false);
+        queryArray.push(query);
+      }
+
+      // 传入刚刚构造的数组
+      this.$Bmob
+        .Query("order_list")
+        .saveAll(queryArray)
+        .then(res => {
+          const proQueryArray = new Array();
+          for (var i = 0; i < res.length; i++) {
+            const proquery = this.$Bmob.Query("product_person");
+
+            const userPointer = this.$Bmob.Pointer("_User");
+            const userID = userPointer.set(this.$store.state.user.objectId);
+            proquery.set("user", userID);
+
+            const productPointer = this.$Bmob.Pointer("product");
+            const productID = productPointer.set(this.paymentInfo.id);
+            proquery.set("product", productID);
+
+            const orderPointer = this.$Bmob.Pointer("order_list");
+            const orderID = orderPointer.set(res[i].success.objectId);
+            proquery.set("order", orderID);
+
+            proQueryArray.push(proquery);
+          }
+          this.$Bmob
+            .Query("product_person")
+            .saveAll(queryArray)
+            .then(() => {
+              this.status = "complate";
+              this.payReslut = item;
+            })
+            .catch(error => {
+              console.log(error);
+            });
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    },
+
+    bindlike(item) {
+      const that = this;
+      let likeQuery = this.$Bmob.Query("like_list");
+
+      if (item.isliked) {
+        likeQuery.destroy(item.isliked).then(() => {
+          that.$set(that.paymentInfo, "isliked", "");
+          that.$set(that.paymentInfo, "likes", item.likes - 1);
+        });
+      } else {
+        let productPointer = this.$Bmob.Pointer("product");
+        const productID = productPointer.set(item.id);
+
+        const userPointer = this.$Bmob.Pointer("_User");
+        const userID = userPointer.set(
+          JSON.parse(localStorage.getItem("memberInfo")).objectId
+        );
+        likeQuery.set("product", productID);
+        likeQuery.set("user", userID);
+        likeQuery.save().then(res => {
+          that.$set(this.paymentInfo, "isliked", res.objectId);
+          that.$set(this.paymentInfo, "likes", item.likes + 1);
+        });
+      }
+    }
+  }
 };
 </script>
 
 <style lang="scss" scoped>
-	.payment-page {
-		padding-top: 50px;
-		.max-width {
-			padding: 50px 100px;
-			background-color: #fff;
-			box-sizing: border-box;
-			.payment-top {
-				display: flex;
-        padding-bottom: 30px;
-        border-bottom: 1px solid #EEEEEE;
-				.top-left {
+.payment-page {
+  padding: 50px 0;
+  .max-width {
+    padding: 50px 100px;
+    background-color: #fff;
+    box-sizing: border-box;
+    .payment-top {
+      display: flex;
+      padding-bottom: 30px;
+      border-bottom: 1px solid #eeeeee;
+      .top-left {
+        width: 300px;
+        .img {
           width: 300px;
-          .img {
-            width: 300px;
-            height: 300px;
-            background-position: 50%;
-            background-size: contain;
-            border: 1px solid #eee;
-            box-sizing: border-box;
-          }
-          // .the-info {
-          //   padding: 20px;
-          //   width: 300px;
-          //   border: 1px solid #eee;
-          //   border-top: none;
-          //   box-sizing: border-box;
-          //   .t {
-          //     margin-bottom: 10px;
-          //     font-size: 14px;
-          //     font-weight: bold;
-          //     color: #666;
-          //   }
-          //   .url {
-          //     margin-bottom: 20px;
-          //     font-size: 12px;
-          //     color: #888;
-          //     word-break: break-all;
-          //   }
-          //   .tag-list {
-          //     display: flex;
-          //     margin-bottom: 25px;
-          //     .tag {
-          //       margin-right: 10px;
-          //       width: 50px;
-          //       height: 20px;
-          //       line-height: 20px;
-          //       text-align: center;
-          //       background-color: #f5f5f5;
-          //       color: #999;
-          //       font-size: 10px;
-          //     }
-          //   }
-          //   .sell {
-          //     font-size: 12px;
-          //     color: #888;
-          //   }
-          // }
-        }
-        .top-right {
-          flex: 1;
-          padding-left: 40px;
+          height: 300px;
+          background-position: 50%;
+          background-size: contain;
+          border: 1px solid #eee;
           box-sizing: border-box;
-          .title {
-            margin-bottom: 10px;
-            font-size: 20px;
-            line-height: 32px;
-            color: #262626;
-            font-weight: 600;
-          }
-          .desc {
-            margin-bottom: 10px;
-            font-size: 14px;
-            line-height: 24px;
-            color: #888;
-          }
-          .info {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-            padding: 0 20px;
-            width: 100%;
-            height: 54px;
-            background-color: #FBFBFB;
-            box-sizing: border-box;
-            .info-left {
-              font-size: 12px;
-              line-height: 17px;
-              color: #262626;
-            }
-            .info-right {
-              width: 66px;
-              height: 26px;
-              background-color: #fff;
-              border-radius: 2px;
-              border:1px solid #F4751D;
-              font-size: 10px;
-              line-height: 26px;
-              text-align: center;
-              color: #F4751D;
-              cursor: pointer;
-              i {
-                font-size: 10px;
-              }
-            }
-          }
-          .process {
-            padding-top: 20px;
-            .t {
-              padding-bottom: 25px;
-              font-size: 14px;
-              color: #333;
-              line-height: 20px;
-            }
-            .list {
-              display: flex;
-              .item {
-                .circle {
-                  margin: auto;
-                  width: 38px;
-                  height: 38px;
-                  line-height: 36px;
-                  text-align: center;
-                  border-radius: 50%;
-                  border: 1px solid #eee;
-                  font-size: 16px;
-                  font-weight: 500;
-                  color: #262626;
-                  box-sizing: border-box;
-                }
-                .text {
-                  margin-top: 10px;
-                  text-align: center;
-                  font-size: 12px;
-                  line-height: 17px;
-                  color: #262626;
-                }
-                &.ing {
-                  .circle {
-                    border: 1px solid #FF5D01;
-                    background-color: #FF5D01;
-                    color: #fff;
-                  }
-                }
-              }
-              .line {
-                margin-top: 19px;
-                width: 52px;
-                height: 1px;
-                background-color: #F4F4F4;
-              }
-            }
-          }
-
-
-
-          // .edit-sku {
-          //   .title {
-          //     margin-bottom: 10px;
-          //     font-size: 14px;
-          //     line-height: 20px;
-          //     color: #333;
-          //     font-weight: bold;
-          //   }
-          //   .attrs {
-          //     display: flex;
-          //     padding-bottom: 20px;
-          //     flex-wrap: wrap;
-          //     border-bottom: 1px solid #eee;
-          //     .attr {
-          //       margin-right: 30px;
-          //       margin-bottom: 10px;
-          //       width: 240px;
-          //       height: 40px;
-          //       line-height: 40px;
-          //       border: 1px solid #eee;
-          //       color: #333;
-          //       text-align: center;
-          //       font-size: 14px;
-          //       cursor: pointer;
-          //       &:hover, &.active {
-          //         border-color: #F47A25;
-          //         color: #F47A25;
-          //       }
-          //     }
-          //   }
-          //   .sell-tips {
-          //     margin-top: 20px;
-          //     .tips-left {
-          //       font-size: 14px;
-          //       line-height: 20px;
-          //       color: #262626;
-          //       font-weight: bold;
-          //       .count {
-          //         color: #F47A25;
-          //       }
-          //     }
-          //     .tips-right {
-          //       margin-left: 30px;
-          //       font-size: 12px;
-          //       color: #262626;
-          //     }
-          //   }
-          //   .sell-func {
-          //     display: flex;
-          //     margin-top: 20px;
-          //     .btn {
-          //       margin-right: 40px;
-          //       width: 170px;
-          //       height: 40px;
-          //       line-height: 40px;
-          //       text-align: center;
-          //       background-color: #F4751D;
-          //       color: #fff;
-          //       cursor: pointer;
-          //     }
-          //     .count-control {
-          //       display: flex;
-          //       width: 100px;
-          //       height: 40px;
-          //       border: 1px solid #eee;
-          //       input {
-          //         width: 80px;
-          //         height: 100%;
-          //         border: none;
-          //         padding: 0;
-          //         box-sizing: border-box;
-          //         outline: none;
-          //         text-align: center;
-          //       }
-          //       .control {
-          //         width: 20px;
-          //         border-left: 1px solid #eee;
-          //         span {
-          //           display: block;
-          //           line-height: 20px;
-          //           text-align: center;
-          //           color: #333;
-          //           cursor: pointer;
-          //           box-sizing: border-box;
-          //           &:first-child {
-          //             border-bottom: 1px solid #eee;
-          //           }
-          //         }
-          //       }
-          //     }
-          //   }
-          // }
         }
-			}
-
-      .payment-block {
-        width: 100%;
-        .block-top {
-          position: relative;
-          padding-top: 30px;
-          padding-bottom: 35px;
-          .back {
-            display: inline-block;
-            cursor: pointer;
-            .back-icon {
-              display: inline-block;
-              width: 20px;
-              height: 28px;
-              line-height: 28px;
-              border: 1px solid #F2F2F2;
-              border-radius: 2px;
-              color: #F4C51D;
-              font-size: 12px;
-              text-align: center;
-            }
-            .t {
-              margin-left: 10px;
-              line-height: 28px;
-              font-size: 12px;
-              color: #262626;
-            }
-          }
-          .title {
-            margin-left: 30px;
-            font-size: 20px;
-            line-height: 32px;
-            color: #333;
-            font-weight: 600;
-          }
-          .add-btn {
-            position: absolute;
-            right: 0;
-            bottom: 35px;
-            display: flex;
-            padding: 0 10px;
-            height: 30px;
-            background-color: #F4C51D;
-            color: #fff;
-            font-size: 12px;
-            border-radius: 2px;
-            cursor: pointer;
-            i {
-              margin-right: 10px;
-              line-height: 30px;
-            }
-            span {
-              line-height: 30px;
-            }
-          }
-        }
-        .block-list {
-          width: 100%;
-          .the-block {
-            display: flex;
-            margin-bottom: 20px;
-            width: 100%;
-            .num {
-              width: 20px;
-              line-height: 36px;
-              font-size: 16px;
-              color: #262626;
-              font-weight: 500;
-            }
-            .name {
-              padding: 0 10px;
-              box-sizing: border-box;
-              .input-group {
-                display: flex;
-                padding: 0 10px;
-                width: 160px;
-                box-sizing: border-box;
-                background-color: #F4F4F4;
-                span {
-                  font-size: 12px;
-                  color: #888;
-                  line-height: 36px;
-                  word-break: keep-all;;
-                }
-                input {
-                  flex: 1;
-                  padding: 0;
-                  padding-left: 5px;
-                  height: 36px;
-                  border: none;
-                  outline: none;
-                  background-color: transparent;
-                  border-radius: 2px;
-                  box-sizing: border-box;
-                }
-              }
-            }
-            .email {
-              padding: 0 10px;
-              box-sizing: border-box;
-              .input-group {
-                display: flex;
-                padding: 0 10px;
-                width: 160px;
-                box-sizing: border-box;
-                background-color: #F4F4F4;
-                span {
-                  font-size: 12px;
-                  color: #888;
-                  line-height: 36px;
-                  word-break: keep-all;;
-                }
-                input {
-                  flex: 1;
-                  padding: 0;
-                  padding-left: 5px;
-                  height: 36px;
-                  border: none;
-                  outline: none;
-                  background-color: transparent;
-                  border-radius: 2px;
-                  box-sizing: border-box;
-                }
-              }
-            }
-            .wechat {
-              padding: 0 10px;
-              box-sizing: border-box;
-              .input-group {
-                display: flex;
-                padding: 0 10px;
-                width: 160px;
-                box-sizing: border-box;
-                background-color: #F4F4F4;
-                span {
-                  font-size: 12px;
-                  color: #888;
-                  line-height: 36px;
-                  word-break: keep-all;;
-                }
-                input {
-                  flex: 1;
-                  padding: 0;
-                  padding-left: 5px;
-                  height: 36px;
-                  border: none;
-                  outline: none;
-                  background-color: transparent;
-                  border-radius: 2px;
-                  box-sizing: border-box;
-                }
-              }
-            }
-            .phone {
-              padding: 0 10px;
-              box-sizing: border-box;
-              .input-group {
-                display: flex;
-                padding: 0 10px;
-                width: 160px;
-                box-sizing: border-box;
-                background-color: #F4F4F4;
-                span {
-                  font-size: 12px;
-                  color: #888;
-                  line-height: 36px;
-                  word-break: keep-all;;
-                }
-                input {
-                  flex: 1;
-                  padding: 0;
-                  padding-left: 5px;
-                  height: 36px;
-                  border: none;
-                  outline: none;
-                  background-color: transparent;
-                  border-radius: 2px;
-                  box-sizing: border-box;
-                }
-              }
-            }
-            .control {
-              width: 30px;
-              text-align: center;
-              color: #cccccc;
-              cursor: pointer;
-              transition: all 250ms ease;
-              i {
-                font-size: 18px;
-                line-height: 36px;
-              }
-              &:hover{
-                color: #cc0033;
-              }
-            }
-          }
-        }
-        .block-remark {
-          margin-top: 30px;
-          width: 400px;
-          height: 80px;
-          background-color: #f4f4f4;
-          textarea {
-            padding: 10px;
-            width: 100%;
-            height: 100%;
-            border: none;
-            resize: none;
-            background-color: transparent;
-            outline: none;
-            box-sizing: border-box;
-          }
-        }
-        .block-wechat {
-          margin-top: 30px;
-          .input-group {
-            display: flex;
-            padding: 0 10px;
-            width: 240px;
-            box-sizing: border-box;
-            background-color: #F4F4F4;
-            span {
-              font-size: 12px;
-              color: #888;
-              line-height: 36px;
-              word-break: keep-all;;
-            }
-            input {
-              flex: 1;
-              padding: 0;
-              padding-left: 5px;
-              height: 36px;
-              border: none;
-              outline: none;
-              background-color: transparent;
-              border-radius: 2px;
-              box-sizing: border-box;
-            }
-          }
-        }
-        .block-total {
-          margin-top: 40px;
-          font-size: 16px;
+      }
+      .top-right {
+        flex: 1;
+        padding-left: 40px;
+        box-sizing: border-box;
+        .title {
+          margin-bottom: 10px;
+          font-size: 20px;
+          line-height: 32px;
           color: #262626;
-          span {
-            margin-left: 15px;
-            color: #F4751D;
-            font-size: 20px;
-            font-weight: 600;
-          }
+          font-weight: 600;
         }
-        .block-wechatpay {
-          margin-top: 15px;
-          padding: 20px;
-          box-sizing: border-box;
+        .desc {
+          margin-bottom: 10px;
+          font-size: 14px;
+          line-height: 24px;
+          color: #888;
+        }
+        .info {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          margin-bottom: 20px;
+          padding: 0 20px;
+          width: 100%;
+          height: 54px;
           background-color: #fbfbfb;
-          border-radius: 2px;
-          .btn {
-            display: flex;
-            width: 163px;
-            height: 38px;
-            align-items: center;
-            justify-content: center;
-            background: #ffffff;
-            border: 1px solid #6bcc03;
+          box-sizing: border-box;
+          .info-left {
+            font-size: 12px;
+            line-height: 17px;
+            color: #262626;
+          }
+          .info-right {
+            width: 66px;
+            height: 26px;
+            background-color: #fff;
             border-radius: 2px;
+            border: 1px solid #d8d8d8;
+            color: #888888;
+            font-size: 10px;
+            line-height: 26px;
+            text-align: center;
             cursor: pointer;
             i {
-              margin-right: 8px;
-              color: #09BB07;
+              font-size: 10px;
             }
-            span {
-              color: #333333;
-              font-size: 14px;
+            &:hover,
+            &.isliked {
+              border-color: #f4751d;
+              color: #f4751d;
+            }
+          }
+        }
+        .process {
+          padding-top: 20px;
+          .t {
+            padding-bottom: 25px;
+            font-size: 14px;
+            color: #333;
+            line-height: 20px;
+          }
+          .list {
+            display: flex;
+            .item {
+              .circle {
+                margin: auto;
+                width: 38px;
+                height: 38px;
+                line-height: 36px;
+                text-align: center;
+                border-radius: 50%;
+                border: 1px solid #eee;
+                font-size: 16px;
+                font-weight: 500;
+                color: #262626;
+                box-sizing: border-box;
+              }
+              .text {
+                margin-top: 10px;
+                text-align: center;
+                font-size: 12px;
+                line-height: 17px;
+                color: #262626;
+              }
+              &.ing {
+                .circle {
+                  border: 1px solid #ff5d01;
+                  background-color: #ff5d01;
+                  color: #fff;
+                }
+              }
+            }
+            .line {
+              margin-top: 19px;
+              width: 52px;
+              height: 1px;
+              background-color: #f4f4f4;
             }
           }
         }
       }
-		}
-	}
+    }
+
+    .payment-block {
+      width: 100%;
+      .block-top {
+        position: relative;
+        padding-top: 30px;
+        padding-bottom: 35px;
+        .back {
+          display: inline-block;
+          cursor: pointer;
+          .back-icon {
+            display: inline-block;
+            width: 20px;
+            height: 28px;
+            line-height: 28px;
+            border: 1px solid #f2f2f2;
+            border-radius: 2px;
+            color: #f4c51d;
+            font-size: 12px;
+            text-align: center;
+          }
+          .t {
+            margin-left: 10px;
+            line-height: 28px;
+            font-size: 12px;
+            color: #262626;
+          }
+        }
+        .title {
+          margin-left: 30px;
+          font-size: 20px;
+          line-height: 32px;
+          color: #333;
+          font-weight: 600;
+        }
+      }
+      .block-list {
+        width: 100%;
+        .the-block {
+          display: flex;
+          margin-bottom: 20px;
+          width: 100%;
+          .num {
+            width: 20px;
+            line-height: 36px;
+            font-size: 16px;
+            color: #262626;
+            font-weight: 500;
+          }
+          .block-group {
+            padding: 0 10px;
+            box-sizing: border-box;
+            .input-group {
+              position: relative;
+              width: 160px;
+              box-sizing: border-box;
+              overflow: hidden;
+              transition: all 500ms ease;
+              &.error {
+                border-color: #e80000;
+                background-color: #fff7f7;
+                border-radius: 6px;
+              }
+              span {
+                position: absolute;
+                left: 10px;
+                top: 0;
+                font-size: 12px;
+                color: #888;
+                line-height: 36px;
+                word-break: keep-all;
+                z-index: 1;
+              }
+              input {
+                position: relative;
+                z-index: 0;
+                padding: 0;
+                padding-left: 39px;
+                width: 100%;
+                height: 36px;
+                border: none;
+                outline: none;
+                background-color: #f4f4f4;
+                border: 1px solid #f4f4f4;
+                border-radius: 2px;
+                box-sizing: border-box;
+                &:focus {
+                  border-radius: 2px !important;
+                  outline: none;
+                  border: 1px solid #ffcb2b !important;
+                  background-color: #f4f4f4 !important;
+                }
+              }
+
+              &.error {
+                input {
+                  border-color: #e80000;
+                  background-color: #fff7f7;
+                  border-radius: 6px;
+                }
+              }
+            }
+          }
+
+          .control {
+            width: 30px;
+            text-align: center;
+            color: #cccccc;
+            cursor: pointer;
+            transition: all 250ms ease;
+            i {
+              font-size: 18px;
+              line-height: 36px;
+            }
+            &:hover {
+              color: #cc0033;
+            }
+          }
+        }
+        .add-btn {
+          display: inline-flex;
+          padding: 0 30px;
+          height: 36px;
+          background-color: #f4c51d;
+          color: #fff;
+          font-size: 12px;
+          border-radius: 2px;
+          cursor: pointer;
+          i {
+            margin-right: 10px;
+            line-height: 36px;
+          }
+          span {
+            line-height: 36px;
+          }
+        }
+      }
+      .block-remark {
+        margin-top: 30px;
+        width: 400px;
+        height: 80px;
+        background-color: #f4f4f4;
+        textarea {
+          padding: 10px;
+          width: 100%;
+          height: 100%;
+          border: none;
+          resize: none;
+          background-color: transparent;
+          outline: none;
+          box-sizing: border-box;
+        }
+      }
+      .block-wechat {
+        margin-top: 30px;
+        .input-group {
+          display: flex;
+          padding: 0 10px;
+          width: 240px;
+          box-sizing: border-box;
+          background-color: #f4f4f4;
+          span {
+            font-size: 12px;
+            color: #888;
+            line-height: 36px;
+            word-break: keep-all;
+          }
+          input {
+            flex: 1;
+            padding: 0;
+            padding-left: 5px;
+            height: 36px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+            border-radius: 2px;
+            box-sizing: border-box;
+          }
+        }
+      }
+      .block-total {
+        margin-top: 40px;
+        font-size: 16px;
+        color: #262626;
+        span {
+          margin-left: 15px;
+          color: #f4751d;
+          font-size: 20px;
+          font-weight: 600;
+        }
+      }
+      .block-wechatpay {
+        margin-top: 15px;
+        padding: 20px;
+        box-sizing: border-box;
+        background-color: #fbfbfb;
+        border-radius: 2px;
+        .btn {
+          display: flex;
+          width: 163px;
+          height: 38px;
+          align-items: center;
+          justify-content: center;
+          background: #ffffff;
+          border: 1px solid #6bcc03;
+          border-radius: 2px;
+          cursor: pointer;
+          i {
+            margin-right: 8px;
+            color: #09bb07;
+          }
+          span {
+            color: #333333;
+            font-size: 14px;
+          }
+        }
+      }
+
+      .block-qrcode {
+        .money {
+          margin-bottom: 20px;
+          font-size: 14px;
+          color: #262626;
+          line-height: 20px;
+          text-align: center;
+          span {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff5d01;
+          }
+        }
+        .title {
+          font-size: 16px;
+          line-height: 22px;
+          color: #262626;
+          text-align: center;
+        }
+      }
+
+      .block-img {
+        margin: auto;
+        margin-top: 60px;
+        margin-bottom: 20px;
+        width: 218px;
+        height: 218px;
+        background-color: #d8d8d8;
+      }
+      .block-title {
+        margin-bottom: 10px;
+        text-align: center;
+        font-size: 20px;
+        color: #262626;
+        font-weight: bold;
+      }
+      .block-text {
+        margin-top: 10px;
+        text-align: center;
+        font-size: 14px;
+        span {
+          color: #ff5d01;
+        }
+      }
+      .block-tips {
+        display: flex;
+        margin-top: 70px;
+        padding: 25px;
+        width: 100%;
+        background-color: #fcfcfc;
+        box-sizing: border-box;
+        .tips-right {
+          padding-left: 40px;
+          .title {
+            font-size: 14px;
+            line-height: 32px;
+            font-weight: bold;
+          }
+          .text {
+            font-size: 14px;
+            line-height: 24px;
+            color: #888888;
+          }
+        }
+      }
+    }
+  }
+}
 </style>

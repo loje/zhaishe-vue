@@ -39,7 +39,7 @@
           <div class="layer-flex">
             <div class="layer-title">
               <div class="icon" style="background-image: url('http://files.zdesigner.cn/2019/12/28/e7eaec524071ce948069035ac5b91ff7.png');background-size: cover;"></div>
-              <div class="title">Eagle素材包</div>
+              <div class="title">导入素材包</div>
               <div class="more" @click="$router.push('./download')">
                 <i class="iconfont">&#xe649;</i>
               </div>
@@ -79,18 +79,6 @@
 							<div class="swiper-pagination" slot="pagination"></div>
 						</swiper>
 
-            <!-- <div class="layer-block">
-							<template v-for="(item, $index) in recommendList">
-              <div class="block-item" :key="$index" @click="$router.push(`/tools/item/${item.id}`)">
-                <div class="icon" :style="{'background-image': `url(${item.imgSrc})`}"></div>
-                <div class="title">{{item.title}}</div>
-              </div>
-							</template>
-              <div class="block-item more-item" @click="showRecommend = true">
-                <div class="icon">加入宅设</div>
-                <div class="title">其他</div>
-              </div>
-            </div> -->
           </div>
           <div class="layer-flex">
             <div class="layer-title">
@@ -101,14 +89,6 @@
               <div class="more" @click="goPrivate">
                 <i class="iconfont">&#xe649;</i>
               </div>
-              <!-- <div class="handle">
-                <div class="prev" @click="getPrivateList(pagePri - 1)">
-                  <i class="iconfont">&#xe693;</i>
-                </div>
-                <div class="next" @click="getPrivateList(pagePri + 1)">
-                  <i class="iconfont">&#xe600;</i>
-                </div>
-              </div> -->
             </div>
             <div class="layer-list">
               <div class="list-item" v-for="(item, $index) in privateList" :key="$index" :title="item.title" @click="privateShow(item)">
@@ -122,9 +102,6 @@
                 </div>
               </div>
             </div>
-            <!-- <div class="pulish">
-              <span>我要发布</span>
-            </div> -->
           </div>
         </div>
       </div>
@@ -134,102 +111,92 @@
         <div class="layer-title">
           <div class="title">深圳同城</div>
           <div class="layer-nav">
-            <div :class="actTab === '宅设主办' ? 'nav active' : 'nav'" @click="getActCount('宅设主办')">宅设主办</div>
-            <!-- <div :class="actTab === '其他活动' ? 'nav active' : 'nav'" @click="getActCount('其他活动')">其他活动</div> -->
-            <div :class="actTab === '同盟活动' ? 'nav active' : 'nav'" @click="getActCount('同盟活动')">同盟活动</div>
-            <div :class="actTab === '节日活动' ? 'nav active' : 'nav'" @click="getActCount('节日活动')">节日活动</div>
+            <div :class="actTab === '展览展会' ? 'nav active' : 'nav'" @click="getActivity('展览展会')">展览展会</div>
+            <div :class="actTab === '知识分享' ? 'nav active' : 'nav'" @click="getActivity('知识分享')">知识分享</div>
+            <div :class="actTab === '休闲娱乐' ? 'nav active' : 'nav'" @click="getActivity('休闲娱乐')">休闲娱乐</div>
+            <div :class="actTab === '生活趣味' ? 'nav active' : 'nav'" @click="getActivity('生活趣味')">生活趣味</div>
           </div>
-          <!-- <div class="pages">
-            <div class="prev" @click="getActivity(actTab, (pageAct - 1))">上一页</div>
-            <div class="page-list">
-              <div :class="pageAct === item ? 'page active' : 'page'" v-for="item in actPages" :key="item" @click="getActivity(actTab, item)">{{item > 3 ? '···' : item}}</div>
-            </div>
-            <div class="next" @click="getActivity(actTab, (pageAct + 1))">下一页</div>
-          </div> -->
 					<div class="more" @click="$router.push('./activity')">
 						<i class="iconfont">&#xe649;</i>
 					</div>
         </div>
 
         <div class="activity-list">
-          <template v-if="activityList.length === 0">
-            <div style="text-align:center; color:#999;">暂无数据</div>
+          <template v-if="activityLoading">
+            <loading></loading>
           </template>
           <template v-else>
-            <div class="the-activity" v-for="(item, $index) in activityList" :key="$index">
-              <div class="activity-left">
-                <div class="img" :style="{backgroundImage: `url(${item.imgSrc})`}"></div>
-              </div>
-              <div class="activity-mid">
-                <div class="title">
-									<!-- <span v-if="pageAct === 1 && $index === 0">最新活动</span> -->
-									{{item.title}}
-								</div>
-								<div class="mid-info">
-									<div class="price" v-if="item.fee">{{item.fee}}元</div>
-									<div class="price" v-else>免费</div>
-									<span class="sort">
-                    <template v-if="item.mode === 1">线下活动</template>
-                    <template v-else-if="item.mode === 2">线上直播</template>
-                  </span>
-								</div>
-                <div class="desc">{{item.desc}}</div>
-                <div class="tag">
-									<span class="num">报名人数：{{item.number}}</span>
-									<span class="count">已报名：{{item.count}}</span>
+            <template v-if="activityList.length === 0">
+              <div style="text-align:center; color:#999;">暂无数据</div>
+            </template>
+            <template v-else>
+              <template v-for="(item, $index) in activityList">
+              <div class="the-activity" :key="$index" v-if="item">
+                <div class="activity-left">
+                  <div class="img" :style="{backgroundImage: `url(${item && item.imgSrc ? item.imgSrc : ''})`}"></div>
+                </div>
+                <div class="activity-mid">
+                  <div class="title" @click="$router.push(`/activity/item/${item.id}`)">
+                    {{item.title}}
+                  </div>
+                  <div class="mid-info">
+                    <template v-if="item.maxPrice !== undefined && item.minPrice !== undefined">
+                    <template v-if="item.maxPrice === item.minPrice">
+                      <div class="price" v-if="item.minPrice > 0">{{item.minPrice}}元</div>
+                      <div class="price" v-else>免费</div>
+                    </template>
+                    <div class="price" v-else>{{item.minPrice}} ~ {{item.maxPrice}}元</div>
+                    </template>
+                    <template v-else>
+                      <div class="price">尚未设置价格</div>
+                    </template>
+                    <template v-if="item.mode.length > 0">
+                      <template v-for="(i, $index) in item.mode">
+                        <span class="sort" :key="$index">{{i}}</span>
+                      </template>
+                    </template>
+                  </div>
+                  <div class="desc">{{item.desc}}</div>
+                  <div class="tag">
+                    <span class="num">报名人数：{{item.number}}</span>
+                    <span class="count">已报名：{{item.count}}</span>
+                  </div>
+                </div>
+                <div class="activity-right">
+                  <div class="btn will" @click="$router.push(`/activity/item/${item.id}`)" v-if="item.actStatus === 1">未开始</div>
+                  <div class="btn" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 2">我要报名 ></div>
+                  <div class="btn end" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 3">已结束</div>
 
-                  <!-- <span>
-                    <template v-if="item.sort === 1">宅设主办</template>
-                    <template v-else-if="item.sort === 2">推荐活动</template>
-                    <template v-else-if="item.sort === 3">合作活动</template>
-                    <template v-else-if="item.sort === 4">探讨会</template>
-                  </span>
-                  <span class="sort">活动标签：
-                    <template v-if="item.mode === 1">线下活动</template>
-                    <template v-else-if="item.mode === 2">线上直播</template>
-                  </span>
-                  <span class="time">{{item.startTime}} ~ {{item.endTime}}</span>
-                  <span class="num">参与人数：{{item.number}}</span> -->
+                  <div class="toggle" @click="toggle($index)" v-if="item.agendaList">活动阵容</div>
+                </div>
+
+                <div class="agenda-layer" v-show="item.toggleStatus === true" v-if="item.agendaList">
+                  <swiper :options="agendaSwiperOption" ref="agendaSwiper">
+                  <template v-for="(is, $index) in item.agendaSwiperList">
+                    <swiper-slide :key="$index">
+                    <div class="speaker-list">
+                      <div class="speaker" v-for="(i, $i) in is" :key="$i">
+                        <div class="img" :style="{backgroundImage: `url(${i.imgSrc})`}"></div>
+                        <div class="speaker-right">
+                          <div class="title">{{i.title}}</div>
+                          <div class="theme">《{{i.theme}}》</div>
+                          <div class="position">{{i.theTitle}}</div>
+                        </div>
+                      </div>
+                    </div>
+                    </swiper-slide>
+                  </template>
+                  </swiper>
+                  <div class="swiper-agenda swiper-agenda-prev swiper-button-prev">
+                    <i class="iconfont">&#xe693;</i>
+                  </div>
+                  <div class="swiper-agenda swiper-agenda-next swiper-button-next">
+                    <i class="iconfont">&#xe600;</i>
+                  </div>
                 </div>
               </div>
-              <div class="activity-right">
-                <div class="btn will" @click="$router.push(`/activity/item/${item.id}`)" v-if="item.actStatus === 1">未开始</div>
-                <div class="btn" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 2">我要报名 ></div>
-                <div class="btn end" @click="$router.push(`/activity/item/${item.id}`)" v-else-if="item.actStatus === 3">已结束</div>
-
-                <!-- <div class="btn end" @click="$router.push(`/activity/item/${item.id}`)">已结束</div> -->
-
-                <!-- <div class="price" v-if="item.fee">￥{{item.fee}}</div> -->
-                <!-- <div class="price" v-else>免费</div> -->
-
-                <div class="toggle" @click="toggle($index)" v-if="item.agendaList">活动阵容</div>
-              </div>
-
-							<div class="agenda-layer" v-show="item.toggleStatus === true" v-if="item.agendaList">
-								<swiper :options="agendaSwiperOption" ref="agendaSwiper">
-								<template v-for="(is, $index) in item.agendaSwiperList">
-									<swiper-slide :key="$index">
-									<div class="speaker-list">
-										<div class="speaker" v-for="(i, $i) in is" :key="$i">
-											<div class="img" :style="{backgroundImage: `url(${i.imgSrc})`}"></div>
-											<div class="speaker-right">
-												<div class="title">{{i.title}}</div>
-												<div class="theme">《{{i.theme}}》</div>
-												<div class="position">腾讯设计师</div>
-											</div>
-										</div>
-									</div>
-									</swiper-slide>
-								</template>
-								</swiper>
-								<div class="swiper-agenda swiper-agenda-prev swiper-button-prev">
-									<i class="iconfont">&#xe693;</i>
-								</div>
-								<div class="swiper-agenda swiper-agenda-next swiper-button-next">
-									<i class="iconfont">&#xe600;</i>
-								</div>
-							</div>
-            </div>
+              </template>
+            </template>
           </template>
         </div>
       </div>
@@ -251,9 +218,12 @@
               <div class="img" :style="{backgroundImage: `url(${item.src})`}"></div>
               <div class="info">
                 <div class="name">{{item.name}}</div>
-                <div class="title">
-                  {{item.info}}
+                <div class="title" v-if="item.mode.length > 0">
+                  <template v-for="(i, $index) in item.mode">
+                    <div :key="$index">{{i}}</div>
+                  </template>
                 </div>
+                <div class="title" v-else>{{item.info}}</div>
                 <a class="btn" :href="item.link" target="blank" v-if="item.link">个人链接</a>
                 <div class="get" @click="orderIt(item)">找他接单</div>
               </div>
@@ -261,14 +231,13 @@
             </swiper-slide>
             </template>
           </swiper>
+          <div class="swiper-people swiper-people-prev swiper-button-prev">
+            <i class="iconfont">&#xe693;</i>
+          </div>
+          <div class="swiper-people swiper-people-next swiper-button-next">
+            <i class="iconfont">&#xe600;</i>
+          </div>
         </div>
-				<div class="swiper-people swiper-people-prev swiper-button-prev">
-					<i class="iconfont">&#xe693;</i>
-				</div>
-				<div class="swiper-people swiper-people-next swiper-button-next">
-					<i class="iconfont">&#xe600;</i>
-				</div>
-				<div class="layer-bg"></div>
       </div>
     </div>
     <div class="btm-bannner">
@@ -276,39 +245,6 @@
     </div>
 
     <downloadDialog :showDownload="showDownload" :dialog="dialog" @hide-download="showDownload = false" @open-link="openLink"></downloadDialog>
-
-    <transition name="fade">
-    <div class="dialog-layer" v-if="showRecommend">
-      <div class="dialog-flex">
-        <div class="dialog-block">
-          <span class="close" @click="closeRecommend">
-            <i class="iconfont">&#xea13;</i>
-          </span>
-          <div class="title">填写你推荐的产品</div>
-          <div class="input-group">
-            <span>称呼</span>
-            <input type="text" v-model="recommend.name" placeholder="您的称呼" />
-          </div>
-          <div class="input-group">
-            <span>电话</span>
-            <input type="text" v-model="recommend.phone" maxlength="11" placeholder="您的联系电话" />
-          </div>
-          <div class="input-group">
-            <span>微信</span>
-            <input type="text" v-model="recommend.wechatId" />
-          </div>
-          <div class="input-group">
-            <span>备注</span>
-            <textarea v-model="recommend.remark" rows="4" placeholder="描述你的推荐内容"></textarea>
-          </div>
-
-          <div class="error" v-if="recommend.error">{{recommend.error}}</div>
-
-          <div class="btn" @click="comfilmRecommend">确定</div>
-        </div>
-      </div>
-    </div>
-    </transition>
 
     <transition name="fade">
       <div class="dialog-layer" v-if="showFeedback">
@@ -403,10 +339,9 @@ export default {
         // ...
         autoplay: true,
         loop : true,
-        delay: 1000,
-        // pagination: {
-        //   el: '.swiper-pagination',
-        // },
+        delay: 5000,
+        speed: 600,
+
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
@@ -430,21 +365,21 @@ export default {
 			recommendSwiperOption: {
 				autoplay: true,
         loop : false,
-        delay: 1000,
+        delay: 5000,
+        speed: 600,
         pagination: {
           el: '.swiper-pagination',
+          clickable :true,
         },
 			},
-			recommendList: [],
 			recommendSwiperList: [],
       recommendLoading: false,
 
-      actTab: '宅设主办',
+      actTab: '展览展会',
       actTotal: 0, // 总条数
       actPages: 0, // 总页数
       actLimit: 3, // 每页条数
 			activityList: [],
-			// agendaSwiperList: [],
 			agendaSwiperOption: {
 				autoplay: true,
         loop : false,
@@ -469,7 +404,7 @@ export default {
         loop : false,
         delay: 1000,
         slidesPerView: 5,
-				spaceBetween: 40,
+				spaceBetween: 20,
         navigation: {
           nextEl: '.swiper-button-next',
           prevEl: '.swiper-button-prev',
@@ -479,23 +414,12 @@ export default {
       showPrivate: false,
       privateDialog: {},
       privateList: [],
-      // priTotal: 0,
-      // priPages: 0,
+
       priLimit: 6,
-      // skipPri: 0, // 跳过数量
-      // pagePri: 1, // 当前页数
+
 
       showDownload: false,
       dialog: {},
-
-      showRecommend: false,
-      recommend: {
-        name: '',
-        phone: '',
-        wechatId: '',
-        remark: '',
-        error: '',
-      },
 
       showFeedback: false,
       showOrder: false,
@@ -508,7 +432,8 @@ export default {
   },
   mounted() {
     this.getDesigner();
-    this.getActCount('宅设主办');
+    this.getActivity('展览展会');
+
     this.getBanner();
     this.getRecommend();
     this.getPrivateList();
@@ -558,7 +483,6 @@ export default {
             imgSrc: res[i].imgSrc
           });
         }
-				// this.recommendList = arr;
 
 				let index = 0;
 				let newArray = [];
@@ -568,38 +492,13 @@ export default {
 				this.recommendSwiperList = newArray;
       });
     },
-    // getPrivateCount() {
-    //   let privateQuery = this.$Bmob.Query('private_orders');
-    //   privateQuery.equalTo('notDelete', '==', true);
-    //   privateQuery.count().then((total) => {
-    //     this.priTotal = total;
-    //     this.priPages = parseInt(total / this.priLimit);
-    //     if (total % this.priLimit > 0) {
-    //       this.priPages = this.priPages + 1;
-    //     }
-    //     this.getPrivateList(1);
-    //   });
-    // },
-    getPrivateList() {
-      // if (page) {
-      //   if (page > this.priPages) {
-      //     this.pagePri = this.priPages;
-      //   } else if (page < 0) {
-      //     this.pagePri = 1;
-      //   } else {
-      //     this.pagePri = page;
-      //   }
-      // } else {
-      //   this.pagePri = 1
-      // }
 
+    getPrivateList() {
       let privateQuery = this.$Bmob.Query('private_orders');
-      // this.skipPri = this.priLimit * (this.pagePri - 1);
       privateQuery.order('-createdAt');
       privateQuery.equalTo('notDelete', '==', true);
       privateQuery.equalTo('audit', '==', true);
       privateQuery.equalTo('online', '==', true);
-      // privateQuery.skip(this.skipPri);
       privateQuery.limit(this.priLimit);
       privateQuery.find().then((res) => {
         for (let i = 0; i < res.length; i += 1) {
@@ -619,71 +518,30 @@ export default {
       this.showPrivate = true;
       this.privateDialog = item;
     },
-    getActCount(actTab) {
-      console.log(actTab);
-      var query = this.$Bmob.Query('activity');
-      query.equalTo('notDelete', '==', true);
-      if (actTab === '宅设主办') {
-        query.equalTo('sort', '==', 1);
-      } else {
-        query.equalTo('sort', '!=', 1);
-      }
-      query.count().then((total) => {
-        this.actTotal = total;
-        this.actPages = parseInt(total / this.actLimit);
-        if (total % this.actLimit > 0) {
-          this.actPages = this.actPages + 1;
-        }
-        this.getActivity(actTab, 1);
-      });
-    },
-    getActivity(actTab, page) {
-			console.log(page);
-			let apList = [];
-			
-			var apQuery = this.$Bmob.Query('activity_person');
-      apQuery.find().then((res) => {
-        apList = res;
-      });
-			
+
+    getActivity(actTab) {
+      this.activityLoading = true;
       this.actTab = actTab;
 
-      // if (page) {
-      //   if (page > this.actPages) {
-      //     this.pageAct = this.actPages;
-      //   } else if (page < 0) {
-      //     this.pageAct = 1;
-      //   } else {
-      //     this.pageAct = page;
-      //   }
-      // } else {
-      //   this.pageAct = 1
-      // }
-      
-      var query = this.$Bmob.Query('activity');
-      // this.skipAct = this.actLimit * (this.pageAct - 1);
-
       let arr = [];
+
+      const query = this.$Bmob.Query('activity');
       query.order('-endTime');
       query.equalTo('notDelete', '==', true);
-      if (actTab === '宅设主办') {
+      if (actTab === '展览展会') {
         query.equalTo('sort', '==', 1);
-      } else {
-        query.equalTo('sort', '!=', 1);
+      } else if (actTab === '知识分享') {
+        query.equalTo('sort', '==', 2);
+      } else if (actTab === '休闲娱乐') {
+        query.equalTo('sort', '==', 3);
+      } else if (actTab === '生活趣味') {
+        query.equalTo('sort', '==', 4);
       }
-
-      // query.skip(this.skipAct);
+      query.order('-endTime');
       query.limit(3);
-      this.activityLoading = true;
       query.find().then((res) => {
         this.activityLoading = false;
         for (let i = 0; i < res.length; i += 1) {
-					let count = 0;
-					for (let j = 0; j < apList.length; j += 1) {
-            if (res[i].objectId === apList[j].activity.objectId) {
-              count += 1;
-            }
-          }
           for (let key in res[i].startTime) {
             if (key === 'iso') {
               res[i].startTime = res[i].startTime[key];
@@ -693,43 +551,71 @@ export default {
             if (key === 'iso') {
               res[i].endTime = res[i].endTime[key];
             }
-					}
-					if (res[i].agenda) {
-						let index = 0;
-						let newArray = [];
-						while(index < JSON.parse(res[i].agenda).length) {
-							newArray.push(JSON.parse(res[i].agenda).slice(index, index += 3));
-						}
-						res[i].agendaSwiperList = newArray;
-					}
-					if (Date.now() < new Date(res[i].startTime).getTime()) {
-						res[i].actStatus = 1
-					} else if (Date.now() > new Date(res[i].startTime).getTime() && Date.now() < new Date(res[i].endTime).getTime()) {
-						res[i].actStatus = 2
-					} else if (Date.now() > new Date(res[i].endTime).getTime()) {
-						res[i].actStatus = 3
-					}
-          arr.push({
-            id: res[i].objectId,
-            title: res[i].title,
-            imgSrc: res[i].imgSrc,
-						desc: res[i].desc,
-						count,
-            status: res[i].status,
-            sort: res[i].sort,
-            mode: res[i].mode,
-            number: res[i].number,
-            fee: res[i].fee,
-            startTime: res[i].startTime,
-						endTime: res[i].endTime,
-						actStatus: res[i].actStatus,
-            toggleStatus: false,
-						agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
-						agendaSwiperList: res[i].agenda ? res[i].agendaSwiperList : undefined,
+          }
+
+          if (res[i].agenda) {
+            let index = 0;
+            let newArray = [];
+            while(index < JSON.parse(res[i].agenda).length) {
+              newArray.push(JSON.parse(res[i].agenda).slice(index, index += 3));
+            }
+            res[i].agendaSwiperList = newArray;
+          }
+          if (Date.now() < new Date(res[i].startTime).getTime()) {
+            res[i].actStatus = 1
+          } else if (Date.now() > new Date(res[i].startTime).getTime() && Date.now() < new Date(res[i].endTime).getTime()) {
+            res[i].actStatus = 2
+          } else if (Date.now() > new Date(res[i].endTime).getTime()) {
+            res[i].actStatus = 3
+          }
+
+
+          const skusQuery = this.$Bmob.Query('skus');
+          let activityPointer = this.$Bmob.Pointer('activity');
+          const activityID = activityPointer.set(res[i].objectId);
+          skusQuery.equalTo('activityId', '==', activityID);
+          skusQuery.find().then((respon) => {
+
+            var apQuery = this.$Bmob.Query('activity_person');
+            apQuery.equalTo('activity', '==', activityID);
+            apQuery.count().then((count) => {
+              this.activityLoading = false;
+              let ar = [];
+              let num = 0;
+              for (let j = 0; j < respon.length; j += 1) {
+                num = respon[j].attrNum + num;
+                ar.push(respon[j].attrPrice);
+              }
+              if (ar.length > 0) {
+                res[i].maxPrice = ar.sort(function(a,b){return a-b})[ar.length - 1];
+                res[i].minPrice = ar.sort(function(a,b){return a-b})[0];
+              }
+
+              const jsonData = {
+                id: res[i].objectId,
+                title: res[i].title,
+                imgSrc: res[i] && res[i].imgSrc ? res[i].imgSrc : '',
+                desc: res[i].desc,
+                number: num,
+                count,
+                maxPrice: res[i].maxPrice,
+                minPrice: res[i].minPrice,
+                status: res[i].status,
+                sort: res[i].sort,
+                mode: res[i].mode || [],
+                startTime: res[i].startTime,
+                endTime: res[i].endTime,
+                actStatus: res[i].actStatus,
+                toggleStatus: false,
+                agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
+                agendaSwiperList: res[i].agenda ? res[i].agendaSwiperList : undefined,
+              };
+              this.$set(arr, i, jsonData);
+            });
           });
         }
         this.activityList = arr;
-      });
+      })
     },
     getDownload() {
       var query = this.$Bmob.Query('download');
@@ -774,6 +660,7 @@ export default {
             id: res[i].objectId,
             src: res[i].img,
             info: res[i].info,
+            mode: res[i].mode || [],
             name: res[i].name,
           });
         }
@@ -805,12 +692,10 @@ export default {
 
 
     dialogShow(item) {
-      console.log(item);
       this.dialog = item;
       this.showDownload = true;
     },
     openLink() {
-      console.log(this.dialog);
       const query = this.$Bmob.Query('download');
       query.get(this.dialog.id).then((res) => {
         res.set('downloads', Number(res.downloads) + 1);
@@ -819,68 +704,6 @@ export default {
         });
       }).catch(err => {
         console.log(err)
-      });
-    },
-
-    closeRecommend() {
-      this.recommend = {};
-      this.showRecommend = false;
-    },
-    comfilmRecommend() {
-      if (!this.recommend.name) {
-        this.recommend.error = '请输入称呼';
-        return false;
-      }
-      if (!this.recommend.phone) {
-        this.recommend.error = '请输入手机号码';
-        return false;
-      }
-
-      if (this.recommend.phone.length !== 11) {
-        this.recommend.error = '请输入11位的手机号码';
-        return false;
-      }
-
-      if (!this.recommend.wechatId) {
-        this.recommend.error = '请输入微信号';
-        return false;
-      }
-
-      if (!this.recommend.remark) {
-        this.recommend.error = '请输入推荐内容';
-        return false;
-      }
-
-      this.recommend.error = '';
-
-      const query = this.$Bmob.Query('recommend');
-      if(localStorage.getItem('memberInfo')) {
-        const userPointer = this.$Bmob.Pointer('_User');
-        const userID = userPointer.set(this.$store.state.user.objectId);
-        query.set('user', userID);
-      }
-      if(this.recommend.name) {
-        query.set('name', this.recommend.name);
-      }
-      if(this.recommend.phone) {
-        query.set('phone', this.recommend.phone);
-      }
-      if(this.recommend.wechatId) {
-        query.set('wechatId', this.recommend.wechatId);
-      }
-      if(this.recommend.remark) {
-        query.set('remark', this.recommend.remark);
-      }
-      query.save().then(() => {
-        this.showRecommend = false;
-        this.showFeedback = true;
-        this.recommend = {
-          name: '',
-          phone: '',
-          wechatId: '',
-          remark: '',
-          error: '',
-        };
       });
     },
 
@@ -977,6 +800,7 @@ export default {
 					position: relative;
           width: 100%;
 					height: 100%;
+          border-radius: 8px;
 					z-index: 0;
           .swiper-slide {
             .img {
@@ -1005,6 +829,13 @@ export default {
               height: 100%;
               background-position: 50%;
               background-size: cover;
+              border-radius: 8px;
+              overflow: hidden;
+              .link {
+                display: block;
+                width: 100%;
+                height: 100%;
+              }
             }
           }
         }
@@ -1032,6 +863,7 @@ export default {
       height: 260px;
       width: 350px;
       background-color: #fff;
+      border-radius: 8px;
       overflow: hidden;
       box-sizing: border-box;
       .layer-title {
@@ -1174,7 +1006,6 @@ export default {
       .layer-block {
         display: flex;
         flex-wrap: wrap;
-        // justify-content: space-between;
         width: 100%;
         .block-item {
           margin-bottom: 10px;
@@ -1194,18 +1025,6 @@ export default {
             color: #888;
             text-align: center;
           }
-
-          &.more-item {
-            .icon {
-              display: flex;
-              align-items: center;
-              padding: 0 10px;
-              border: 2px solid #F2F2F2;
-              box-sizing: border-box;
-              font-size: 12px;
-              color: #888;
-            }
-          }
         }
       }
     }
@@ -1216,6 +1035,7 @@ export default {
     .max-width {
 			margin: auto;
 			background-color: #fff;
+      border-radius: 8px;
       .layer-title {
 				position: relative;
         display: flex;
@@ -1244,6 +1064,7 @@ export default {
             line-height: 60px;
             border-bottom: 4px solid transparent;
             box-sizing: border-box;
+            transition: color 600ms ease, border-color 600ms ease;
             cursor: pointer;
             &:hover, &.active {
               color: #F4C51D;
@@ -1274,52 +1095,6 @@ export default {
             border-color: #F4C51D;
           }
 				}
-        // .pages {
-        //   .prev {
-        //     display: inline-block;
-        //     padding: 0 15px;
-        //     height: 50px;
-        //     line-height: 50px;
-        //     vertical-align: middle;
-        //     font-size: 12px;
-        //     color: #888;
-        //     cursor: pointer;
-        //   }
-        //   .page-list {
-        //     display: inline-block;
-        //     vertical-align: middle;
-        //     .page {
-        //       display: inline-block;
-        //       width: 34px;
-        //       height: 50px;
-        //       line-height: 50px;
-        //       vertical-align: middle;
-        //       text-align: center;
-        //       cursor: pointer;
-        //       font-weight: bold;
-        //       transition: all ease 0.25s;
-        //       &.more {
-        //         color: #D8D8D8;
-        //         font-weight: normal;
-        //         letter-spacing: 4px;
-        //       }
-        //       &:hover, &.active {
-        //         background-color: #F4C51D;
-        //         color: #000;
-        //       }
-        //     }
-        //   }
-        //   .next {
-        //     display: inline-block;
-        //     padding: 0 15px;
-        //     height: 50px;
-        //     line-height: 50px;
-        //     vertical-align: middle;
-        //     font-size: 12px;
-        //     color: #888;
-        //     cursor: pointer;
-        //   }
-        // }
       }
 
       .activity-list {
@@ -1340,10 +1115,14 @@ export default {
             .img {
               width: 280px;
               height: 165px;
-              background-color: #888;
               border-radius: 3px;
               background-position: 50%;
-              background-size: cover;
+              background-size: auto 100%;
+              background-repeat: no-repeat;
+              transition: all 250ms ease;
+              &:hover {
+                background-size: auto 120%;
+              }
             }
           }
           .activity-mid {
@@ -1353,12 +1132,11 @@ export default {
             padding: 0 20px;
             box-sizing: border-box;
             .title {
-              // margin-bottom: 10px;
               font-size: 20px;
-              // font-family: PingFangSC;
-              // font-weight: 600;
               color: #262626;
               line-height: 32px;
+              cursor: pointer;
+              transition: all 250ms ease;
               span {
                 display: inline-block;
                 margin-right: 10px;
@@ -1375,7 +1153,6 @@ export default {
 						}
 						.mid-info {
 							padding: 10px 0;
-							// margin-bottom: 10px;
 							.price {
 								display: inline-block;
 								margin-right: 24px;
@@ -1424,21 +1201,6 @@ export default {
 								line-height: 20px;
 								color: #888;
 							}
-              // span {
-              //   color: #262626;
-              // }
-              // .sort {
-              //   color: #888;
-              //   margin-left: 25px;
-              // }
-              // .time {
-              //   color: #888;
-              //   margin-left: 25px;
-              // }
-              // .num {
-              //   color: #888;
-              //   margin-left: 25px;
-              // }
             }
           }
           .activity-right {
@@ -1452,26 +1214,18 @@ export default {
               height: 38px;
               line-height: 38px;
               text-align: center;
-              border-radius: 2px;
               font-size: 14px;
 							color: #fff;
 							background-color: #F4751D;
+              border-radius: 19px;
               box-sizing: border-box;
 							cursor: pointer;
 							&.end, &.will {
 								background-color: #F5F5F5;
-								color: #2B2B2B;
+								color: #9b9b9b;
 							}
             }
-            // .price {
-            //   margin-top: 10px;
-            //   width: 100px;
-            //   font-size: 16px;
-            //   font-weight: 600;
-            //   color: rgba(244,117,29,1);
-            //   line-height: 22px;
-            //   text-align: center;
-            // }
+
             .toggle {
               position: absolute;
               right: 0;
@@ -1482,21 +1236,9 @@ export default {
               color: #F4C51D;
 							font-size: 12px;
 							border: 1px solid #eeeeee;
-							border-radius: 2px;
+							border-radius: 13px;
 							text-align: center;
               cursor: pointer;
-              // i {
-              //   display: inline-block;
-              //   margin-right: 5px;
-              //   height: 12px;
-              //   font-size: 12px;
-              //   color: #231916;
-              //   transform: rotate(0deg);
-              //   transition: transform 0.25s linear;
-              //   &.show {
-              //     transform: rotate(-180deg);
-              //   }
-              // }
             }
 					}
 					.agenda-layer {
@@ -1505,8 +1247,6 @@ export default {
 						padding: 0 100px;
 						width: 100%;
 						background-color: #FCFCFC;
-						// white-space:nowrap;
-						// overflow: auto;
 						box-sizing: border-box;
 						.speaker-list {
 							display: flex;
@@ -1514,10 +1254,10 @@ export default {
 							flex-wrap: wrap;
 							width: 100%;
 							.speaker {
-								// display: inline-block;
-								// width: 33.33%;
-								padding: 19px 30px;
+								padding: 19px 0;
 								vertical-align: middle;
+                flex: 1;
+                box-sizing: border-box;
 								.img {
 									display: inline-block;
 									width: 80px;
@@ -1552,6 +1292,13 @@ export default {
 							}
 						}
 					}
+          &:hover {
+            .activity-mid {
+              .title {
+                color: #F4C51D;
+              }
+            }
+          }
         }
       }
     }
@@ -1559,28 +1306,19 @@ export default {
 
   .designer-layer {
 		margin-bottom: 30px;
-    // padding-top: 50px;
-    // padding-bottom: 30px;
     .max-width {
 			position: relative;
 			margin: auto;
-			padding: 0 30px;
-			
-			box-sizing: border-box;
       .layer-title {
         position: relative;
-        // padding: 20px 0;
-        // padding-right: 50px;
 				width: 100%;
 				height: 60px;
 				line-height: 60px;
-        // height: 22px;
 				box-sizing: border-box;
 				z-index: 1;
         .title {
           display: inline-block;
           font-size: 16px;
-          font-family: PingFangSC;
           font-weight: bold;
           color: #383838;
           line-height: 22px;
@@ -1588,8 +1326,6 @@ export default {
           span {
             margin-left: 20px;
             font-size: 14px;
-            font-family: PingFangSC;
-            font-weight: 400;
             color: rgba(136,136,136,1);
             line-height: 20px;
           }
@@ -1620,12 +1356,14 @@ export default {
         }
       }
       .people-box {
+        position: relative;
         width: 100%;
+        padding: 0 40px;
+        box-sizing: border-box;
         .box {
           position: relative;
           width: 100%;
           height: 340px;
-          // border: 1px solid #D8D8D8;
           overflow: hidden;
           box-sizing: border-box;
           .img {
@@ -1684,9 +1422,7 @@ export default {
 							position: absolute;
 							left: 15px;
 							bottom: 15px;
-              // margin-top: 50px;
               font-size: 16px;
-              // font-family: PingFangSC;
               font-weight: bold;
               color: rgba(51,51,51,1);
               line-height: 22px;
@@ -1699,24 +1435,51 @@ export default {
 						}
 					}
         }
-			}
-			.layer-bg {
-				position: absolute;
-				left: 0;
-				top: 0;
-				width: 100%;
-				height: 290px;
-				background-color: #fff;
-				z-index: 0;
-			}
+
+        .swiper-people {
+          margin-top: 0!important;
+          top: 0!important;
+          width: 30px!important;
+          height: 340px!important;
+          text-align: center;
+          background-image: none!important;
+          background-color: #fff;
+          outline: none;
+        }
+        .swiper-people i {
+          display: block;
+          width: 100%;
+          font-size: 24px;
+          line-height: 340px;
+          text-align: center;
+          color: #383838;
+        }
+        .swiper-people.swiper-button-disabled {
+          opacity: 0!important;
+          background-color: #B3B3B3;
+        }
+        .swiper-people.swiper-button-disabled i{
+          color: #fff;
+        }
+        .swiper-people:hover {
+          background: linear-gradient(rgba(250,228,62,0.2), rgba(244,197,29,0.2))!important;
+        }
+        .swiper-people:hover i {
+          color: #F4C51D!important;
+        }
+
+        .swiper-people-prev{
+          left: 0!important;
+        }
+        .swiper-people-next {
+          right: 0!important;
+        }
+      }
     }
   }
 
   .btm-bannner {
     width: 100%;
-    background-image: url(../assets/img/btm_tips.png);
-    background-position: 50%;
-    background-color: #fff;
     img {
       display: block;
       margin: auto;

@@ -12,7 +12,7 @@
     <div class="info-form">
       <div class="form-t">用户名</div>
       <div class="form-i">
-        <input type="text" v-model="form.username" disabled />
+        <input type="text" v-model="form.nickname" disabled />
       </div>
     </div>
     <div class="info-form">
