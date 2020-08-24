@@ -528,6 +528,8 @@ export default {
       const query = this.$Bmob.Query('activity');
       query.order('-endTime');
       query.equalTo('notDelete', '==', true);
+      query.equalTo('status', '==', 1);
+      query.equalTo("endTime", ">=", {"__type":"Date","iso":new Date()});
       if (actTab === '展览展会') {
         query.equalTo('sort', '==', 1);
       } else if (actTab === '知识分享') {

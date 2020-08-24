@@ -25,21 +25,39 @@
             <div class="desc">{{info.desc}}</div>
 
             <div class="price-bar">
-              <div class="the-price">
+              <!-- <div class="the-price">
                 价格
                 <span
                   class="val"
                   v-if="!info.maxPrice || !info.maxPrice || (info.maxPrice === info.minPrice)"
                 >{{info.price || info.minPrice}}元</span>
                 <span class="val" v-else>{{info.minPrice}} ~ {{info.maxPrice}}元</span>
-              </div>
+              </div> -->
+
+                <template v-if="info.maxPrice !== undefined && info.minPrice !== undefined">
+                  <div class="the-price">
+                    价格
+                  <template v-if="info.maxPrice === info.minPrice">
+                    <span class="val" v-if="info.minPrice > 0">{{info.minPrice}}元</span>
+                    <span class="val" v-else>免费</span>
+                  </template>
+                  <span class="val" v-else>{{info.minPrice}} ~ {{info.maxPrice}}元</span>
+                  </div>
+                </template>
+                <template v-else>
+                  <div class="the-price">
+                  尚未设置价格
+                  </div>
+                </template>
+
+
               <div :class="info.isliked ? 'like isliked' : 'like'" @click="bindlike(info)">
                 <i class="iconfont">&#xe602;</i>
                 {{info.likes}}
               </div>
             </div>
 
-            <div class="edit-sku">
+            <div class="edit-sku" v-if="!info.isShow">
               <div class="title">选择购买套餐</div>
               <div class="attrs">
                 <template v-for="(item, $index) in attrs">
@@ -49,6 +67,11 @@
                     @click="selSku(item)"
                   >{{item.attrName}}-{{item.attrPrice}}元</div>
                 </template>
+              </div>
+            </div>
+            <div class="edit-sku">
+              <div class="attrs">
+                <div class="attr disabled">活动公示</div>
               </div>
             </div>
 
@@ -97,11 +120,11 @@ export default {
       selectAttr: "",
 
       tipsText: "",
-      tipsType: ""
+      tipsType: "",
     };
   },
   components: {
-    Tips
+    Tips,
   },
   mounted() {
     this.getInfo();
@@ -128,13 +151,13 @@ export default {
 
       const that = this;
       const checkSkus = this.$Bmob.Query("skus");
-      checkSkus.get(item.objectId).then(res => {
+      checkSkus.get(item.objectId).then((res) => {
         if (res.attrNum === 0) {
           that.getInfo();
-          that.tipsText = '当前选择套餐已售罄，请选择其他套餐';
-          that.tipsType = 'error';
+          that.tipsText = "当前选择套餐已售罄，请选择其他套餐";
+          that.tipsType = "error";
           let t = setTimeout(() => {
-            that.tipsText = '';
+            that.tipsText = "";
             clearTimeout(t);
           }, 1500);
         } else {
@@ -154,7 +177,7 @@ export default {
             endtime: this.info.endtime,
             address: this.info.address,
             number: this.info.number,
-            count: this.info.count
+            count: this.info.count,
           };
           localStorage.setItem("payment", JSON.stringify(payment));
           that.$router.push("/activity/payment");
@@ -164,7 +187,7 @@ export default {
     getInfo() {
       this.loading = true;
       var query = this.$Bmob.Query("activity");
-      query.get(this.$route.params.id).then(res => {
+      query.get(this.$route.params.id).then((res) => {
         this.loading = false;
         for (let key in res.startTime) {
           if (key === "iso") {
@@ -199,12 +222,13 @@ export default {
           desc: res.desc,
           address: res.address,
           agendaList: res.agendaList,
-          content: res.content
+          content: res.content,
+          isShow: res.isShow,
         };
 
         let skuquery = this.$Bmob.Query("skus");
         skuquery.equalTo("activityId", "===", this.$route.params.id);
-        skuquery.find().then(r => {
+        skuquery.find().then((r) => {
           this.attrs = r;
           let ar = [];
           let number = 0;
@@ -215,19 +239,19 @@ export default {
           this.info = {
             ...this.info,
             number,
-            maxPrice: ar.sort(function(a, b) {
+            maxPrice: ar.sort(function (a, b) {
               return a - b;
             })[ar.length - 1],
-            minPrice: ar.sort(function(a, b) {
+            minPrice: ar.sort(function (a, b) {
               return a - b;
-            })[0]
+            })[0],
           };
           this.getBuyerCount();
         });
 
         let likeCountQuery = this.$Bmob.Query("like_list");
         likeCountQuery.equalTo("activity", "==", this.$route.params.id);
-        likeCountQuery.find().then(likesCount => {
+        likeCountQuery.find().then((likesCount) => {
           this.$set(this.info, "likes", likesCount.length);
 
           if (likesCount.length > 0 && localStorage.getItem("memberInfo")) {
@@ -238,7 +262,7 @@ export default {
               "==",
               JSON.parse(localStorage.getItem("memberInfo")).objectId
             );
-            likeQuery.find().then(like => {
+            likeQuery.find().then((like) => {
               if (like.length > 0) {
                 this.$set(this.info, "isliked", like[0].objectId);
               }
@@ -254,11 +278,11 @@ export default {
 
       const buyerCount = this.$Bmob.Query("activity_person");
       buyerCount.equalTo("activity", "==", poiID);
-      buyerCount.count().then(count => {
+      buyerCount.count().then((count) => {
         console.log(count);
         this.info = {
           ...this.info,
-          count
+          count,
         };
       });
     },
@@ -285,13 +309,13 @@ export default {
         );
         likeQuery.set("activity", activityID);
         likeQuery.set("user", userID);
-        likeQuery.save().then(res => {
+        likeQuery.save().then((res) => {
           that.$set(this.info, "isliked", res.objectId);
           that.$set(this.info, "likes", item.likes + 1);
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 <style lang="scss" scope>

@@ -3,8 +3,8 @@
     <Search @search="searchTool"></Search>
 
     <div class="the-layout">
-      <div class="max-width">
-        <div class="layout-left" ref="layoutLeft">
+      <div class="max-width" :style="{alignItems: isScoll === false ? 'flex-end' : 'inherit'}">
+        <div class="layout-left" ref="layoutLeft" :style="{paddingRight: isScoll === true ? '355px': '30px'}">
           <div class="list-top">
             <div class="title">设计师工具</div>
 
@@ -67,7 +67,7 @@
             </template>
           </div>
         </div>
-        <div class="layout-right" :style="{left: fixRight + 'px', top: fixTop + 'px'}">
+        <div class="layout-right" :style="{left: isScoll === true ? fixRight + 'px' : 'inherit', top: isScoll === true ? fixTop + 'px' : 'inherit', position: isScoll === true ? 'fixed' : 'relative'}" v-if="productLoading === false">
           <div class="sell-notice">
             <div class="title">购买消息</div>
             <div class="notice-list">
@@ -138,7 +138,9 @@ export default {
       proOrderList: [],
 
       tipsText: "",
-      tipsType: ""
+      tipsType: "",
+
+      isScoll: true,
     };
   },
   activated() {
@@ -167,10 +169,16 @@ export default {
         window.pageYOffset ||
         document.documentElement.scrollTop ||
         document.body.scrollTop;
-      if (scrollTop > 160) {
-        this.fixTop = 60;
+
+      if (scrollTop + window.innerHeight > document.body.scrollHeight - 321) {
+        this.isScoll = false;
       } else {
-        this.fixTop = this.$refs.layoutLeft.getBoundingClientRect().top;
+        this.isScoll = true;
+        if (scrollTop > 160) {
+          this.fixTop = 60;
+        } else {
+          this.fixTop = this.$refs.layoutLeft.getBoundingClientRect().top;
+        }
       }
     },
     getToolCount(tab) {
@@ -344,7 +352,8 @@ export default {
       display: flex;
       .layout-left {
         flex: 1;
-        padding-right: 355px;
+        // padding-right: 355px;
+        padding-right: 30px;
         box-sizing: border-box;
 
         .list-top {
@@ -514,7 +523,6 @@ export default {
         }
       }
       .layout-right {
-        position: fixed;
         width: 325px;
         box-sizing: border-box;
         .sell-notice {

@@ -126,6 +126,7 @@ export default {
       query.order('-endTime');
       query.equalTo('notDelete', '==', true);
       query.equalTo('status', '==', 1);
+      query.limit(16)
 
       if (actTab === '展览展会') {
         query.equalTo('sort', '==', 1);
