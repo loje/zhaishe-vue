@@ -78,7 +78,7 @@ new Vue({
 
 // appid： wx9a76b368090721eb
 
-// mch_id： 1570704211
+// mch_id： 1601810899
 
 // device_info： 1000
 
@@ -87,4 +87,4 @@ new Vue({
 // nonce_str： ibuaiVcKdpRxkhJA
 
 
-// `weixin：//wxpay/bizpayurl?sign=XXXXX&appid=wx9a76b368090721eb&mch_id=1570704211&product_id=000001&time_stamp=${secord}&nonce_str=${nonce_str}`
+// `weixin：//wxpay/bizpayurl?sign=XXXXX&appid=wx9a76b368090721eb&mch_id=1601810899&product_id=000001&time_stamp=${secord}&nonce_str=${nonce_str}`
