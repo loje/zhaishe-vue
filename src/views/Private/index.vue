@@ -52,7 +52,7 @@
         </div>
       </template>
     </div>
-    <div class="pages" v-if="list.length > 0">
+    <div class="pages" v-if="list.length > 0 && pages > 1">
       <div class="prev" @click="getlist(1)">首页</div>
       <div class="page-list">
         <div
@@ -197,6 +197,8 @@ export default {
   methods: {
     getCount() {
       const query = this.$Bmob.Query("private_orders");
+      query.equalTo('notDelete', '==', true);
+      query.equalTo('online', '==', true);
       query.count().then(count => {
         this.total = count;
         this.pages = parseInt(count / this.limit) + (count % this.limit > 0 ? 1 : 0);
@@ -205,7 +207,9 @@ export default {
     getlist(page) {
 			this.getCount();
 			this.current = page
-			const query = this.$Bmob.Query("private_orders");
+      const query = this.$Bmob.Query("private_orders");
+      query.equalTo('notDelete', '==', true);
+      query.equalTo('online', '==', true);
 			query.order('-updatedAt');
       query.skip(this.limit * (this.current - 1));
       query.limit(this.limit);

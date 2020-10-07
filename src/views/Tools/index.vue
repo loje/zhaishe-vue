@@ -151,8 +151,8 @@ export default {
   mounted() {
     const that = this;
     window.onresize = () => {
-      console.log("onresize");
-      console.log(that.$refs.layoutLeft.getBoundingClientRect().right);
+      // console.log("onresize");
+      // console.log(that.$refs.layoutLeft.getBoundingClientRect().right);
       that.fixRight = that.$refs.layoutLeft.getBoundingClientRect().right - 325;
     };
     window.addEventListener("scroll", this.windowScroll);
