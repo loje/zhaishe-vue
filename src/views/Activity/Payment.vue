@@ -4,37 +4,42 @@
       <div class="payment-top">
         <div class="top-left">
           <!-- <div class="img" :style="{backgroundImage: `url(${paymentInfo.imgSrc})`}"></div> -->
-          <div class="info-img" :style="{backgroundImage: `url(${paymentInfo.imgSrc})`}"></div>
+          <div
+            class="info-img"
+            :style="{ backgroundImage: `url(${paymentInfo.imgSrc})` }"
+          ></div>
           <div class="the-info">
             <div class="info-title">
               活动时间：
-              <span>{{paymentInfo.starttime}} - {{paymentInfo.endtime}}</span>
+              <span
+                >{{ paymentInfo.starttime }} - {{ paymentInfo.endtime }}</span
+              >
             </div>
             <div class="info-title">
               活动地点：
-              <span>{{paymentInfo.address || '地点不限'}}</span>
+              <span>{{ paymentInfo.address || "地点不限" }}</span>
             </div>
             <div class="info-title">
               报名人数：
-              <span>{{paymentInfo.number}} / {{paymentInfo.count}}人</span>
+              <span>{{ paymentInfo.number }} / {{ paymentInfo.count }}人</span>
             </div>
           </div>
         </div>
         <div class="top-right">
-          <div class="title">{{paymentInfo.title}}</div>
-          <div class="desc">{{paymentInfo.desc}}</div>
+          <div class="title">{{ paymentInfo.title }}</div>
+          <div class="desc">{{ paymentInfo.desc }}</div>
 
           <div class="price-bar">
             <div class="the-price">
               价格
-              <span class="val">{{paymentInfo.price}}元</span>
+              <span class="val">{{ paymentInfo.price }}元</span>
             </div>
             <div
               :class="paymentInfo.isliked ? 'like isliked' : 'like'"
               @click="bindlike(paymentInfo)"
             >
               <i class="iconfont">&#xe602;</i>
-              {{paymentInfo.likes}}
+              {{ paymentInfo.likes }}
             </div>
           </div>
           <div class="process">
@@ -85,29 +90,57 @@
           <div class="block-list">
             <template v-for="(item, $index) in paymentInfo.amount">
               <div class="the-block" :key="$index">
-                <div class="num">{{$index + 1}}</div>
+                <div class="num">{{ $index + 1 }}</div>
                 <div class="block-group">
-                  <div :class="errorList[$index].name ? 'input-group error' : 'input-group'">
+                  <div
+                    :class="
+                      errorList[$index].name
+                        ? 'input-group error'
+                        : 'input-group'
+                    "
+                  >
                     <span>姓名</span>
                     <input type="text" v-model="buyerList[$index].name" />
                   </div>
                 </div>
                 <div class="block-group">
-                  <div :class="errorList[$index].email ? 'input-group error' : 'input-group'">
+                  <div
+                    :class="
+                      errorList[$index].email
+                        ? 'input-group error'
+                        : 'input-group'
+                    "
+                  >
                     <span>邮箱</span>
                     <input type="text" v-model="buyerList[$index].email" />
                   </div>
                 </div>
                 <div class="block-group">
-                  <div :class="errorList[$index].wechat ? 'input-group error' : 'input-group'">
+                  <div
+                    :class="
+                      errorList[$index].wechat
+                        ? 'input-group error'
+                        : 'input-group'
+                    "
+                  >
                     <span>微信</span>
                     <input type="text" v-model="buyerList[$index].wechat" />
                   </div>
                 </div>
                 <div class="block-group">
-                  <div :class="errorList[$index].phone ? 'input-group error' : 'input-group'">
+                  <div
+                    :class="
+                      errorList[$index].phone
+                        ? 'input-group error'
+                        : 'input-group'
+                    "
+                  >
                     <span>电话</span>
-                    <input type="text" v-model="buyerList[$index].phone" maxlength="11" />
+                    <input
+                      type="text"
+                      v-model="buyerList[$index].phone"
+                      maxlength="11"
+                    />
                   </div>
                 </div>
                 <div class="control">
@@ -131,7 +164,7 @@
           </div>
           <div class="block-total">
             一共需支付
-            <span>{{paymentInfo.price * paymentInfo.amount}}元</span>
+            <span>{{ paymentInfo.price * paymentInfo.amount }}元</span>
           </div>
           <div class="block-wechatpay">
             <div class="btn" @click="payit">
@@ -156,7 +189,8 @@
           <div class="block-qrcode">
             <div class="money">
               实付
-              <span>{{paymentInfo.price * paymentInfo.amount}}</span>元
+              <span>{{ paymentInfo.price * paymentInfo.amount }}</span
+              >元
             </div>
 
             <div class="qrcode">
@@ -179,9 +213,9 @@
             </div>
             <div class="tips-right">
               <div class="title">购买需知</div>
-              <div
-                class="text"
-              >所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意</div>
+              <div class="text">
+                所有优惠购买的活动都是通过微信团购、或者返利形式给到大家优惠，所以购买时需要填写您的可添加微信，这样方便小编第一时间加到您，添加您到优惠队列中，所有购买不会第一时间拿到，请大家购买前注意
+              </div>
             </div>
           </div>
         </div>
@@ -203,7 +237,9 @@
             </div>
             <div class="tips-right">
               <div class="title">活动注意事项</div>
-              <div class="text">活动由宅设发布，真实有效，报名请仔细看清楚活动详情后报名，如有不理解请扫二维码咨询</div>
+              <div class="text">
+                活动由宅设发布，真实有效，报名请仔细看清楚活动详情后报名，如有不理解请扫二维码咨询
+              </div>
             </div>
           </div>
         </div>
@@ -232,12 +268,12 @@ export default {
       errorList: [],
 
       tipsText: "",
-      tipsType: ""
+      tipsType: "",
     };
   },
   components: {
     wechatPay,
-    Tips
+    Tips,
   },
   mounted() {
     this.paymentInfo = JSON.parse(localStorage.getItem("payment"));
@@ -246,13 +282,13 @@ export default {
         name: "",
         email: "",
         wechat: "",
-        phone: ""
+        phone: "",
       });
       this.errorList.push({
         name: undefined,
         email: undefined,
         wechat: undefined,
-        phone: undefined
+        phone: undefined,
       });
     }
   },
@@ -266,13 +302,13 @@ export default {
         name: "",
         email: "",
         wechat: "",
-        phone: ""
+        phone: "",
       });
       this.errorList.push({
         name: undefined,
         email: undefined,
         wechat: undefined,
-        phone: undefined
+        phone: undefined,
       });
     },
     del(i) {
@@ -282,13 +318,18 @@ export default {
     },
 
     payit() {
-      console.log(this.paymentInfo);
       const that = this;
 
       if (this.buyerList.length === 0) {
         alert("请添加购买人信息");
         return false;
       }
+
+      if (this.buyerList.length > this.paymentInfo.number - this.paymentInfo.count) {
+        alert("库存不足");
+        return false;
+      }
+
       let i = 0;
       this.buyerList.forEach((item, index) => {
         if (item.name.length === 0) {
@@ -336,7 +377,7 @@ export default {
       });
 
       const checkSkus = this.$Bmob.Query("skus");
-      checkSkus.get(this.paymentInfo.selectAttrId).then(res => {
+      checkSkus.get(this.paymentInfo.selectAttrId).then((res) => {
         if (res.attrNum === 0) {
           that.tipsText = `当前选择套餐【${res.attrName}】已售罄，请点击返回选择其他套餐`;
           that.tipsType = "error";
@@ -356,7 +397,7 @@ export default {
             that.payForm = {
               out_trade_no: `zdesigner${new Date().getTime()}`,
               total_fee: that.paymentInfo.price * that.paymentInfo.amount,
-              body: `${that.paymentInfo.title}-${that.paymentInfo.attrName}`
+              body: `${that.paymentInfo.title}-${that.paymentInfo.attrName}`,
             };
 
             if (that.paymentInfo.price > 0) {
@@ -370,10 +411,10 @@ export default {
       });
     },
 
-    getReslut(item) {
+    async getReslut(item) {
       const queryArray = new Array();
       // 构造含有50个对象的数组
-      for (var i = 0; i < this.buyerList.length; i++) {
+      for (var a = 0; a < this.buyerList.length; a++) {
         var query = this.$Bmob.Query("order_list");
         query.set("payReslut", item);
         query.set("sort", "activity");
@@ -388,10 +429,33 @@ export default {
         query.set("user", userID);
         query.set("trade_state", item.trade_state || "SUCCESS");
 
-        query.set("name", this.buyerList[i].name);
-        query.set("phone", this.buyerList[i].phone);
-        query.set("email", this.buyerList[i].email);
-        query.set("wechatId", this.buyerList[i].wechat);
+        query.set("name", this.buyerList[a].name);
+        query.set("phone", this.buyerList[a].phone);
+        query.set("email", this.buyerList[a].email);
+
+        // 查询该用户的微信号是否存在，若存在则直接获得微信的objectid，若不存在则新建一个新的微信objectid
+        let wechatQuery = this.$Bmob.Query("user_wechat");
+        wechatQuery.equalTo("user", "==", userID);
+        wechatQuery.equalTo("wechatId", "==", this.buyerList[a].wechat);
+        let wechatList = await wechatQuery.find();
+        if (wechatList.length > 0) {
+          const wechatPointer = this.$Bmob.Pointer("user_wechat");
+          const wechatID = wechatPointer.set(wechatList[0].objectId);
+          query.set("userWechat", wechatID);
+        } else {
+          wechatQuery.set("user", userID);
+          wechatQuery.set("wechatId", this.buyerList[a].wechat);
+          let wechat = await wechatQuery.save();
+
+          const wechatPointer = this.$Bmob.Pointer("user_wechat");
+          const wechatID = wechatPointer.set(wechat.objectId);
+
+          query.set("userWechat", wechatID);
+        }
+
+        query.set("attrName", this.paymentInfo.attrName);
+
+        // query.set("wechatId", this.buyerList[i].wechat);
         if (this.remark) {
           query.set("remark", this.remark);
         }
@@ -403,44 +467,55 @@ export default {
       }
 
       // 传入刚刚构造的数组
+      let res = await this.$Bmob.Query("order_list").saveAll(queryArray);
+
+      const proQueryArray = new Array();
+      for (var b = 0; b < res.length; b++) {
+        const proquery = this.$Bmob.Query("activity_person");
+
+        const userPointer = this.$Bmob.Pointer("_User");
+        const userID = userPointer.set(this.$store.state.user.objectId);
+        proquery.set("user", userID);
+
+        const activityPointer = this.$Bmob.Pointer("activity");
+        const activityID = activityPointer.set(this.paymentInfo.id);
+        proquery.set("activity", activityID);
+
+        const orderPointer = this.$Bmob.Pointer("order_list");
+        const orderID = orderPointer.set(res[b].success.objectId);
+        proquery.set("order", orderID);
+
+        const orderQuery = this.$Bmob.Query('order_list');
+        let r = await orderQuery.get(res[b].success.objectId);
+
+        const wechatPointer = this.$Bmob.Pointer("user_wechat");
+        const wechatID = wechatPointer.set(r.userWechat.objectId);
+        proquery.set("userWechat", wechatID);
+
+        // let wechatQuery = this.$Bmob.Query("user_wechat");
+        // wechatQuery.equalTo("user", "==", userID);
+        // wechatQuery.equalTo("wechatId", "==", this.buyerList[a].wechat);
+        // let wechatList = await wechatQuery.find();
+        // if (wechatList.length > 0) {
+        //   const wechatPointer = this.$Bmob.Pointer("user_wechat");
+        //   const wechatID = wechatPointer.set(wechatList[0].objectId);
+        //   proquery.set("userWechat", wechatID);
+        // }
+
+        proquery.set("isApply", true);
+        proquery.set("isPaid", true);
+
+        proQueryArray.push(proquery);
+      }
       this.$Bmob
-        .Query("order_list")
-        .saveAll(queryArray)
-        .then(res => {
-          const proQueryArray = new Array();
-          for (var i = 0; i < res.length; i++) {
-            const proquery = this.$Bmob.Query("activity_person");
-
-            const userPointer = this.$Bmob.Pointer("_User");
-            const userID = userPointer.set(this.$store.state.user.objectId);
-            proquery.set("user", userID);
-
-            const activityPointer = this.$Bmob.Pointer("activity");
-            const activityID = activityPointer.set(this.paymentInfo.id);
-            proquery.set("activity", activityID);
-
-            const orderPointer = this.$Bmob.Pointer("order_list");
-            const orderID = orderPointer.set(res[i].success.objectId);
-            proquery.set("order", orderID);
-
-            proquery.set("isApply", true);
-            proquery.set("isPaid", true);
-
-            proQueryArray.push(proquery);
-          }
-          this.$Bmob
-            .Query("activity_person")
-            .saveAll(proQueryArray)
-            .then(() => {
-              this.status = "complate";
-              this.payReslut = item;
-            })
-            .catch(error => {
-              console.log(error);
-            });
+        .Query("activity_person")
+        .saveAll(proQueryArray)
+        .then(() => {
+          this.status = "complate";
+          this.payReslut = item;
         })
-        .catch(err => {
-          console.log(err);
+        .catch((error) => {
+          console.log(error);
         });
     },
     bindlike(item) {
@@ -466,13 +541,13 @@ export default {
         );
         likeQuery.set("activity", activityID);
         likeQuery.set("user", userID);
-        likeQuery.save().then(res => {
+        likeQuery.save().then((res) => {
           that.$set(this.paymentInfo, "isliked", res.objectId);
           that.$set(this.paymentInfo, "likes", item.likes + 1);
         });
       }
-    }
-  }
+    },
+  },
 };
 </script>
 

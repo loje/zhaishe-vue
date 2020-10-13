@@ -254,6 +254,24 @@ export default {
 			let arr = [];
 
       // 获取活动列表
+      // const query = this.$Bmob.Query('activity');
+      // query.order('-endTime');
+      // query.equalTo('notDelete', '==', true);
+      // query.equalTo('status', '==', 1);
+      // query.equalTo("endTime", ">=", {"__type":"Date","iso":new Date()});
+      // if (actTab === '展览展会') {
+      //   query.equalTo('sort', '==', 1);
+      // } else if (actTab === '知识分享') {
+      //   query.equalTo('sort', '==', 2);
+      // } else if (actTab === '休闲娱乐') {
+      //   query.equalTo('sort', '==', 3);
+      // } else if (actTab === '生活趣味') {
+      //   query.equalTo('sort', '==', 4);
+      // }
+      // query.order('-endTime');
+      // query.limit(3);
+      // query.find().then((res) => {
+
       const query = this.$Bmob.Query("activity");
       query.order("-endTime");
       query.equalTo("notDelete", "==", true);
@@ -271,6 +289,7 @@ export default {
       }
       query.order("-endTime");
       let res = await query.find();
+
 
       for (let i = 0; i < res.length; i += 1) {
         for (let key in res[i].startTime) {
@@ -303,14 +322,14 @@ export default {
         } else if (Date.now() > new Date(res[i].endTime).getTime()) {
           res[i].actStatus = 3;
         }
-			}
-			
+      }
+
 			for (let i = 0; i < res.length; i += 1) {
 				const skusQuery = this.$Bmob.Query('skus');
 				let activityPointer = this.$Bmob.Pointer('activity');
 				const activityID = activityPointer.set(res[i].objectId);
 				skusQuery.equalTo('activityId', '==', activityID);
-				let respon = await skusQuery.find();
+        let respon = await skusQuery.find();
 
 				var apQuery = this.$Bmob.Query('activity_person');
 				apQuery.equalTo('activity', '==', activityID);
@@ -348,137 +367,36 @@ export default {
 					agendaSwiperList: res[i].agenda ? res[i].agendaSwiperList : undefined,
 				};
 				this.$set(arr, i, jsonData);
-			}
+      }
 
-      if (res.length === this.skipLimit) {
+      if (res.length !== 0 && res.length <= this.skipLimit) {
         this.activityList = this.activityList.concat(arr);
       } else {
 				if (this.activityList.length > 0) {
-        this.skipAct = this.skipAct - this.skipLimit;
-        this.tipsText = "所有活动已加载完";
-        this.tipsType = "success";
-        let t = setTimeout(() => {
-          this.tipsText = "";
-          clearTimeout(t);
-        }, 1000);
+          this.skipAct = this.skipAct - this.skipLimit;
+          this.tipsText = "所有活动已加载完";
+          this.tipsType = "success";
+          let t = setTimeout(() => {
+            this.tipsText = "";
+            clearTimeout(t);
+          }, 1000);
 				} else {
-        this.skipAct = 0;
-        this.tipsText = "该分类下暂无活动";
-        this.tipsType = "success";
-        let t = setTimeout(() => {
-          this.tipsText = "";
-          clearTimeout(t);
-        }, 1000);
+          this.skipAct = 0;
+          this.tipsText = "该分类下暂无活动";
+          this.tipsType = "success";
+          let t = setTimeout(() => {
+            this.tipsText = "";
+            clearTimeout(t);
+          }, 1000);
 				}
 			}
       this.loading = false;
-			
     },
 
     getMore() {
       this.skipAct = this.skipAct + this.skipLimit;
       this.getActivity(this.actTab);
     },
-    // getActivity(actTab) {
-    //   this.loading = true;
-    //   this.actTab = actTab;
-
-    //   let arr = [];
-
-    //   const query = this.$Bmob.Query('activity');
-    //   query.order('-endTime');
-    //   query.equalTo('notDelete', '==', true);
-    //   query.equalTo('status', '==', 1);
-    //   query.skip(this.skipAct);
-    //   query.limit(5)
-
-    //   if (actTab === '展览展会') {
-    //     query.equalTo('sort', '==', 1);
-    //   } else if (actTab === '知识分享') {
-    //     query.equalTo('sort', '==', 2);
-    //   } else if (actTab === '休闲娱乐') {
-    //     query.equalTo('sort', '==', 3);
-    //   } else if (actTab === '生活趣味') {
-    //     query.equalTo('sort', '==', 4);
-    //   }
-    //   query.order('-endTime');
-    //   query.find().then((res) => {
-    //     this.loading = false;
-    //     for (let i = 0; i < res.length; i += 1) {
-    //       for (let key in res[i].startTime) {
-    //         if (key === 'iso') {
-    //           res[i].startTime = res[i].startTime[key];
-    //         }
-    //       }
-    //       for (let key in res[i].endTime) {
-    //         if (key === 'iso') {
-    //           res[i].endTime = res[i].endTime[key];
-    //         }
-    //       }
-
-    //       if (res[i].agenda) {
-    //         let index = 0;
-    //         let newArray = [];
-    //         while(index < JSON.parse(res[i].agenda).length) {
-    //           newArray.push(JSON.parse(res[i].agenda).slice(index, index += 3));
-    //         }
-    //         res[i].agendaSwiperList = newArray;
-    //       }
-    //       if (Date.now() < new Date(res[i].startTime).getTime()) {
-    //         res[i].actStatus = 1
-    //       } else if (Date.now() > new Date(res[i].startTime).getTime() && Date.now() < new Date(res[i].endTime).getTime()) {
-    //         res[i].actStatus = 2
-    //       } else if (Date.now() > new Date(res[i].endTime).getTime()) {
-    //         res[i].actStatus = 3
-    //       }
-
-    //       const skusQuery = this.$Bmob.Query('skus');
-    //       let activityPointer = this.$Bmob.Pointer('activity');
-    //       const activityID = activityPointer.set(res[i].objectId);
-    //       skusQuery.equalTo('activityId', '==', activityID);
-    //       skusQuery.find().then((respon) => {
-
-    //         var apQuery = this.$Bmob.Query('activity_person');
-    //         apQuery.equalTo('activity', '==', activityID);
-    //         apQuery.count().then((count) => {
-    //           this.activityLoading = false;
-    //           let ar = [];
-    //           let num = 0;
-    //           for (let j = 0; j < respon.length; j += 1) {
-    //             num = respon[j].attrNum + num;
-    //             ar.push(respon[j].attrPrice);
-    //           }
-    //           if (ar.length > 0) {
-    //             res[i].maxPrice = ar.sort(function(a,b){return a-b})[ar.length - 1];
-    //             res[i].minPrice = ar.sort(function(a,b){return a-b})[0];
-    //           }
-
-    //           const jsonData = {
-    //             id: res[i].objectId,
-    //             title: res[i].title,
-    //             imgSrc: res[i] && res[i].imgSrc ? res[i].imgSrc : '',
-    //             desc: res[i].desc,
-    //             number: num,
-    //             count,
-    //             maxPrice: res[i].maxPrice,
-    //             minPrice: res[i].minPrice,
-    //             status: res[i].status,
-    //             sort: res[i].sort,
-    //             mode: res[i].mode || [],
-    //             startTime: res[i].startTime,
-    //             endTime: res[i].endTime,
-    //             actStatus: res[i].actStatus,
-    //             toggleStatus: false,
-    //             agendaList: res[i].agenda ? JSON.parse(res[i].agenda) : undefined,
-    //             agendaSwiperList: res[i].agenda ? res[i].agendaSwiperList : undefined,
-    //           };
-    //           this.$set(arr, i, jsonData);
-    //         });
-    //       });
-    //     }
-    //     this.activityList = arr;
-    //   })
-    // },
   },
 };
 </script>

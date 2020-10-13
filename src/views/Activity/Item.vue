@@ -69,7 +69,7 @@
                 </template>
               </div>
             </div>
-            <div class="edit-sku">
+            <div class="edit-sku" v-else>
               <div class="attrs">
                 <div class="attr disabled">活动公示</div>
               </div>
