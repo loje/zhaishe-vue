@@ -9,7 +9,7 @@ function randomString(length, chars) {
 }
 
 const appid = 'wx6437f6f13c54a09e';
-const mch_id = '1601810899';
+const mch_id = '1570704211';
 const notify_url = 'http://www.zdesigner.cn/';
 const out_trade_no = 'z000001'; // 微信会有自己订单号、我们自己的系统需要设置自己的订单号
 const total_fee = 1; // 注意，单位为分

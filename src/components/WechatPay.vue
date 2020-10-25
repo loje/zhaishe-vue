@@ -90,7 +90,7 @@
       getSign() {
         const that = this;
         const appid = 'wx6437f6f13c54a09e';
-        const mch_id = '1601810899';
+        const mch_id = '1570704211';
         const notify_url = 'http://www.zdesigner.cn/';
         const out_trade_no = this.out_trade_no; // 微信会有自己订单号、我们自己的系统需要设置自己的订单号
         const total_fee = this.total_fee * 100; // 注意，单位为分
@@ -142,7 +142,7 @@
 
         let interval = setInterval(() => {
           const appid = 'wx6437f6f13c54a09e';
-          const mch_id = '1601810899';
+          const mch_id = '1570704211';
           const out_trade_no = this.out_trade_no;
           const nonce_str = this.randomString(32, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ');
 
